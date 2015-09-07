@@ -2,7 +2,7 @@
 Infoblox Client
 ===============================
 
-.. image:: https://img.shields.io/travis/infobloxopen/infoblox-client.svg
+.. image:: https://img.shields.io/travis/bondar-pavel/infoblox-client.svg
         :target: https://travis-ci.org/infobloxopen/infoblox-client
 
 .. image:: https://img.shields.io/pypi/v/infoblox-client.svg
