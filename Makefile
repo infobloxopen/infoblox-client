@@ -46,7 +46,7 @@ clean-test:
 	rm -fr htmlcov/
 
 lint:
-	flake8 infoblox-client tests
+	flake8 infoblox_client
 
 test:
 	python setup.py test
