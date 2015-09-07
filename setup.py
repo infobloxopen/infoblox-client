@@ -50,6 +50,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
     ],
-    test_suite='tests',
+    test_suite='infoblox_client.tests',
     tests_require=test_requirements
 )
