@@ -108,4 +108,4 @@ Tips
 
 To run a subset of tests::
 
-    $ python -m unittest tests.test_infoblox-client
+    $ python -m unittest infoblox_client.tests.test_infoblox_client

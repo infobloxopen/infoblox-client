@@ -11,7 +11,7 @@ Infoblox Client
 
 Client for interacting with Infoblox NIOS over WAPI.
 
-* Free software: BSD license
+* Free software: Apache license
 * Documentation: https://infoblox-client.readthedocs.org.
 
 Features
