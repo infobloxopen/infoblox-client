@@ -52,6 +52,11 @@ class Connector(object):
     """
 
     DEFAULT_HEADER = {'Content-type': 'application/json'}
+    DEFAULT_OPTIONS = {'ssl_verify': False,
+                       'http_request_timeout': 10,
+                       'http_pool_connections': 10,
+                       'http_pool_maxsize': 10,
+                       'wapi_version': 'v1.1'}
 
     def __init__(self, options):
         self._parse_options(options)
@@ -79,6 +84,8 @@ class Connector(object):
             elif hasattr(options, attr):
                 value = getattr(options, attr)
                 setattr(self, attr, value)
+            elif attr in self.DEFAULT_OPTIONS:
+                setattr(self, attr, self.DEFAULT_OPTIONS[attr])
             else:
                 msg = "WAPI config error. Option %s is not defined" % attr
                 raise ib_ex.InfobloxConfigException(msg=msg)

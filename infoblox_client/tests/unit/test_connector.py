@@ -253,10 +253,29 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
                     http_pool_connections=10,
                     http_pool_maxsize=10,
                     http_request_timeout=10)
-        connector.Connector(opts)
+        conn = connector.Connector(opts)
+        self.assertEqual(opts['host'], conn.host)
+        self.assertEqual(opts['wapi_version'], conn.wapi_version)
+        self.assertEqual(opts['username'], conn.username)
+        self.assertEqual(opts['password'], conn.password)
+        self.assertEqual(opts['ssl_verify'], conn.ssl_verify)
+        self.assertEqual(opts['http_pool_connections'], conn.http_pool_connections)
+        self.assertEqual(opts['http_pool_maxsize'], conn.http_pool_maxsize)
+        self.assertEqual(opts['http_request_timeout'], conn.http_request_timeout)
 
     def test_incomplete_options_raises_exception(self):
         opts = dict(host='infoblox.example.org',
                     wapi_version='v1.1')
         self.assertRaises(exceptions.InfobloxConfigException,
                           connector.Connector, opts)
+
+    def test_default_options(self):
+        opts = dict(host='infoblox.example.org',
+                    username='admin',
+                    password='password')
+        conn = connector.Connector(opts)
+        self.assertEqual(False, conn.ssl_verify)
+        self.assertEqual(10, conn.http_request_timeout)
+        self.assertEqual(10, conn.http_pool_connections)
+        self.assertEqual(10, conn.http_pool_maxsize)
+        self.assertEqual('v1.1', conn.wapi_version)
