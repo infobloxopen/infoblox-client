@@ -19,8 +19,11 @@ import re
 import requests
 from requests import exceptions as req_exc
 import six
-import urllib
-import urlparse
+try:
+    import urlparse
+    import urllib
+except ImportError:
+    import urllib.parse as urlparse
 
 from oslo_serialization import jsonutils
 
@@ -54,6 +57,16 @@ class Connector(object):
         self._parse_options(options)
         self._validate_wapi_config()
         self._configure_session()
+        # urllib has different interface for py27 and py34
+        try:
+            self._urlencode = urllib.urlencode
+            self._quote = urllib.quote
+            self._urljoin = urlparse.urljoin
+        except NameError:
+            self._urlencode = urlparse.urlencode
+            self._quote = urlparse.quote
+            self._urljoin = urlparse.urljoin
+
 
     def _parse_options(self, options):
         """Copy needed options to self"""
@@ -110,10 +123,10 @@ class Connector(object):
         if query_params:
             if len(query) > 1:
                 query += '&'
-            query += urllib.urlencode(query_params)
+            query += self._urlencode(query_params)
 
-        base_url = urlparse.urljoin(self.wapi_url,
-                                    urllib.quote(relative_path))
+        base_url = self._urljoin(self.wapi_url,
+                                 self._quote(relative_path))
         return base_url + query
 
     @staticmethod

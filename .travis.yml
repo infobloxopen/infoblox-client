@@ -3,7 +3,7 @@
 language: python
 
 python:
-#  - "3.4" # Disable for now since require fixing urllib usage in connector.py
+  - "3.4"
   - "2.7"
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
