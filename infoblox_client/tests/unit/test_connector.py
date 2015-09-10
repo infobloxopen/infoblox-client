@@ -243,3 +243,20 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
                       'v3.0/', 'v11.0.1/')
         for url in wapi_cloud:
             self.assertTrue(connector.Connector.is_cloud_wapi(url))
+
+    def test_allow_options_as_dict(self):
+        opts = dict(host='infoblox.example.org',
+                    wapi_version='v1.1',
+                    username='admin',
+                    password='password',
+                    ssl_verify=False,
+                    http_pool_connections=10,
+                    http_pool_maxsize=10,
+                    http_request_timeout=10)
+        connector.Connector(opts)
+
+    def test_incomplete_options_raises_exception(self):
+        opts = dict(host='infoblox.example.org',
+                    wapi_version='v1.1')
+        self.assertRaises(exceptions.InfobloxConfigException,
+                          connector.Connector, opts)

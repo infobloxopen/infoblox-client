@@ -74,7 +74,9 @@ class Connector(object):
                       'ssl_verify', 'http_request_timeout',
                       'http_pool_connections', 'http_pool_maxsize')
         for attr in attributes:
-            if hasattr(options, attr):
+            if isinstance(options, dict) and attr in options:
+                setattr(self, attr, options[attr])
+            elif hasattr(options, attr):
                 value = getattr(options, attr)
                 setattr(self, attr, value)
             else:
@@ -83,7 +85,7 @@ class Connector(object):
 
         self.wapi_url = "https://%s/wapi/%s/" % (self.host,
                                                  self.wapi_version)
-        self.cloud_api_enabled = self.is_cloud_wapi(options.wapi_version)
+        self.cloud_api_enabled = self.is_cloud_wapi(self.wapi_version)
 
     def _validate_wapi_config(self):
         if not self.wapi_url or not self.username or not self.password:
