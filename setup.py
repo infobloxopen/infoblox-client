@@ -30,7 +30,7 @@ setup(
     author_email='pbondar@infoblox.com',
     url='https://github.com/infobloxopen/infoblox-client',
     packages=[
-        'infoblox-client',
+        'infoblox_client',
     ],
     package_dir={'infoblox-client':
                  'infoblox_client'},
