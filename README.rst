@@ -33,7 +33,7 @@ Retrieve list of network views from NIOS:
   from infoblox_client import connector
 
   opts = {'host': '192.168.1.10', 'username': 'admin', 'password': 'admin'}
-  conn = infoblox_client.connector.Connector(opts)
+  conn = connector.Connector(opts)
   # get all network_views
   network_views = conn.get_object('networkview')
 
