@@ -259,9 +259,11 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
         self.assertEqual(opts['username'], conn.username)
         self.assertEqual(opts['password'], conn.password)
         self.assertEqual(opts['ssl_verify'], conn.ssl_verify)
-        self.assertEqual(opts['http_pool_connections'], conn.http_pool_connections)
+        self.assertEqual(opts['http_pool_connections'],
+                         conn.http_pool_connections)
         self.assertEqual(opts['http_pool_maxsize'], conn.http_pool_maxsize)
-        self.assertEqual(opts['http_request_timeout'], conn.http_request_timeout)
+        self.assertEqual(opts['http_request_timeout'],
+                         conn.http_request_timeout)
 
     def test_incomplete_options_raises_exception(self):
         opts = dict(host='infoblox.example.org',

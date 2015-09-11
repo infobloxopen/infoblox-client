@@ -19,9 +19,9 @@ import re
 import requests
 from requests import exceptions as req_exc
 import six
+import urllib
 try:
     import urlparse
-    import urllib
 except ImportError:
     import urllib.parse as urlparse
 
@@ -67,11 +67,10 @@ class Connector(object):
             self._urlencode = urllib.urlencode
             self._quote = urllib.quote
             self._urljoin = urlparse.urljoin
-        except NameError:
+        except AttributeError:
             self._urlencode = urlparse.urlencode
             self._quote = urlparse.quote
             self._urljoin = urlparse.urljoin
-
 
     def _parse_options(self, options):
         """Copy needed options to self"""
