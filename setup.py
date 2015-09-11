@@ -15,6 +15,8 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 requirements = [
+    'requests>=2.5.2',
+    'oslo.serialization>=1.4.0',
 ]
 
 test_requirements = [
