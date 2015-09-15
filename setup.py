@@ -17,6 +17,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'requests>=2.5.2',
     'oslo.serialization>=1.4.0',
+    'oslo.log>=1.8.0',
 ]
 
 test_requirements = [
