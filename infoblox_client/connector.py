@@ -56,7 +56,7 @@ class Connector(object):
                        'http_request_timeout': 10,
                        'http_pool_connections': 10,
                        'http_pool_maxsize': 10,
-                       'wapi_version': 'v1.1'}
+                       'wapi_version': '1.1'}
 
     def __init__(self, options):
         self._parse_options(options)
@@ -89,8 +89,8 @@ class Connector(object):
                 msg = "WAPI config error. Option %s is not defined" % attr
                 raise ib_ex.InfobloxConfigException(msg=msg)
 
-        self.wapi_url = "https://%s/wapi/%s/" % (self.host,
-                                                 self.wapi_version)
+        self.wapi_url = "https://%s/wapi/v%s/" % (self.host,
+                                                  self.wapi_version)
         self.cloud_api_enabled = self.is_cloud_wapi(self.wapi_version)
 
     def _validate_wapi_config(self):

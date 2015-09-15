@@ -35,7 +35,7 @@ class TestInfobloxConnector(base.TestCase):
     def _prepare_options():
         opts = mock.Mock()
         opts.host = 'infoblox.example.org'
-        opts.wapi_version = 'v1.1'
+        opts.wapi_version = '1.1'
         opts.username = 'admin'
         opts.password = 'password'
         opts.ssl_verify = False
@@ -280,4 +280,4 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
         self.assertEqual(10, conn.http_request_timeout)
         self.assertEqual(10, conn.http_pool_connections)
         self.assertEqual(10, conn.http_pool_maxsize)
-        self.assertEqual('v1.1', conn.wapi_version)
+        self.assertEqual('1.1', conn.wapi_version)
