@@ -1,2 +1,4 @@
 wheel==0.23.0
+requests>=2.5.2
+oslo.serialization>=1.4.0
 setuptools>=17.1
