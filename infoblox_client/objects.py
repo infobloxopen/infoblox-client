@@ -26,7 +26,7 @@ class InfobloxObject(object):
     _fields = []
     _search_fields = []
     _return_fields = []
-    _infoblox_object_type = None
+    _infoblox_type = None
     _remap = {}
     _custom_field_processing = {}
 
@@ -60,7 +60,7 @@ class InfobloxObject(object):
     @classmethod
     def from_dict(cls, connector, ip_dict):
         mapping = cls._custom_field_processing
-        # Process fields that require building themself as objects
+        # Process fields that require building themselves as objects
         for field in mapping:
             if field in ip_dict:
                 ip_dict[field] = mapping[field](ip_dict[field])
@@ -83,7 +83,7 @@ class InfobloxObject(object):
         if search_fields == 'only':
             fields = self._search_fields
         elif search_fields == 'exclude':
-            # exlude searchfields for update actions
+            # exclude search fields for update actions
             fields = [field for field in self._fields
                       if field not in self._search_fields]
 
@@ -102,21 +102,19 @@ class InfobloxObject(object):
                          {'obj_type': ib_obj.ib_type,
                           'ib_obj': ib_obj})
         local_obj = cls(connector, **kwargs)
-        parsing_class = local_obj.__class__
         if not ib_obj:
-            ib_type = local_obj.get_infoblox_type()
-            ib_obj = connector.create_object(ib_type,
+            ib_obj = connector.create_object(local_obj.infoblox_type,
                                              local_obj.to_dict(),
-                                             local_obj._return_fields)
+                                             local_obj.return_fields)
             LOG.info("Infoblox %(obj_type)s was created: %(ib_obj)s",
-                     {'obj_type': ib_type, 'ib_obj': ib_obj})
+                     {'obj_type': local_obj.infoblox_type, 'ib_obj': ib_obj})
         elif update_if_exists:
             update_fields = local_obj.to_dict(search_fields='exclude')
             ib_obj = connector.update_object(ib_obj['_ref'],
                                              update_fields,
-                                             local_obj._return_fields)
+                                             local_obj.return_fields)
             LOG.info('Infoblox object was updated: %s', ib_obj['_ref'])
-        return parsing_class.from_dict(connector, ib_obj)
+        return local_obj.from_dict(connector, ib_obj)
 
     @classmethod
     def search(cls, connector, return_fields=None,
@@ -124,8 +122,9 @@ class InfobloxObject(object):
                force_proxy=False, **kwargs):
         ib_obj_for_search = cls(connector, **kwargs)
         search_dict = ib_obj_for_search.to_dict(search_fields='only')
-        ib_type = ib_obj_for_search.get_infoblox_type()
-        ib_obj = connector.get_object(ib_type,
+        if not return_fields and ib_obj_for_search.return_fields:
+            return_fields = ib_obj_for_search.return_fields
+        ib_obj = connector.get_object(ib_obj_for_search.infoblox_type,
                                       search_dict,
                                       return_fields=return_fields,
                                       extattrs=extattrs,
@@ -134,8 +133,13 @@ class InfobloxObject(object):
             return cls.from_dict(connector, ib_obj)
         return None
 
-    def get_infoblox_type(self):
-        return self._infoblox_object_type
+    @property
+    def infoblox_type(self):
+        return self._infoblox_type
+
+    @property
+    def return_fields(self):
+        return self._return_fields
 
     @classmethod
     def get_class_from_args(cls, kwargs):
@@ -186,15 +190,15 @@ class Network(InfobloxObject):
 
 
 class NetworkV4(Network):
-    _infoblox_object_type = 'network'
+    _infoblox_type = 'network'
 
 
 class NetworkV6(Network):
-    _infoblox_object_type = 'ipv6network'
+    _infoblox_type = 'ipv6network'
 
 
 class HostRecord(InfobloxObject):
-    _infoblox_object_type = 'record:host'
+    _infoblox_type = 'record:host'
 
     @classmethod
     def get_v4_class(cls):
@@ -305,11 +309,11 @@ class IPRange(InfobloxObject):
 
 
 class IPRangeV4(IPRange):
-    _infoblox_object_type = 'range'
+    _infoblox_type = 'range'
 
 
 class IPRangeV6(IPRange):
-    _infoblox_object_type = 'ipv6range'
+    _infoblox_type = 'ipv6range'
 
 
 class FixedAddress(InfobloxObject):
@@ -324,20 +328,20 @@ class FixedAddress(InfobloxObject):
 
 
 class FixedAddressV4(FixedAddress):
-    _infoblox_object_type = 'fixedaddress'
+    _infoblox_type = 'fixedaddress'
     _fields = ['_ref', 'ipv4addr', 'mac', 'network_view']
     _search_fields = ['ipv4addr', 'mac', 'network_view']
     _remap = {'ip': 'ipv4addr'}
 
 
 class FixedAddressV6(FixedAddress):
-    _infoblox_object_type = 'ipv6fixedaddress'
+    _infoblox_type = 'ipv6fixedaddress'
     _fields = ['_ref', 'ipv6addr', 'duid', 'network_view']
     _search_fields = ['ipv6addr', 'duid', 'network_view']
     _remap = {'ip': 'ipv6addr'}
 
 
-class ARecords(InfobloxObject):
+class ARecordBase(InfobloxObject):
 
     @classmethod
     def get_v4_class(cls):
@@ -348,22 +352,22 @@ class ARecords(InfobloxObject):
         return AAAARecord
 
 
-class ARecord(ARecords):
-    _infoblox_object_type = 'record:a'
+class ARecord(ARecordBase):
+    _infoblox_type = 'record:a'
     _fields = ['_ref', 'ipv4addr', 'name', 'view', 'extattrs']
     _search_fields = ['ipv4addr', 'name', 'view']
     _remap = {'ip': 'ipv4addr'}
 
 
-class AAAARecord(ARecords):
-    _infoblox_object_type = 'record:aaaa'
+class AAAARecord(ARecordBase):
+    _infoblox_type = 'record:aaaa'
     _fields = ['_ref', 'ipv6addr', 'name', 'view', 'extattrs']
     _search_fields = ['ipv6addr', 'name', 'view']
     _remap = {'ip': 'ipv6addr'}
 
 
 class PtrRecord(InfobloxObject):
-    _infoblox_object_type = 'record:ptr'
+    _infoblox_type = 'record:ptr'
 
     @classmethod
     def get_v4_class(cls):
@@ -387,26 +391,26 @@ class PtrRecordV6(PtrRecord):
 
 
 class NetworkView(InfobloxObject):
-    _infoblox_object_type = 'networkview'
+    _infoblox_type = 'networkview'
     _fields = ['name', 'extattrs']
     _search_fields = ['name']
 
 
 class DNSView(InfobloxObject):
-    _infoblox_object_type = 'view'
+    _infoblox_type = 'view'
     _fields = ['name', 'network_view']
     _search_fields = ['name', 'network_view']
 
 
 class DNSZone(InfobloxObject):
     # TODO(pbondar): Add special processing for dns_members
-    _infoblox_object_type = 'zone_auth'
+    _infoblox_type = 'zone_auth'
     _fields = ['fqdn', 'view', 'extattrs', 'zone_format', 'ns_group',
                'prefix', 'primary_dns_members', 'secondary_dns_members']
     _search_fields = ['fqdn', 'view']
 
 
-class IPAllocationObject(object):
+class IPAllocation(object):
 
     def __init__(self, address, next_available_ip):
         self.ip_version = ib_utils.determine_ip_version(address)
