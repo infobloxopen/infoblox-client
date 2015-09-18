@@ -19,13 +19,35 @@ import mock
 from infoblox_client import objects
 from infoblox_client.tests import base
 
+DEFAULT_HOST_RECORD = {
+    '_ref': 'record:host/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYWwuY22NA'
+            ':test_host_name.testsubnet.cloud.global.com/default',
+    'ipv4addrs': [{
+        'configure_for_dhcp': False,
+        '_ref': 'record:host_ipv4addr/lMmQ3ZjkuM4Zj5Mi00Y2:22.0.0.2/'
+                'test_host_name.testsubnet.cloud.global.com/default',
+        'ipv4addr': '22.0.0.2',
+        'mac': 'fa:16:3e:29:87:70',
+        'host': '2c8f8e97-0d92-4cac-a350-096ff2b79.cloud.global.com'}],
+    'extattrs': {
+        'Account': {'value': '8a21c40495f04f30a1b2dc6fd1d9ed1a'},
+        'Cloud API Owned': {'value': 'True'},
+        'VM ID': {'value': 'None'},
+        'IP Type': {'value': 'Fixed'},
+        'CMP Type': {'value': 'OpenStack'},
+        'Port ID': {'value': '136ef9ad-9c88-41ea-9fa6-bd48d8ec789a'},
+        'Tenant ID': {'value': '00fd80791dee4112bb538c872b206d4c'}}
+}
+
 
 class TestObjects(base.TestCase):
 
-    def _mock_connector(self, get_object=None, create_object=None):
+    def _mock_connector(self, get_object=None, create_object=None,
+                        delete_object=None):
         connector = mock.Mock()
         connector.get_object.return_value = get_object
         connector.create_object.return_value = create_object
+        connector.delete_object.return_value = delete_object
         return connector
 
     def test_search_network(self):
@@ -79,25 +101,7 @@ class TestObjects(base.TestCase):
         self.assertEqual(None, ip.host)
 
     def test_create_host_record_with_ip(self):
-        mock_record = {
-            '_ref': 'record:host/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYWwuY22NA'
-                    ':test_host_name.testsubnet.cloud.global.com/default',
-            'ipv4addrs': [{
-                'configure_for_dhcp': False,
-                '_ref': 'record:host_ipv4addr/lMmQ3ZjkuM4Zj5Mi00Y2:22.0.0.2/'
-                        'test_host_name.testsubnet.cloud.global.com/default',
-                'ipv4addr': '22.0.0.2',
-                'mac': 'fa:16:3e:29:87:70',
-                'host': '2c8f8e97-0d92-4cac-a350-096ff2b79.cloud.global.com'}],
-            'extattrs': {
-                'Account': {'value': '8a21c40495f04f30a1b2dc6fd1d9ed1a'},
-                'Cloud API Owned': {'value': 'True'},
-                'VM ID': {'value': 'None'},
-                'IP Type': {'value': 'Fixed'},
-                'CMP Type': {'value': 'OpenStack'},
-                'Port ID': {'value': '136ef9ad-9c88-41ea-9fa6-bd48d8ec789a'},
-                'Tenant ID': {'value': '00fd80791dee4112bb538c872b206d4c'}}
-        }
+        mock_record = DEFAULT_HOST_RECORD
         host_record_copy = copy.deepcopy(mock_record)
         connector = self._mock_connector(create_object=host_record_copy)
 
@@ -107,6 +111,13 @@ class TestObjects(base.TestCase):
         host_record = objects.HostRecord.create(connector,
                                                 view='some-dns-view',
                                                 ip=[ip])
+        # Validate that ip object was converted to simple ip
+        # as a string representation for searching
+        connector.get_object.assert_called_once_with(
+            'record:host',
+            {'view': 'some-dns-view', 'ipv4addr': '22.0.0.2'},
+            extattrs=None, force_proxy=False, return_fields=None)
+        # Validate create_object call
         ip_dict = {'ipv4addr': '22.0.0.2', 'mac': 'fa:16:3e:29:87:70'}
         connector.create_object.assert_called_once_with(
             'record:host',
@@ -123,3 +134,75 @@ class TestObjects(base.TestCase):
                          nios_ip.host)
         self.assertEqual(mock_record['ipv4addrs'][0]['configure_for_dhcp'],
                          nios_ip.configure_for_dhcp)
+
+    def test_search_and_delete_host_record(self):
+        host_record_copy = copy.deepcopy(DEFAULT_HOST_RECORD)
+        connector = self._mock_connector(get_object=host_record_copy)
+
+        host_record = objects.HostRecord.search(connector,
+                                                view='some-dns-view',
+                                                ip='192.168.15.20')
+        connector.get_object.assert_called_once_with(
+            'record:host',
+            {'view': 'some-dns-view', 'ipv4addr': '192.168.15.20'},
+            extattrs=None, force_proxy=False, return_fields=None)
+
+        host_record.delete()
+        connector.delete_object.assert_called_once_with(
+            DEFAULT_HOST_RECORD['_ref'])
+
+    def test_create_fixed_address(self):
+        mock_fixed_address = {
+            '_ref': 'fixedaddress/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYWw2NA',
+            'ipv4addr': '192.168.1.15',
+            'mac': 'aa:ac:cd:11:22:33',
+        }
+        connector = self._mock_connector(create_object=mock_fixed_address)
+
+        fixed_addr = objects.FixedAddress.create(connector,
+                                                 ip='192.168.1.15',
+                                                 network_view='some-view',
+                                                 mac='aa:ac:cd:11:22:33')
+        connector.get_object.assert_called_once_with(
+            'fixedaddress',
+            {'network_view': 'some-view', 'ipv4addr': '192.168.1.15',
+             'mac': 'aa:ac:cd:11:22:33'},
+            extattrs=None, force_proxy=False, return_fields=None)
+        self.assertIsInstance(fixed_addr, objects.FixedAddressV4)
+        connector.create_object.assert_called_once_with(
+            'fixedaddress',
+            {'network_view': 'some-view', 'ipv4addr': '192.168.1.15',
+             'mac': 'aa:ac:cd:11:22:33'}, mock.ANY)
+
+    def test_create_fixed_address_v6(self):
+        mock_fixed_address = {
+            '_ref': 'ipv6fixedaddress/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYA',
+            'ipv6addr': 'fffe:1234:1234::1',
+            'duid': '00:23:97:49:aa:ac:cd:11:22:33',
+        }
+        connector = self._mock_connector(create_object=mock_fixed_address)
+
+        fixed_addr = objects.FixedAddress.create(connector,
+                                                 ip='fffe:1234:1234::1',
+                                                 network_view='some-view',
+                                                 mac='aa:ac:cd:11:22:33')
+        self.assertIsInstance(fixed_addr, objects.FixedAddressV6)
+
+        connector.get_object.assert_called_once_with(
+            'ipv6fixedaddress',
+            {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',
+             'duid': mock.ANY},
+            extattrs=None, force_proxy=False, return_fields=None)
+        connector.create_object.assert_called_once_with(
+            'ipv6fixedaddress',
+            {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',
+             'duid': mock.ANY}, mock.ANY)
+
+    def test_fixed_address_v6(self):
+        connector = self._mock_connector()
+        fixed_addr = objects.FixedAddress(connector,
+                                          ip='fffe:1234:1234::1',
+                                          network_view='some-view',
+                                          mac='aa:ac:cd:11:22:33')
+        self.assertIsInstance(fixed_addr, objects.FixedAddressV6)
+        self.assertEqual('aa:ac:cd:11:22:33', fixed_addr.mac)
