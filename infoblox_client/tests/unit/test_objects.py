@@ -187,6 +187,7 @@ class TestObjects(base.TestCase):
                                                  network_view='some-view',
                                                  mac='aa:ac:cd:11:22:33')
         self.assertIsInstance(fixed_addr, objects.FixedAddressV6)
+        self.assertEqual(mock_fixed_address['duid'], fixed_addr.duid)
 
         connector.get_object.assert_called_once_with(
             'ipv6fixedaddress',
@@ -198,11 +199,17 @@ class TestObjects(base.TestCase):
             {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',
              'duid': mock.ANY}, mock.ANY)
 
-    def test_fixed_address_v6(self):
+    @mock.patch('infoblox_client.utils.generate_duid')
+    def test_fixed_address_v6(self, generate):
+        mac = 'aa:ac:cd:11:22:33'
+        duid = '00:0a:d3:9b:aa:ac:cd:11:22:33'
+        generate.return_value = duid
         connector = self._mock_connector()
         fixed_addr = objects.FixedAddress(connector,
                                           ip='fffe:1234:1234::1',
                                           network_view='some-view',
-                                          mac='aa:ac:cd:11:22:33')
+                                          mac=mac)
         self.assertIsInstance(fixed_addr, objects.FixedAddressV6)
-        self.assertEqual('aa:ac:cd:11:22:33', fixed_addr.mac)
+        self.assertEqual(mac, fixed_addr.mac)
+        self.assertEqual(duid, fixed_addr.duid)
+        generate.assert_called_once_with(mac)

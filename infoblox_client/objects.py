@@ -463,7 +463,7 @@ class FixedAddressV6(FixedAddress):
         self._mac = mac
         if mac:
             self.duid = ib_utils.generate_duid(mac)
-        elif hasattr(self, 'duid'):
+        elif not hasattr(self, 'duid'):
             self.duid = None
 
 
