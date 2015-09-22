@@ -59,7 +59,7 @@ class TestObjects(base.TestCase):
         connector.get_object.assert_called_once_with(
             'network',
             {'network_view': 'some-view', 'network': '192.68.1.0/20'},
-            extattrs=None, force_proxy=False, return_fields=None)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY)
 
     def test_search_network_v6(self):
         connector = self._mock_connector()
@@ -70,14 +70,14 @@ class TestObjects(base.TestCase):
         connector.get_object.assert_called_once_with(
             'ipv6network',
             {'network_view': 'some-view', 'network': 'fffe:2312::/64'},
-            extattrs=None, force_proxy=False, return_fields=None)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY)
 
     def test_search_network_with_results(self):
         found = {"_ref": "network/ZG5zLm5ldHdvcmskMTAuMzkuMTEuMC8yNC8w"
                          ":10.39.11.0/24/default",
                  "network_view": 'some-view',
                  "network": '192.68.1.0/20'}
-        connector = self._mock_connector(get_object=found)
+        connector = self._mock_connector(get_object=[found])
 
         network = objects.Network.search(connector,
                                          network_view='some-view',
@@ -85,7 +85,7 @@ class TestObjects(base.TestCase):
         connector.get_object.assert_called_once_with(
             'network',
             {'network_view': 'some-view', 'network': '192.68.1.0/20'},
-            extattrs=None, force_proxy=False, return_fields=None)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY)
         self.assertEqual('192.68.1.0/20', network.network)
         self.assertEqual('some-view', network.network_view)
         # verify aliased fields works too
@@ -103,7 +103,7 @@ class TestObjects(base.TestCase):
     def test_create_host_record_with_ip(self):
         mock_record = DEFAULT_HOST_RECORD
         host_record_copy = copy.deepcopy(mock_record)
-        connector = self._mock_connector(create_object=host_record_copy)
+        connector = self._mock_connector(create_object=[host_record_copy])
 
         ip = objects.IP.create(ip='22.0.0.2', mac='fa:16:3e:29:87:70')
         self.assertIsInstance(ip, objects.IPv4)
@@ -116,12 +116,12 @@ class TestObjects(base.TestCase):
         connector.get_object.assert_called_once_with(
             'record:host',
             {'view': 'some-dns-view', 'ipv4addr': '22.0.0.2'},
-            extattrs=None, force_proxy=False, return_fields=None)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY)
         # Validate create_object call
         ip_dict = {'ipv4addr': '22.0.0.2', 'mac': 'fa:16:3e:29:87:70'}
         connector.create_object.assert_called_once_with(
             'record:host',
-            {'view': 'some-dns-view', 'ipv4addrs': [ip_dict]}, [])
+            {'view': 'some-dns-view', 'ipv4addrs': [ip_dict]}, ['ipv4addrs'])
         self.assertIsInstance(host_record, objects.HostRecordV4)
         # validate nios reply was parsed correctly
         self.assertEqual(mock_record['_ref'], host_record._ref)
@@ -137,7 +137,7 @@ class TestObjects(base.TestCase):
 
     def test_search_and_delete_host_record(self):
         host_record_copy = copy.deepcopy(DEFAULT_HOST_RECORD)
-        connector = self._mock_connector(get_object=host_record_copy)
+        connector = self._mock_connector(get_object=[host_record_copy])
 
         host_record = objects.HostRecord.search(connector,
                                                 view='some-dns-view',
@@ -145,18 +145,18 @@ class TestObjects(base.TestCase):
         connector.get_object.assert_called_once_with(
             'record:host',
             {'view': 'some-dns-view', 'ipv4addr': '192.168.15.20'},
-            extattrs=None, force_proxy=False, return_fields=None)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY)
 
         host_record.delete()
         connector.delete_object.assert_called_once_with(
             DEFAULT_HOST_RECORD['_ref'])
 
     def test_create_fixed_address(self):
-        mock_fixed_address = {
+        mock_fixed_address = [{
             '_ref': 'fixedaddress/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYWw2NA',
             'ipv4addr': '192.168.1.15',
             'mac': 'aa:ac:cd:11:22:33',
-        }
+        }]
         connector = self._mock_connector(create_object=mock_fixed_address)
 
         fixed_addr = objects.FixedAddress.create(connector,
@@ -167,7 +167,7 @@ class TestObjects(base.TestCase):
             'fixedaddress',
             {'network_view': 'some-view', 'ipv4addr': '192.168.1.15',
              'mac': 'aa:ac:cd:11:22:33'},
-            extattrs=None, force_proxy=False, return_fields=None)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY)
         self.assertIsInstance(fixed_addr, objects.FixedAddressV4)
         connector.create_object.assert_called_once_with(
             'fixedaddress',
@@ -175,11 +175,11 @@ class TestObjects(base.TestCase):
              'mac': 'aa:ac:cd:11:22:33'}, mock.ANY)
 
     def test_create_fixed_address_v6(self):
-        mock_fixed_address = {
+        mock_fixed_address = [{
             '_ref': 'ipv6fixedaddress/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYA',
             'ipv6addr': 'fffe:1234:1234::1',
             'duid': '00:23:97:49:aa:ac:cd:11:22:33',
-        }
+        }]
         connector = self._mock_connector(create_object=mock_fixed_address)
 
         fixed_addr = objects.FixedAddress.create(connector,
@@ -187,13 +187,13 @@ class TestObjects(base.TestCase):
                                                  network_view='some-view',
                                                  mac='aa:ac:cd:11:22:33')
         self.assertIsInstance(fixed_addr, objects.FixedAddressV6)
-        self.assertEqual(mock_fixed_address['duid'], fixed_addr.duid)
+        self.assertEqual(mock_fixed_address[0]['duid'], fixed_addr.duid)
 
         connector.get_object.assert_called_once_with(
             'ipv6fixedaddress',
             {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',
              'duid': mock.ANY},
-            extattrs=None, force_proxy=False, return_fields=None)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY)
         connector.create_object.assert_called_once_with(
             'ipv6fixedaddress',
             {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',

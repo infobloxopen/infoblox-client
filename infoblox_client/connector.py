@@ -165,7 +165,7 @@ class Connector(object):
                     timeout=self.http_request_timeout,
                     headers=self.DEFAULT_HEADER)
         if data:
-            opts['data'] = data
+            opts['data'] = jsonutils.dumps(data)
         return opts
 
     @reraise_neutron_exception

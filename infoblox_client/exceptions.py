@@ -36,12 +36,12 @@ class InfobloxException(BaseExc):
 
 
 class InfobloxSearchError(InfobloxException):
-    message = ("Cannot search '%(objtype)s' object(s): "
+    message = ("Cannot search '%(obj_type)s' object(s): "
                "%(content)s [code %(code)s]")
 
 
 class InfobloxCannotCreateObject(InfobloxException):
-    message = ("Cannot create '%(objtype)s' object(s): "
+    message = ("Cannot create '%(obj_type)s' object(s): "
                "%(content)s [code %(code)s]")
 
 

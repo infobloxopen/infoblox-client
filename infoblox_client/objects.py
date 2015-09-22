@@ -79,6 +79,12 @@ class InfobloxObject(object):
             return True
         return False
 
+    def __repr__(self):
+        data = {field: getattr(self, field) for field in self._fields
+                if getattr(self, field) is not None}
+        data_str = ', '.join("{0}={1}".format(key, data[key]) for key in data)
+        return "{0}: {1}".format(self.__class__.__name__, data_str)
+
     @classmethod
     def from_dict(cls, connector, ip_dict):
         mapping = cls._custom_field_processing
@@ -112,6 +118,18 @@ class InfobloxObject(object):
         return {field: self.field_to_dict(field) for field in fields
                 if getattr(self, field, None) is not None}
 
+    @staticmethod
+    def _object_from_reply(parse_class, connector, reply, has_return_fields):
+        if not reply:
+            return None
+        if has_return_fields:
+            return parse_class.from_dict(connector, reply[0])
+
+        # If no return fields were requested reply contains only string
+        # with reference to object
+        return_dict = {'_ref': reply}
+        return parse_class.from_dict(connector, return_dict)
+
     @classmethod
     def create(cls, connector, check_if_exists=True,
                update_if_exists=False, **kwargs):
@@ -123,6 +141,7 @@ class InfobloxObject(object):
                           "%(ib_obj)s"),
                          {'obj_type': ib_obj.infoblox_type,
                           'ib_obj': ib_obj})
+                return ib_obj
         local_obj = cls(connector, **kwargs)
         if not ib_obj:
             ib_obj = connector.create_object(local_obj.infoblox_type,
@@ -132,34 +151,59 @@ class InfobloxObject(object):
                      {'obj_type': local_obj.infoblox_type, 'ib_obj': ib_obj})
         elif update_if_exists:
             update_fields = local_obj.to_dict(search_fields='exclude')
-            ib_obj = connector.update_object(ib_obj['_ref'],
+            ib_obj = connector.update_object(ib_obj._ref,
                                              update_fields,
                                              local_obj.return_fields)
-            LOG.info('Infoblox object was updated: %s', ib_obj['_ref'])
-        return local_obj.from_dict(connector, ib_obj)
+            LOG.info('Infoblox object was updated: %s', ib_obj._ref)
+        return cls._object_from_reply(local_obj, connector,
+                                      ib_obj, local_obj.return_fields)
 
     @classmethod
-    def search(cls, connector, return_fields=None,
-               extattrs=None,
-               force_proxy=False, **kwargs):
+    def _search(cls, connector, return_fields=None,
+                extattrs=None, force_proxy=False, **kwargs):
         ib_obj_for_search = cls(connector, **kwargs)
         search_dict = ib_obj_for_search.to_dict(search_fields='only')
         if not return_fields and ib_obj_for_search.return_fields:
             return_fields = ib_obj_for_search.return_fields
-        ib_obj = connector.get_object(ib_obj_for_search.infoblox_type,
-                                      search_dict,
-                                      return_fields=return_fields,
-                                      extattrs=extattrs,
-                                      force_proxy=force_proxy)
+        reply = connector.get_object(ib_obj_for_search.infoblox_type,
+                                     search_dict,
+                                     return_fields=return_fields,
+                                     extattrs=extattrs,
+                                     force_proxy=force_proxy)
+        return reply, ib_obj_for_search
+
+    @classmethod
+    def search(cls, connector, return_fields=None,
+               extattrs=None, force_proxy=False, **kwargs):
+        ib_obj, parse_class = cls._search(
+            connector, return_fields=return_fields, extattrs=extattrs,
+            force_proxy=force_proxy, **kwargs)
         if ib_obj:
-            return ib_obj_for_search.from_dict(connector, ib_obj)
-        return None
+            return parse_class.from_dict(connector, ib_obj[0])
+
+    @classmethod
+    def search_all(cls, connector, return_fields=None,
+                   extattrs=None, force_proxy=False, **kwargs):
+        ib_objects, parsing_class = cls._search(
+            connector, return_fields=return_fields, extattrs=extattrs,
+            force_proxy=force_proxy, **kwargs)
+        return [parsing_class.from_dict(connector, obj)
+                for obj in ib_objects]
+
+    def update(self):
+        update_fields = self.to_dict(search_fields='exclude')
+        ib_obj = self.connector.update_object(self._ref,
+                                              update_fields,
+                                              self.return_fields)
+        LOG.info('Infoblox object was updated: %s', self._ref)
+        return self._object_from_reply(self, self.connector,
+                                       ib_obj, self.return_fields)
 
     def delete(self):
         try:
             self.connector.delete_object(self._ref)
         except ib_ex.InfobloxCannotDeleteObject as e:
-            LOG.info(("Failed to delete an object: %s"), e)
+            LOG.info("Failed to delete an object: %s", e)
 
     @property
     def infoblox_type(self):
@@ -208,8 +252,10 @@ class InfobloxObject(object):
 
 
 class Network(InfobloxObject):
-    _fields = ['_ref', 'network_view', 'network']
+    _fields = ['_ref', 'network_view', 'network', 'template',
+               'options', 'nameservers', 'members', 'gateway_ip']
     _search_fields = ['network_view', 'network']
+    _return_fields = ['network_view', 'network']
     _remap = {'cidr': 'network'}
 
     @classmethod
@@ -259,12 +305,43 @@ class HostRecord(InfobloxObject):
     def get_v6_class(cls):
         return HostRecordV6
 
+    def _ip_setter(self, ipaddr_name, ipaddrs_name, ips):
+        """Setter for ip fields
+
+        Accept as input string or list of IP instances.
+        String case:
+            only ipvXaddr is going to be filled, that is enough to perform
+            host record search using ip
+        List of IP instances case:
+            ipvXaddrs is going to be filled with ips content,
+            so create can be issues, since fully prepared IP objects in place.
+            ipXaddr is also filled to be able perform search on NIOS
+            and verify that no such host record exists yet.
+        """
+        print(ips)
+        if isinstance(ips, six.string_types):
+            setattr(self, ipaddr_name, ips)
+        elif isinstance(ips, (list, tuple)) and isinstance(ips[0], IP):
+            setattr(self, ipaddr_name, ips[0].ip)
+            setattr(self, ipaddrs_name, ips)
+        elif isinstance(ips, IP):
+            setattr(self, ipaddr_name, ips.ip)
+            setattr(self, ipaddrs_name, [ips])
+        elif ips is None:
+            setattr(self, ipaddr_name, None)
+            setattr(self, ipaddrs_name, None)
+        else:
+            raise ValueError(
+                "Invalid format of ip passed in: %s."
+                "Should be string or list of NIOS IP objects." % ips)
+
 
 class HostRecordV4(HostRecord):
     """HostRecord for IPv4"""
     _fields = ['_ref', 'ipv4addrs', 'view', 'extattrs', 'name']
-    _search_fields = ['view', 'ipv4addr']
+    _search_fields = ['view', 'ipv4addr', 'name']
     _shadow_fields = ['ipv4addr']
+    _return_fields = ['ipv4addrs']
     _remap = {'ip': 'ipv4addrs'}
     _ip_version = 4
 
@@ -274,27 +351,8 @@ class HostRecordV4(HostRecord):
 
     @ipv4addrs.setter
     def ipv4addrs(self, ips):
-        """Setter for ipv4addrs
-
-        Accept as input string or list of IP instances.
-        String case:
-            only ipv4addr is going to be filled, that is enough to perform
-            host record search using ip
-        List of IP instances case:
-            ipv4addrs is going to be filled with ips content,
-            so create can be issues, since fully prepared IP objects in place.
-            ip4addr is also filled to be able perform search on NIOS
-            and verify that no such host record exists yet.
-        """
-        if isinstance(ips, six.string_types):
-            self.ipv4addr = ips
-        elif isinstance(ips, (list, tuple)) and isinstance(ips[0], IP):
-            self._ipv4addrs = ips
-            self.ipv4addr = ips[0].ip
-        else:
-            raise ValueError(
-                "Invalid format of ip passed in: %s."
-                "Should be string or list of NIOS IP objects." % ips)
+        """Setter for ipv4addrs/ipv4addr"""
+        self._ip_setter('ipv4addr', '_ipv4addrs', ips)
 
     @staticmethod
     def _build_ipv4(ips_v4):
@@ -311,8 +369,9 @@ class HostRecordV4(HostRecord):
 class HostRecordV6(HostRecord):
     """HostRecord for IPv6"""
     _fields = ['_ref', 'ipv6addrs', 'view', 'extattrs',  'name']
-    _search_fields = ['ipv6addr', 'view']
+    _search_fields = ['ipv6addr', 'view', 'name']
     _shadow_fields = ['ipv6addr']
+    _return_fields = ['ipv6addrs']
     _remap = {'ip': 'ipv6addrs'}
     _ip_version = 6
 
@@ -322,17 +381,8 @@ class HostRecordV6(HostRecord):
 
     @ipv6addrs.setter
     def ipv6addrs(self, ips):
-        """Setter for ipv6addrs
-
-        Refer to HostRecordV4.ipv6addrs setter for more details
-        """
-        if isinstance(ips, six.string_types):
-            self.ipv6addr = ips
-        elif isinstance(ips, (list, tuple)) and isinstance(ips[0], IP):
-            self._ipv6addrs = ips
-            self.ipv6addr = ips[0].ip
-        else:
-            raise ValueError
+        """Setter for ipv6addrs/ipv6addr"""
+        self._ip_setter('ipv6addr', '_ipv6addrs', ips)
 
     @staticmethod
     def _build_ipv6(ips_v6):
@@ -364,6 +414,15 @@ class IP(object):
         for field in self._fields:
             if field in kwargs:
                 setattr(self, field, kwargs[field])
+            else:
+                setattr(self, field, None)
+
+    def __eq__(self, other):
+        if isinstance(other, six.string_types):
+            return self.ip == other
+        elif isinstance(other, self.__class__):
+            return self.ip == other.ip and self.zone_auth == other.zone_auth
+        return False
 
     def __getattr__(self, name):
         # Map aliases into real fields
@@ -383,6 +442,16 @@ class IP(object):
         return {field: getattr(self, field) for field in self._fields
                 if getattr(self, field, None) is not None}
 
+    @property
+    def zone_auth(self):
+        if self.host is not None:
+            return self.host.partition('.')[2]
+
+    @property
+    def hostname(self):
+        if self.host is not None:
+            return self.host.partition('.')[0]
+
 
 class IPv4(IP):
     _fields = ['ipv4addr', 'configure_for_dhcp', 'host', 'mac']
@@ -398,9 +467,10 @@ class IPv6(IP):
 
 class IPRange(InfobloxObject):
     _fields = ['_ref', 'start_addr', 'end_addr', 'network_view',
-               'cidr', 'extattrs', 'disable']
+               'network', 'extattrs', 'disable']
     _remap = {'cidr': 'network'}
     _search_fields = ['network_view', 'start_addr']
+    _return_fields = ['start_addr', 'end_addr', 'network_view', 'extattrs']
 
     @classmethod
     def get_v4_class(cls):
@@ -433,8 +503,9 @@ class FixedAddress(InfobloxObject):
 
 class FixedAddressV4(FixedAddress):
     _infoblox_type = 'fixedaddress'
-    _fields = ['_ref', 'ipv4addr', 'mac', 'network_view']
+    _fields = ['_ref', 'ipv4addr', 'mac', 'network_view', 'extattrs']
     _search_fields = ['ipv4addr', 'mac', 'network_view']
+    _return_fields = ['ipv4addr', 'mac', 'network_view', 'extattrs']
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
 
@@ -442,8 +513,9 @@ class FixedAddressV4(FixedAddress):
 class FixedAddressV6(FixedAddress):
     """FixedAddress for IPv6"""
     _infoblox_type = 'ipv6fixedaddress'
-    _fields = ['_ref', 'ipv6addr', 'duid', 'network_view']
+    _fields = ['_ref', 'ipv6addr', 'duid', 'network_view', 'extattrs']
     _search_fields = ['ipv6addr', 'duid', 'network_view']
+    _return_fields = ['ipv6addr', 'duid', 'network_view', 'extattrs']
     _shadow_fields = ['mac']
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
@@ -524,6 +596,7 @@ class NetworkView(InfobloxObject):
     _infoblox_type = 'networkview'
     _fields = ['_ref', 'name', 'extattrs']
     _search_fields = ['name']
+    _shadow_fields = ['is_default']
     _ip_version = 'any'
 
 
@@ -531,6 +604,7 @@ class DNSView(InfobloxObject):
     _infoblox_type = 'view'
     _fields = ['_ref', 'name', 'network_view']
     _search_fields = ['name', 'network_view']
+    _shadow_fields = ['is_default']
     _ip_version = 'any'
 
 
@@ -548,6 +622,9 @@ class IPAllocation(object):
     def __init__(self, address, next_available_ip):
         self.ip_version = ib_utils.determine_ip_version(address)
         self.next_available_ip = next_available_ip
+
+    def __repr__(self):
+        return str(self.next_available_ip)
 
     @classmethod
     def next_available_ip_from_cidr(cls, net_view_name, cidr):

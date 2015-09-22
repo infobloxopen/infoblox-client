@@ -18,6 +18,8 @@ from mock import patch
 import requests
 from requests import exceptions as req_exc
 
+from oslo_serialization import jsonutils
+
 from infoblox_client import connector
 from infoblox_client import exceptions
 
@@ -55,7 +57,7 @@ class TestInfobloxConnector(base.TestCase):
             self.connector.create_object(objtype, payload)
             patched_create.assert_called_once_with(
                 'https://infoblox.example.org/wapi/v1.1/network',
-                data=payload,
+                data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=False
@@ -72,7 +74,7 @@ class TestInfobloxConnector(base.TestCase):
             self.connector.create_object(objtype, payload)
             patched_create.assert_called_once_with(
                 'https://infoblox.example.org/wapi/v1.1/network',
-                data=payload,
+                data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=False
@@ -124,7 +126,7 @@ class TestInfobloxConnector(base.TestCase):
             self.connector.update_object(ref, payload)
             patched_update.assert_called_once_with(
                 'https://infoblox.example.org/wapi/v1.1/network',
-                data=payload,
+                data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=False
