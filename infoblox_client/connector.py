@@ -56,7 +56,7 @@ class Connector(object):
                        'http_request_timeout': 10,
                        'http_pool_connections': 10,
                        'http_pool_maxsize': 10,
-                       'wapi_version': '1.1'}
+                       'wapi_version': '1.4'}
 
     def __init__(self, options):
         self._parse_options(options)

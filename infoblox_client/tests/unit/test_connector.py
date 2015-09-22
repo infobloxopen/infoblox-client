@@ -282,4 +282,4 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
         self.assertEqual(10, conn.http_request_timeout)
         self.assertEqual(10, conn.http_pool_connections)
         self.assertEqual(10, conn.http_pool_maxsize)
-        self.assertEqual('1.1', conn.wapi_version)
+        self.assertEqual('1.4', conn.wapi_version)
