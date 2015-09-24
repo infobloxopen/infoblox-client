@@ -542,3 +542,88 @@ class ObjectManipulatorTestCase(base.TestCase):
             'fixedaddress', payload, extattrs=None,
             return_fields=mock.ANY, force_proxy=mock.ANY)
         connector.delete_object.assert_called_once_with(mock.ANY)
+
+    def test_member_is_assigned_as_list_on_network_create(self):
+        net_view = 'net-view-name'
+        cidr = '192.168.1.0/24'
+        nameservers = []
+        members = [
+            objects.AnyMember(name='just-a-single-member-ip',
+                              ip='192.168.1.25',
+                              _struct='dhcpmember')
+        ]
+        gateway_ip = '192.168.1.1'
+        expected_members = members[0].ip
+        extattrs = mock.Mock()
+
+        connector = mock.Mock()
+        ibom = om.InfobloxObjectManager(connector)
+
+        ibom.create_network(net_view, cidr, nameservers, members, gateway_ip,
+                            extattrs)
+
+        assert not connector.get_object.called
+        matcher = PayloadMatcher({'ipv4addr': expected_members})
+        connector.create_object.assert_called_once_with('network', matcher,
+                                                        mock.ANY)
+
+    def test_create_dns_zone_with_grid_secondaries(self):
+        dns_view_name = 'dns-view-name'
+        fqdn = 'host.global.com'
+        primary_dns_members = [objects.AnyMember(name='member_primary',
+                                                 _struct='memberserver')]
+        secondary_dns_members = [objects.AnyMember(name='member_secondary',
+                                                   _struct='memberserver')]
+        zone_format = 'IPV4'
+
+        connector = mock.Mock()
+        connector.get_object.return_value = None
+
+        ibom = om.InfobloxObjectManager(connector)
+
+        ibom.create_dns_zone(dns_view_name, fqdn, primary_dns_members,
+                             secondary_dns_members, zone_format=zone_format)
+
+        matcher = PayloadMatcher({'view': dns_view_name,
+                                  'fqdn': fqdn})
+        connector.get_object.assert_called_once_with('zone_auth', matcher,
+                                                     return_fields=mock.ANY)
+
+        payload = {'view': dns_view_name,
+                   'fqdn': fqdn,
+                   'zone_format': zone_format,
+                   'grid_primary': [{'name': primary_dns_members[0].name,
+                                     '_struct': 'memberserver'}],
+                   'grid_secondaries': [{'name': member.name,
+                                         '_struct': 'memberserver'}
+                                        for member in secondary_dns_members]
+                   }
+        connector.create_object.assert_called_once_with('zone_auth', payload,
+                                                        mock.ANY)
+
+    def test_create_dns_zone_creates_zone_auth_object(self):
+        dns_view_name = 'dns-view-name'
+        fqdn = 'host.global.com'
+        member = objects.AnyMember(name='member_name', ip='192.168.1.2',
+                                   _struct='memberserver')
+        zone_format = 'IPV4'
+
+        connector = mock.Mock()
+        connector.get_object.return_value = None
+
+        ibom = om.InfobloxObjectManager(connector)
+
+        ibom.create_dns_zone(dns_view_name, fqdn, [member],
+                             zone_format=zone_format)
+
+        matcher = PayloadMatcher({'view': dns_view_name,
+                                  'fqdn': fqdn})
+        connector.get_object.assert_called_once_with('zone_auth', matcher,
+                                                     return_fields=mock.ANY)
+
+        matcher = PayloadMatcher({'view': dns_view_name,
+                                  'fqdn': fqdn,
+                                  'zone_format': zone_format,
+                                  'name': member.name})
+        connector.create_object.assert_called_once_with('zone_auth', matcher,
+                                                        mock.ANY)

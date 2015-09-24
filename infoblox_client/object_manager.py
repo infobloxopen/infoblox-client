@@ -58,6 +58,9 @@ class InfobloxObjectManager(object):
         return obj.Network.create(self.connector,
                                   network_view=net_view_name,
                                   cidr=cidr,
+                                  members=members,
+                                  gateway_ip=gateway_ip,
+                                  nameservers=nameservers,
                                   extattrs=network_extattrs,
                                   check_if_exists=False)
 
@@ -222,48 +225,26 @@ class InfobloxObjectManager(object):
         return host_record.update()
 
     def has_dns_zones(self, dns_view):
-        zone_data = {'view': dns_view}
         try:
-            zone = self._get_infoblox_object_or_none('zone_auth', zone_data)
-            return bool(zone)
+            zones = obj.DNSZone.search_all(self.connector, view=dns_view)
+            return bool(zones)
         except ib_ex.InfobloxSearchError:
             return False
 
     def create_dns_zone(self, dns_view, dns_zone,
-                        primary_dns_members=None, secondary_dns_members=None,
+                        grid_primary=None, grid_secondaries=None,
                         zone_format=None, ns_group=None, prefix=None,
                         extattrs=None):
-        dns_zone_data = {'fqdn': dns_zone,
-                         'view': dns_view,
-                         'extattrs': extattrs if extattrs else {}}
-        zone_args = {}
-
-        primary_members_structs = []
-        for member in primary_dns_members:
-            primary_members_structs.append({'name': member.name,
-                                            '_struct': 'memberserver'})
-        zone_args['grid_primary'] = primary_members_structs
-
-        if secondary_dns_members:
-            grid_secondaries = [{'name': member.name,
-                                 '_struct': 'memberserver'}
-                                for member in secondary_dns_members]
-            zone_args['grid_secondaries'] = grid_secondaries
-
-        if zone_format:
-            zone_args['zone_format'] = zone_format
-
-        if ns_group:
-            zone_args['ns_group'] = ns_group
-
-        if prefix:
-            zone_args['prefix'] = prefix
-
         try:
-            self._create_infoblox_object('zone_auth',
-                                         dns_zone_data,
-                                         additional_create_kwargs=zone_args,
-                                         check_if_exists=True)
+            obj.DNSZone.create(self.connector,
+                               fqdn=dns_zone,
+                               view=dns_view,
+                               extattrs=extattrs,
+                               zone_format=zone_format,
+                               ns_group=ns_group,
+                               prefix=prefix,
+                               grid_primary=grid_primary,
+                               grid_secondaries=grid_secondaries)
         except ib_ex.InfobloxCannotCreateObject:
             LOG.warning('Unable to create DNS zone %(dns_zone_fqdn)s '
                         'for %(dns_view)s',

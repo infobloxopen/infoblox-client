@@ -23,7 +23,83 @@ from infoblox_client import utils as ib_utils
 LOG = logging.getLogger(__name__)
 
 
-class InfobloxObject(object):
+class BaseObject(object):
+    """Base class that provides minimal new object model interface
+
+    This class add next features to objects:
+    - initialize public instance variables with None for fields
+     defined in '_fields' and '_shadow_fields'
+    - accept fields from '_fields' and '_shadow_fields' as a parameter on init
+    - dynamically remap one fields into another using _remap dict,
+     mapping is in effect on all stages (on init, getter and setter)
+    - provides nice object representation that contains class
+     and not None object fields (useful in python interpretter)
+    """
+    _fields = []
+    _shadow_fields = []
+    _remap = {}
+    _infoblox_type = None
+
+    def __init__(self, **kwargs):
+        mapped_args = self._remap_fields(kwargs)
+        for field in self._fields + self._shadow_fields:
+            if field in mapped_args:
+                setattr(self, field, mapped_args[field])
+            else:
+                # Init all not initialized fields with None
+                if not hasattr(self, field):
+                    setattr(self, field, None)
+
+    def __getattr__(self, name):
+        # Map aliases into real fields
+        if name in self._remap:
+            return getattr(self, self._remap[name])
+        else:
+            # Default behaviour
+            raise AttributeError
+
+    def __setattr__(self, name, value):
+        if name in self._remap:
+            return setattr(self, self._remap[name], value)
+        else:
+            super(BaseObject, self).__setattr__(name, value)
+
+    def __repr__(self):
+        data = {field: getattr(self, field)
+                for field in self._fields + self._shadow_fields
+                if getattr(self, field) is not None}
+        data_str = ', '.join("{0}={1}".format(key, data[key]) for key in data)
+        return "{0}: {1}".format(self.__class__.__name__, data_str)
+
+    @classmethod
+    def _remap_fields(cls, kwargs):
+        """Map fields from kwargs into dict acceptable by NIOS"""
+        mapped = {}
+        for key in kwargs:
+            if key in cls._remap:
+                mapped[cls._remap[key]] = kwargs[key]
+            elif key in cls._fields or key in cls._shadow_fields:
+                mapped[key] = kwargs[key]
+            else:
+                raise ValueError("Unknown parameter %s for class %s" %
+                                 (key, cls))
+        return mapped
+
+    @classmethod
+    def from_dict(cls, ip_dict):
+        return cls(**ip_dict)
+
+    def to_dict(self):
+        return {field: getattr(self, field) for field in self._fields
+                if getattr(self, field, None) is not None}
+
+    @property
+    def ref(self):
+        if hasattr(self, '_ref'):
+            return self._ref
+
+
+class InfobloxObject(BaseObject):
     """Base class for all Infoblox related objects
 
     _fields - fields that represents NIOS object (WAPI fields) and
@@ -46,9 +122,10 @@ class InfobloxObject(object):
     _fields = []
     _search_fields = []
     _shadow_fields = []
-    _return_fields = []
     _infoblox_type = None
     _remap = {}
+
+    _return_fields = []
     _custom_field_processing = {}
     _ip_version = None
 
@@ -58,34 +135,13 @@ class InfobloxObject(object):
 
     def __init__(self, connector, **kwargs):
         self.connector = connector
-        mapped_args = self._remap_fields(kwargs)
-        for field in self._fields + self._shadow_fields:
-            if field in mapped_args:
-                setattr(self, field, mapped_args[field])
-            else:
-                # Init all not initialized fields with None
-                if not hasattr(self, field):
-                    setattr(self, field, None)
+        super(InfobloxObject, self).__init__(**kwargs)
 
     def update_from_dict(self, ip_dict):
         mapped_args = self._remap_fields(ip_dict)
         for field in self._fields + self._shadow_fields:
             if field in ip_dict:
                 setattr(self, field, mapped_args[field])
-
-    def __getattr__(self, name):
-        # Map aliases into real fields
-        if name in self._remap:
-            return getattr(self, self._remap[name])
-        else:
-            # Default behaviour
-            raise AttributeError
-
-    def __setattr__(self, name, value):
-        if name in self._remap:
-            return setattr(self, self._remap[name], value)
-        else:
-            super(InfobloxObject, self).__setattr__(name, value)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -94,13 +150,6 @@ class InfobloxObject(object):
                     return False
             return True
         return False
-
-    def __repr__(self):
-        data = {field: getattr(self, field)
-                for field in self._fields + self._shadow_fields
-                if getattr(self, field) is not None}
-        data_str = ', '.join("{0}={1}".format(key, data[key]) for key in data)
-        return "{0}: {1}".format(self.__class__.__name__, data_str)
 
     @classmethod
     def from_dict(cls, connector, ip_dict):
@@ -265,20 +314,6 @@ class InfobloxObject(object):
         return cls.get_v4_class()
 
     @classmethod
-    def _remap_fields(cls, kwargs):
-        """Map fields from kwargs into dict acceptable by NIOS"""
-        mapped = {}
-        for key in kwargs:
-            if key in cls._remap:
-                mapped[cls._remap[key]] = kwargs[key]
-            elif key in cls._fields or key in cls._shadow_fields:
-                mapped[key] = kwargs[key]
-            else:
-                raise ValueError("Unknown parameter %s for class %s" %
-                                 (key, cls))
-        return mapped
-
-    @classmethod
     def get_v4_class(cls):
         return cls
 
@@ -293,7 +328,7 @@ class Network(InfobloxObject):
                'extattrs']
     _search_fields = ['network_view', 'network']
     _shadow_fields = ['_ref']
-    _return_fields = ['network_view', 'network']
+    _return_fields = ['network_view', 'network', 'options', 'members']
     _remap = {'cidr': 'network'}
 
     @classmethod
@@ -303,6 +338,14 @@ class Network(InfobloxObject):
     @classmethod
     def get_v6_class(cls):
         return NetworkV6
+
+    @staticmethod
+    def _build_member(members):
+        if not members:
+            return None
+        return [AnyMember.from_dict(m) for m in members]
+
+    _custom_field_processing = {'members': _build_member.__func__}
 
 
 class NetworkV4(Network):
@@ -433,49 +476,8 @@ class HostRecordV6(HostRecord):
     _custom_field_processing = {'ipv6addrs': _build_ipv6.__func__}
 
 
-class IP(object):
-    _fields = []
-    _remap = {}
-    ip_version = None
-
-    @classmethod
-    def create(cls, ip=None, mac=None, **kwargs):
-        if ip is None:
-            raise ValueError
-        if ib_utils.determine_ip_version(ip) == 6:
-            return IPv6(ipv6addr=ip, duid=ib_utils.generate_duid(mac),
-                        **kwargs)
-        else:
-            return IPv4(ipv4addr=ip, mac=mac, **kwargs)
-
-    def __init__(self, **kwargs):
-        self._ip = None
-        for field in self._fields:
-            if field in kwargs:
-                setattr(self, field, kwargs[field])
-            else:
-                setattr(self, field, None)
-
-    def __eq__(self, other):
-        if isinstance(other, six.string_types):
-            return self.ip == other
-        elif isinstance(other, self.__class__):
-            return self.ip == other.ip
-        return False
-
-    def __getattr__(self, name):
-        # Map aliases into real fields
-        if name in self._remap:
-            return getattr(self, self._remap[name])
-        else:
-            # Default behaviour
-            raise AttributeError
-
-    def __setattr__(self, name, value):
-        if name in self._remap:
-            return setattr(self, self._remap[name], value)
-        else:
-            super(IP, self).__setattr__(name, value)
+class SubObjects(BaseObject):
+    """Base class for objects that do not require all InfobloxObject power"""
 
     @classmethod
     def from_dict(cls, ip_dict):
@@ -484,6 +486,31 @@ class IP(object):
     def to_dict(self):
         return {field: getattr(self, field) for field in self._fields
                 if getattr(self, field, None) is not None}
+
+
+class IP(SubObjects):
+    _fields = []
+    _shadow_fields = ['_ref', 'ip']
+    _remap = {}
+    ip_version = None
+
+    # better way for mac processing?
+    @classmethod
+    def create(cls, ip=None, mac=None, **kwargs):
+        if ip is None:
+            raise ValueError
+        if ib_utils.determine_ip_version(ip) == 6:
+            return IPv6(ip=ip, duid=ib_utils.generate_duid(mac),
+                        **kwargs)
+        else:
+            return IPv4(ip=ip, mac=mac, **kwargs)
+
+    def __eq__(self, other):
+        if isinstance(other, six.string_types):
+            return self.ip == other
+        elif isinstance(other, self.__class__):
+            return self.ip == other.ip
+        return False
 
     @property
     def zone_auth(self):
@@ -497,6 +524,7 @@ class IP(object):
 
     @property
     def ip(self):
+        # Convert IPAllocation objects to string
         if hasattr(self, '_ip'):
             return str(self._ip)
 
@@ -515,6 +543,29 @@ class IPv6(IP):
     _fields = ['ipv6addr', 'configure_for_dhcp', 'host', 'duid']
     _remap = {'ipv6addr': 'ip'}
     ip_version = 6
+
+
+class AnyMember(SubObjects):
+    _fields = ['_struct', 'name', 'ipv4addr', 'ipv6addr']
+    _shadow_fields = ['ip']
+
+    @property
+    def ip(self):
+        if hasattr(self, '_ip'):
+            return str(self._ip)
+
+    @ip.setter
+    def ip(self, ip):
+        # AnyMember represents both ipv4 and ipv6 objects, so don't need
+        # versioned object for that. Just set v4 or v6 field additionally
+        # to setting shadow 'ip' field itself.
+        # So once dict is generated by to_dict only versioned ip field
+        # to be shown.
+        self._ip = ip
+        if ib_utils.determine_ip_version(ip) == 6:
+            self.ipv6addr = ip
+        else:
+            self.ipv4addr = ip
 
 
 class IPRange(InfobloxObject):
@@ -615,7 +666,7 @@ class ARecordBase(InfobloxObject):
 
 class ARecord(ARecordBase):
     _infoblox_type = 'record:a'
-    _fields = ['_ref', 'ipv4addr', 'name', 'view', 'extattrs']
+    _fields = ['ipv4addr', 'name', 'view', 'extattrs']
     _search_fields = ['ipv4addr', 'view']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}
@@ -624,7 +675,7 @@ class ARecord(ARecordBase):
 
 class AAAARecord(ARecordBase):
     _infoblox_type = 'record:aaaa'
-    _fields = ['_ref', 'ipv6addr', 'name', 'view', 'extattrs']
+    _fields = ['ipv6addr', 'name', 'view', 'extattrs']
     _search_fields = ['ipv6addr', 'view']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
@@ -644,7 +695,7 @@ class PtrRecord(InfobloxObject):
 
 
 class PtrRecordV4(PtrRecord):
-    _fields = ['_ref', 'view', 'ipv4addr', 'ptrdname', 'extattrs']
+    _fields = ['view', 'ipv4addr', 'ptrdname', 'extattrs']
     _search_fields = ['view', 'ipv4addr']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}
@@ -652,7 +703,7 @@ class PtrRecordV4(PtrRecord):
 
 
 class PtrRecordV6(PtrRecord):
-    _fields = ['_ref', 'view', 'ipv6addr', 'ptrdname', 'extattrs']
+    _fields = ['view', 'ipv6addr', 'ptrdname', 'extattrs']
     _search_fields = ['view', 'ipv6addr']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
@@ -661,7 +712,7 @@ class PtrRecordV6(PtrRecord):
 
 class NetworkView(InfobloxObject):
     _infoblox_type = 'networkview'
-    _fields = ['_ref', 'name', 'extattrs']
+    _fields = ['name', 'extattrs']
     _search_fields = ['name']
     _shadow_fields = ['_ref', 'is_default']
     _ip_version = 'any'
@@ -669,20 +720,29 @@ class NetworkView(InfobloxObject):
 
 class DNSView(InfobloxObject):
     _infoblox_type = 'view'
-    _fields = ['_ref', 'name', 'network_view']
+    _fields = ['name', 'network_view']
     _search_fields = ['name', 'network_view']
     _shadow_fields = ['_ref', 'is_default']
     _ip_version = 'any'
 
 
 class DNSZone(InfobloxObject):
-    # TODO(pbondar): Add special processing for dns_members
     _infoblox_type = 'zone_auth'
     _fields = ['_ref', 'fqdn', 'view', 'extattrs', 'zone_format', 'ns_group',
-               'prefix', 'primary_dns_members', 'secondary_dns_members']
+               'prefix', 'grid_primary', 'grid_secondaries']
     _search_fields = ['fqdn', 'view']
     _shadow_fields = ['_ref']
     _ip_version = 'any'
+
+    @staticmethod
+    def _build_member(members):
+        if not members:
+            return None
+        return [AnyMember.from_dict(m) for m in members]
+
+    _custom_field_processing = {
+        'primary_dns_members': _build_member.__func__,
+        'secondary_dns_members': _build_member.__func__}
 
 
 class Member(InfobloxObject):
