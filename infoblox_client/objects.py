@@ -157,6 +157,8 @@ class InfobloxObject(object):
                           "%(ib_obj)s"),
                          {'obj_type': local_obj.infoblox_type,
                           'ib_obj': local_obj})
+                if not update_if_exists:
+                    return local_obj
         reply = None
         if not local_obj._ref:
             reply = connector.create_object(local_obj.infoblox_type,
