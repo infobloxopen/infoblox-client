@@ -215,11 +215,16 @@ class TestObjects(base.TestCase):
         generate.assert_called_once_with(mac)
 
     def test_search_ipaddress(self):
-        connector = self._mock_connector()
-        objects.IPAddress.search(connector,
-                                 network_view='some_view',
-                                 ip_address='192.168.1.5')
+        ip_mock = [{'_ref': ('ipv4address/Li5pcHY0X2FkZHJlc3MkMTky'
+                             'LjE2OC4xLjEwLzE:192.168.1.10/my_view'),
+                    'objects': ['ref_1', 'ref_2']}]
+        connector = self._mock_connector(get_object=ip_mock)
+        ip = objects.IPAddress.search(connector,
+                                      network_view='some_view',
+                                      ip_address='192.168.1.5')
         payload = {'network_view': 'some_view', 'ip_address': '192.168.1.5'}
         connector.get_object.assert_called_once_with(
             'ipv4address', payload, return_fields=mock.ANY,
             extattrs=None, force_proxy=mock.ANY)
+        self.assertIsInstance(ip, objects.IPv4Address)
+        self.assertEqual(ip_mock[0]['objects'], ip.objects)

@@ -627,3 +627,39 @@ class ObjectManipulatorTestCase(base.TestCase):
                                   'name': member.name})
         connector.create_object.assert_called_once_with('zone_auth', matcher,
                                                         mock.ANY)
+
+    def test_delete_all_associated_objects(self):
+        a_rec_ref = ('record:a/ZG5zLmJpbmRfYSQuNC5jb20ubXlfem9uZSxuYW'
+                     '1lLDE5Mi4xNjguMS41:name.my_zone.com/my_dns_view')
+        reply_map = {
+            'ipv4address': [{
+                '_ref': ('ipv4address/Li5pcHY0X2FkZHJlc3MkMTky'
+                         'LjE2OC4xLjEwLzE:192.168.1.10/my_view'),
+                'objects': [a_rec_ref]
+            }],
+            a_rec_ref: {'_ref': a_rec_ref,
+                        'view': 'my_dns_view',
+                        'name': 'name.my_zone.com'},
+        }
+
+        def get_object(ref, *args, **kwargs):
+            if ref in reply_map:
+                return reply_map[ref]
+
+        connector = mock.Mock()
+        connector.get_object.side_effect = get_object
+        ibom = om.InfobloxObjectManager(connector)
+        delete_list = ['record:a']
+        ibom.delete_all_associated_objects('some_view', '192.168.1.10',
+                                           delete_list)
+
+        payload = {'network_view': 'some_view', 'ip_address': '192.168.1.10'}
+        calls = [mock.call('ipv4address', payload, extattrs=mock.ANY,
+                           force_proxy=mock.ANY, return_fields=mock.ANY),
+                 mock.call(a_rec_ref),
+                 mock.call('record:cname', {'view': 'my_dns_view',
+                                            'canonical': 'name.my_zone.com'}),
+                 mock.call('record:txt', {'name': 'name.my_zone.com',
+                                          'view': 'my_dns_view'})]
+        connector.get_object.assert_has_calls(calls)
+        connector.delete_object.assert_called_once_with(a_rec_ref)

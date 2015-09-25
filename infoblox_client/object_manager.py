@@ -368,6 +368,10 @@ class InfobloxObjectManager(object):
             return ip_objects.objects
         return []
 
+    @staticmethod
+    def _get_object_type_from_ref(ref):
+        return ref.split('/', 1)[0]
+
     def delete_all_associated_objects(self, network_view, ip, delete_list):
         del_ib_objs = []
         ib_obj_refs = self.get_all_associated_objects(network_view, ip)
