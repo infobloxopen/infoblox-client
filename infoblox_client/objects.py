@@ -209,7 +209,7 @@ class InfobloxObject(BaseObject):
                 if not update_if_exists:
                     return local_obj
         reply = None
-        if not local_obj._ref:
+        if not local_obj.ref:
             reply = connector.create_object(local_obj.infoblox_type,
                                             local_obj.to_dict(),
                                             local_obj.return_fields)
@@ -218,10 +218,10 @@ class InfobloxObject(BaseObject):
                       'ib_obj': local_obj})
         elif update_if_exists:
             update_fields = local_obj.to_dict(search_fields='exclude')
-            reply = connector.update_object(local_obj._ref,
+            reply = connector.update_object(local_obj.ref,
                                             update_fields,
                                             local_obj.return_fields)
-            LOG.info('Infoblox object was updated: %s', local_obj._ref)
+            LOG.info('Infoblox object was updated: %s', local_obj.ref)
         return cls._object_from_reply(local_obj, connector, reply)
 
     @classmethod
@@ -260,9 +260,9 @@ class InfobloxObject(BaseObject):
         Update existent object with fields returned from NIOS
         Return True on successful object fetch
         """
-        if self._ref:
+        if self.ref:
             reply = self.connector.get_object(
-                self._ref, return_fields=self.return_fields)
+                self.ref, return_fields=self.return_fields)
             if reply:
                 self.update_from_dict(reply)
                 return True
@@ -278,15 +278,15 @@ class InfobloxObject(BaseObject):
 
     def update(self):
         update_fields = self.to_dict(search_fields='exclude')
-        ib_obj = self.connector.update_object(self._ref,
+        ib_obj = self.connector.update_object(self.ref,
                                               update_fields,
                                               self.return_fields)
-        LOG.info('Infoblox object was updated: %s', self._ref)
+        LOG.info('Infoblox object was updated: %s', self.ref)
         return self._object_from_reply(self, self.connector, ib_obj)
 
     def delete(self):
         try:
-            self.connector.delete_object(self._ref)
+            self.connector.delete_object(self.ref)
         except ib_ex.InfobloxCannotDeleteObject as e:
             LOG.info("Failed to delete an object: %s", e)
 
@@ -747,7 +747,7 @@ class DNSZone(InfobloxObject):
 
 class Member(InfobloxObject):
     _infoblox_type = 'member'
-    _fields = ['host_name']
+    _fields = ['host_name', 'ipv6_setting', 'node_info', 'vip_setting']
     _search_fields = ['host_name']
     _shadow_fields = ['_ref', 'ip']
     _ip_version = 'any'
@@ -757,6 +757,7 @@ class Member(InfobloxObject):
 class IPAddress(InfobloxObject):
     _fields = ['network_view', 'ip_address', 'objects']
     _search_fields = ['network_view', 'ip_address']
+    _shadow_fields = ['_ref']
     _return_fields = ['objects']
 
     @classmethod
@@ -768,12 +769,12 @@ class IPAddress(InfobloxObject):
         return IPv6Address
 
 
-class IPv4Address(InfobloxObject):
+class IPv4Address(IPAddress):
     _infoblox_type = 'ipv4address'
     _ip_version = 4
 
 
-class IPv6Address(InfobloxObject):
+class IPv6Address(IPAddress):
     _infoblox_type = 'ipv6address'
     _ip_version = 6
 

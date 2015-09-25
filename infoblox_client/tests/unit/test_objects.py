@@ -213,3 +213,13 @@ class TestObjects(base.TestCase):
         self.assertEqual(mac, fixed_addr.mac)
         self.assertEqual(duid, fixed_addr.duid)
         generate.assert_called_once_with(mac)
+
+    def test_search_ipaddress(self):
+        connector = self._mock_connector()
+        objects.IPAddress.search(connector,
+                                 network_view='some_view',
+                                 ip_address='192.168.1.5')
+        payload = {'network_view': 'some_view', 'ip_address': '192.168.1.5'}
+        connector.get_object.assert_called_once_with(
+            'ipv4address', payload, return_fields=mock.ANY,
+            extattrs=None, force_proxy=mock.ANY)
