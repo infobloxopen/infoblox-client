@@ -55,7 +55,7 @@ test-all:
 	tox
 
 coverage:
-	coverage run --source infoblox-client setup.py test
+	coverage run --source infoblox_client setup.py test
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
