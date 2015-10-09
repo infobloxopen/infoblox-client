@@ -8,6 +8,8 @@ Infoblox Client
 .. image:: https://img.shields.io/pypi/v/infoblox-client.svg
         :target: https://pypi.python.org/pypi/infoblox-client
 
+.. image:: https://codecov.io/github/infobloxopen/infoblox-client/coverage.svg?branch=master
+        :target: https://codecov.io/github/infobloxopen/infoblox-client?branch=master
 
 Client for interacting with Infoblox NIOS over WAPI.
 
