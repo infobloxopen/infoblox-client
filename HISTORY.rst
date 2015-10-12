@@ -3,6 +3,13 @@
 History
 -------
 
+0.0.5 (2015-10-12)
+____________________
+* Fixed issues in working with objects
+* Added missed _get_object_type_from_ref
+* Added code coverage
+* Updated links to point to infobloxopen repository
+
 0.0.4 (2015-09-23)
 ____________________
 * Added object abstraction for interacting with NIOS objects
