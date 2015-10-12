@@ -283,3 +283,13 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
         self.assertEqual(10, conn.http_pool_connections)
         self.assertEqual(10, conn.http_pool_maxsize)
         self.assertEqual('1.4', conn.wapi_version)
+
+    def test_blank_values_not_allowed(self):
+        base_dict = {'host': '192.168.1.15',
+                     'username': 'admin',
+                     'password': 'pass'}
+        for field in base_dict:
+            test_dict = base_dict.copy()
+            test_dict[field] = None
+            self.assertRaises(exceptions.InfobloxConfigException,
+                              connector.Connector, test_dict)

@@ -60,7 +60,6 @@ class Connector(object):
 
     def __init__(self, options):
         self._parse_options(options)
-        self._validate_wapi_config()
         self._configure_session()
         # urllib has different interface for py27 and py34
         try:
@@ -89,14 +88,14 @@ class Connector(object):
                 msg = "WAPI config error. Option %s is not defined" % attr
                 raise ib_ex.InfobloxConfigException(msg=msg)
 
+        for attr in ('host', 'username', 'password'):
+            if not getattr(self, attr):
+                msg = "WAPI config error. Option %s can not be blank" % attr
+                raise ib_ex.InfobloxConfigException(msg=msg)
+
         self.wapi_url = "https://%s/wapi/v%s/" % (self.host,
                                                   self.wapi_version)
         self.cloud_api_enabled = self.is_cloud_wapi(self.wapi_version)
-
-    def _validate_wapi_config(self):
-        if not self.wapi_url or not self.username or not self.password:
-            raise ib_ex.InfobloxConfigException(
-                msg="WAPI config error. Invalid URL or credentials")
 
     def _configure_session(self):
         self.session = requests.Session()
