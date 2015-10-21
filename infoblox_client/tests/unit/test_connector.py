@@ -236,7 +236,7 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
             connector.Connector._validate_authorized(response)
 
     def test_non_cloud_api_detection(self):
-        wapi_not_cloud = ('v1.4.1', 'v1.9/', 'v1.99', 'asd', '')
+        wapi_not_cloud = ('v1.4.1', 'v1.9/', 'v1.99', 'asd')
         for url in wapi_not_cloud:
             self.assertFalse(connector.Connector.is_cloud_wapi(url))
 
@@ -293,3 +293,9 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
             test_dict[field] = None
             self.assertRaises(exceptions.InfobloxConfigException,
                               connector.Connector, test_dict)
+
+    def test_is_cloud_wapi_raises_exception(self):
+        for value in (None, '', 0, 1, self, 1.2):
+            self.assertRaises(ValueError,
+                              connector.Connector.is_cloud_wapi,
+                              value)

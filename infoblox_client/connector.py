@@ -344,7 +344,7 @@ class Connector(object):
     def is_cloud_wapi(wapi_version):
         valid = wapi_version and isinstance(wapi_version, six.string_types)
         if not valid:
-            ValueError("Invalid argument was passed")
+            raise ValueError("Invalid argument was passed")
         version_match = re.search('(\d+)\.(\d+)', wapi_version)
         if version_match:
             if int(version_match.group(1)) >= \
