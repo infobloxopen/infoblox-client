@@ -387,3 +387,9 @@ class InfobloxObjectManager(object):
             obj_type = self._get_object_type_from_ref(ib_obj_ref)
             if obj_type in delete_list:
                 self.connector.delete_object(ib_obj_ref)
+
+    def delete_object_by_ref(self, ref):
+        try:
+            self.connector.delete_object(ref)
+        except ib_ex.InfobloxCannotDeleteObject:
+            pass

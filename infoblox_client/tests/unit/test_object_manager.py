@@ -663,3 +663,13 @@ class ObjectManipulatorTestCase(base.TestCase):
                                           'view': 'my_dns_view'})]
         connector.get_object.assert_has_calls(calls)
         connector.delete_object.assert_called_once_with(a_rec_ref)
+
+    def test_delete_object_by_ref(self):
+        connector = mock.Mock()
+        connector.delete_objectside_effect = (
+            exceptions.InfobloxCannotDeleteObject)
+        ref = mock.Mock()
+
+        ibom = om.InfobloxObjectManager(connector)
+        ibom.delete_object_by_ref(ref)
+        connector.delete_object.assert_called_once_with(ref)
