@@ -665,10 +665,18 @@ class ObjectManipulatorTestCase(base.TestCase):
         connector.delete_object.assert_called_once_with(a_rec_ref)
 
     def test_delete_object_by_ref(self):
-        connector = mock.Mock()
-        connector.delete_objectside_effect = (
-            exceptions.InfobloxCannotDeleteObject)
+        """Verify that exception would not be raised for delete by reference.
+        """
         ref = mock.Mock()
+
+        # Create an exception object instance with dummy error message.
+        exception_kwargs = {'ref': ref, 'content': 'Not Found', 'code': 404}
+
+        err = exceptions.InfobloxCannotDeleteObject(
+            'specified object not found', **exception_kwargs)
+
+        connector = mock.Mock()
+        connector.delete_object.side_effect = err
 
         ibom = om.InfobloxObjectManager(connector)
         ibom.delete_object_by_ref(ref)
