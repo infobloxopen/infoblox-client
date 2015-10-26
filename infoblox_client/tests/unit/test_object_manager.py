@@ -145,7 +145,7 @@ class ObjectManipulatorTestCase(base.TestCase):
             ]
         }
         connector.create_object.assert_called_once_with(
-            'record:host', exp_payload, ['ipv4addrs'])
+            'record:host', exp_payload, mock.ANY)
 
     def test_delete_host_record_deletes_host_record_object(self):
         connector = mock.Mock()
@@ -162,7 +162,7 @@ class ObjectManipulatorTestCase(base.TestCase):
                                   PayloadMatcher.ANYKEY: ip_address})
         connector.get_object.assert_called_once_with(
             'record:host', matcher, extattrs=None,
-            force_proxy=mock.ANY, return_fields=['ipv4addrs'])
+            force_proxy=mock.ANY, return_fields=mock.ANY)
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_get_network_gets_network_object(self):
@@ -666,6 +666,7 @@ class ObjectManipulatorTestCase(base.TestCase):
 
     def test_delete_object_by_ref(self):
         """Verify that exception would not be raised for delete by reference.
+
         """
         ref = mock.Mock()
 

@@ -121,7 +121,7 @@ class TestObjects(base.TestCase):
         ip_dict = {'ipv4addr': '22.0.0.2', 'mac': 'fa:16:3e:29:87:70'}
         connector.create_object.assert_called_once_with(
             'record:host',
-            {'view': 'some-dns-view', 'ipv4addrs': [ip_dict]}, ['ipv4addrs'])
+            {'view': 'some-dns-view', 'ipv4addrs': [ip_dict]}, mock.ANY)
         self.assertIsInstance(host_record, objects.HostRecordV4)
         # validate nios reply was parsed correctly
         self.assertEqual(mock_record['_ref'], host_record._ref)
@@ -228,3 +228,23 @@ class TestObjects(base.TestCase):
             extattrs=None, force_proxy=mock.ANY)
         self.assertIsInstance(ip, objects.IPv4Address)
         self.assertEqual(ip_mock[0]['objects'], ip.objects)
+
+    def test_ea_parse_generate(self):
+        eas = {'Subnet ID': {'value': 'some-id'},
+               'Tenant Name': {'value': 'tenant-name'}}
+        ea = objects.EA.from_dict(eas)
+        self.assertIsInstance(ea, objects.EA)
+        self.assertEqual(eas, ea.to_dict())
+
+    def test_ea_returns_none(self):
+        for ea in (None, '', 0):
+            self.assertEqual(None, objects.EA.from_dict(ea))
+
+    def test_ea_set_get(self):
+        ea = objects.EA()
+        ea_name = 'Subnet ID'
+        id = 'subnet-id'
+        generated_eas = {ea_name: {'value': id}}
+        ea.set(ea_name, id)
+        self.assertEqual(id, ea.get(ea_name))
+        self.assertEqual(generated_eas, ea.to_dict())
