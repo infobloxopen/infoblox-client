@@ -231,10 +231,15 @@ class InfobloxObject(BaseObject):
         search_dict = ib_obj_for_search.to_dict(search_fields='only')
         if not return_fields and ib_obj_for_search.return_fields:
             return_fields = ib_obj_for_search.return_fields
+        # allow search_extattrs to be instance of EA class
+        # or dict in NIOS format
+        extattrs = search_extattrs
+        if hasattr(search_extattrs, 'to_dict'):
+            extattrs = search_extattrs.to_dict()
         reply = connector.get_object(ib_obj_for_search.infoblox_type,
                                      search_dict,
                                      return_fields=return_fields,
-                                     extattrs=search_extattrs,
+                                     extattrs=extattrs,
                                      force_proxy=force_proxy)
         return reply, ib_obj_for_search
 
@@ -322,13 +327,60 @@ class InfobloxObject(BaseObject):
         return cls
 
 
+class EA(object):
+    """Extensible Attributes
+
+    This class represents extensible attributes (EA).
+    Converts EAs into format suitable for NIOS (to_dict)
+    and builds EA class from NIOS reply (from_dict).
+    """
+
+    def __init__(self, ea_dict=None):
+        """Optionally accept EAs as a dict on init
+
+        Expected EA format is {ea_name: ea_value}
+        """
+        if ea_dict is None:
+            ea_dict = {}
+        self._ea_dict = ea_dict
+
+    def __repr__(self):
+        eas = ()
+        if self._ea_dict:
+            eas = ("{0}={1}".format(name, self._ea_dict[name])
+                   for name in self._ea_dict)
+        return "EAs:{0}".format(','.join(eas))
+
+    @classmethod
+    def from_dict(cls, eas_from_nios):
+        if not eas_from_nios:
+            return
+        return cls({name: eas_from_nios[name]['value']
+                    for name in eas_from_nios})
+
+    def to_dict(self):
+        return {name: {'value': self._ea_dict[name]}
+                for name in self._ea_dict
+                if self._ea_dict[name]}
+
+    def get(self, name):
+        """Return value of requested EA"""
+        if name in self._ea_dict:
+            return self._ea_dict[name]
+
+    def set(self, name, value):
+        """Set value of requested EA"""
+        self._ea_dict[name] = value
+
+
 class Network(InfobloxObject):
     _fields = ['network_view', 'network', 'template',
                'options', 'nameservers', 'members', 'gateway_ip',
                'extattrs']
     _search_fields = ['network_view', 'network']
     _shadow_fields = ['_ref']
-    _return_fields = ['network_view', 'network', 'options', 'members']
+    _return_fields = ['network_view', 'network', 'options', 'members',
+                      'extattrs']
     _remap = {'cidr': 'network'}
 
     @classmethod
@@ -345,7 +397,8 @@ class Network(InfobloxObject):
             return None
         return [AnyMember.from_dict(m) for m in members]
 
-    _custom_field_processing = {'members': _build_member.__func__}
+    _custom_field_processing = {'members': _build_member.__func__,
+                                'extattrs': EA.from_dict}
 
 
 class NetworkV4(Network):
@@ -421,7 +474,7 @@ class HostRecordV4(HostRecord):
     _fields = ['ipv4addrs', 'view', 'extattrs', 'name']
     _search_fields = ['view', 'ipv4addr']
     _shadow_fields = ['_ref', 'ipv4addr']
-    _return_fields = ['ipv4addrs']
+    _return_fields = ['ipv4addrs', 'extattrs']
     _remap = {'ip': 'ipv4addrs'}
     _ip_version = 4
 
@@ -451,7 +504,7 @@ class HostRecordV6(HostRecord):
     _fields = ['ipv6addrs', 'view', 'extattrs',  'name']
     _search_fields = ['ipv6addr', 'view', 'name']
     _shadow_fields = ['_ref', 'ipv6addr']
-    _return_fields = ['ipv6addrs']
+    _return_fields = ['ipv6addrs', 'extattrs']
     _remap = {'ip': 'ipv6addrs'}
     _ip_version = 6
 
