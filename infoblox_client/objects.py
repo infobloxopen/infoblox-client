@@ -353,23 +353,23 @@ class EA(object):
 
     @classmethod
     def from_dict(cls, eas_from_nios):
+        """Converts extensible attributes from the NIOS reply."""
         if not eas_from_nios:
             return
         return cls({name: eas_from_nios[name]['value']
                     for name in eas_from_nios})
 
     def to_dict(self):
-        return {name: {'value': self._ea_dict[name]}
-                for name in self._ea_dict
-                if self._ea_dict[name]}
+        """Converts extensible attributes into the format suitable for NIOS."""
+        return {name: {'value': value}
+                for name, value in self._ea_dict.items() if value}
 
-    def get(self, name):
-        """Return value of requested EA"""
-        if name in self._ea_dict:
-            return self._ea_dict[name]
+    def get(self, name, default=None):
+        """Return value of requested EA."""
+        return self._ea_dict.get(name, default)
 
     def set(self, name, value):
-        """Set value of requested EA"""
+        """Set value of requested EA."""
         self._ea_dict[name] = value
 
 
