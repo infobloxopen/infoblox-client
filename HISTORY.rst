@@ -3,6 +3,13 @@
 History
 -------
 
+0.0.6 (2015-10-26)
+____________________
+* Added initial support of Extensible Attributes as sub objects
+* Added search by Extensible Attributes
+* Improved validation in connector
+* Added delete_object_by_ref to object manager
+
 0.0.5 (2015-10-12)
 ____________________
 * Fixed issues in working with objects
