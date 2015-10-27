@@ -625,7 +625,7 @@ class IPRange(InfobloxObject):
     _fields = ['start_addr', 'end_addr', 'network_view',
                'network', 'extattrs', 'disable']
     _remap = {'cidr': 'network'}
-    _search_fields = ['network_view', 'start_addr']
+    _search_fields = ['network_view', 'start_addr', 'network']
     _shadow_fields = ['_ref']
     _return_fields = ['start_addr', 'end_addr', 'network_view', 'extattrs']
 
