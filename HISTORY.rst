@@ -3,6 +3,11 @@
 History
 -------
 
+0.0.7 (2015-10-27)
+____________________
+* Added 'network' to IPRange search fields
+* Modified `get` method of the EA class to allow return default values
+
 0.0.6 (2015-10-26)
 ____________________
 * Added initial support of Extensible Attributes as sub objects
