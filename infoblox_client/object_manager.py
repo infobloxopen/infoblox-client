@@ -53,14 +53,24 @@ class InfobloxObjectManager(object):
     def create_network(self, net_view_name, cidr, nameservers=None,
                        members=None, gateway_ip=None, dhcp_trel_ip=None,
                        network_extattrs=None):
-        # TODO(pbondar): add nameservers/members/gateway_ip/dhcp_trel_ip
-        #                processing to Network object
+        """Create NIOS Network."""
+
+        options = []
+        if nameservers:
+            options.append(obj.DhcpOption(name='domain-name-servers',
+                                          value=",".join(nameservers)))
+        if gateway_ip:
+            options.append(obj.DhcpOption(name='routers',
+                                          value=gateway_ip))
+        if dhcp_trel_ip:
+            options.append(obj.DhcpOption(name='dhcp-server-identifier',
+                                          num=54,
+                                          value=dhcp_trel_ip))
         return obj.Network.create(self.connector,
                                   network_view=net_view_name,
                                   cidr=cidr,
                                   members=members,
-                                  gateway_ip=gateway_ip,
-                                  nameservers=nameservers,
+                                  options=options,
                                   extattrs=network_extattrs,
                                   check_if_exists=False)
 

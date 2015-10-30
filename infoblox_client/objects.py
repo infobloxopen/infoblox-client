@@ -375,8 +375,7 @@ class EA(object):
 
 class Network(InfobloxObject):
     _fields = ['network_view', 'network', 'template',
-               'options', 'nameservers', 'members', 'gateway_ip',
-               'extattrs']
+               'options', 'members', 'extattrs']
     _search_fields = ['network_view', 'network']
     _shadow_fields = ['_ref']
     _return_fields = ['network_view', 'network', 'options', 'members',
@@ -397,7 +396,17 @@ class Network(InfobloxObject):
             return None
         return [AnyMember.from_dict(m) for m in members]
 
+    # TODO(pbondar): Rework SubObject to correctly handle arrays
+    # passed into from_dict, so all _build_options and _build_member
+    # would be no longer needed
+    @staticmethod
+    def _build_options(members):
+        if not members:
+            return None
+        return [DhcpOption.from_dict(m) for m in members]
+
     _custom_field_processing = {'members': _build_member.__func__,
+                                'options': _build_options.__func__,
                                 'extattrs': EA.from_dict}
 
 
@@ -619,6 +628,10 @@ class AnyMember(SubObjects):
             self.ipv6addr = ip
         else:
             self.ipv4addr = ip
+
+
+class DhcpOption(SubObjects):
+    _fields = ['name', 'num', 'use_option', 'value', 'vendor_class']
 
 
 class IPRange(InfobloxObject):

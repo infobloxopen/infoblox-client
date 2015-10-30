@@ -553,18 +553,28 @@ class ObjectManipulatorTestCase(base.TestCase):
                               _struct='dhcpmember')
         ]
         gateway_ip = '192.168.1.1'
-        expected_members = members[0].ip
-        extattrs = mock.Mock()
+        dhcp_trel_ip = '8.8.8.8'
+        extattrs = None
+        expected_payload = {
+            'members': [{'ipv4addr': '192.168.1.25',
+                         '_struct': 'dhcpmember',
+                         'name': 'just-a-single-member-ip'}],
+            'network_view': net_view,
+            'network': cidr,
+            'options': [{'name': 'routers', 'value': gateway_ip},
+                        {'name': 'dhcp-server-identifier',
+                         'value': dhcp_trel_ip,
+                         'num': 54}]}
 
         connector = mock.Mock()
         ibom = om.InfobloxObjectManager(connector)
 
         ibom.create_network(net_view, cidr, nameservers, members, gateway_ip,
-                            extattrs)
+                            dhcp_trel_ip, extattrs)
 
         assert not connector.get_object.called
-        matcher = PayloadMatcher({'ipv4addr': expected_members})
-        connector.create_object.assert_called_once_with('network', matcher,
+        connector.create_object.assert_called_once_with('network',
+                                                        expected_payload,
                                                         mock.ANY)
 
     def test_create_dns_zone_with_grid_secondaries(self):
