@@ -591,8 +591,9 @@ class ObjectManipulatorTestCase(base.TestCase):
 
         ibom = om.InfobloxObjectManager(connector)
 
-        ibom.create_dns_zone(dns_view_name, fqdn, primary_dns_members,
-                             secondary_dns_members, zone_format=zone_format)
+        zone = ibom.create_dns_zone(dns_view_name, fqdn, primary_dns_members,
+                                    secondary_dns_members,
+                                    zone_format=zone_format)
 
         matcher = PayloadMatcher({'view': dns_view_name,
                                   'fqdn': fqdn})
@@ -610,6 +611,7 @@ class ObjectManipulatorTestCase(base.TestCase):
                    }
         connector.create_object.assert_called_once_with('zone_auth', payload,
                                                         mock.ANY)
+        self.assertIsInstance(zone, objects.DNSZone)
 
     def test_create_dns_zone_creates_zone_auth_object(self):
         dns_view_name = 'dns-view-name'
