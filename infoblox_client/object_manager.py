@@ -246,15 +246,15 @@ class InfobloxObjectManager(object):
                         zone_format=None, ns_group=None, prefix=None,
                         extattrs=None):
         try:
-            obj.DNSZone.create(self.connector,
-                               fqdn=dns_zone,
-                               view=dns_view,
-                               extattrs=extattrs,
-                               zone_format=zone_format,
-                               ns_group=ns_group,
-                               prefix=prefix,
-                               grid_primary=grid_primary,
-                               grid_secondaries=grid_secondaries)
+            return obj.DNSZone.create(self.connector,
+                                      fqdn=dns_zone,
+                                      view=dns_view,
+                                      extattrs=extattrs,
+                                      zone_format=zone_format,
+                                      ns_group=ns_group,
+                                      prefix=prefix,
+                                      grid_primary=grid_primary,
+                                      grid_secondaries=grid_secondaries)
         except ib_ex.InfobloxCannotCreateObject:
             LOG.warning('Unable to create DNS zone %(dns_zone_fqdn)s '
                         'for %(dns_view)s',
