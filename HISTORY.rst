@@ -3,6 +3,12 @@
 History
 -------
 
+0.0.8 (2015-11-12)
+___________________
+* Add Extensible Attributes Definition support
+* Fixed options processing for create_network in object_manager
+* Fixed missed DNSZone object in create_dns_zone
+
 0.0.7 (2015-10-27)
 ____________________
 * Added 'network' to IPRange search fields
