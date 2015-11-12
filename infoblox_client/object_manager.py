@@ -343,6 +343,31 @@ class InfobloxObjectManager(object):
         member.fetch()
         return member
 
+    def get_all_ea_definitions(self):
+        try:
+            ea_defs = obj.EADefinition.search_all(self.connector)
+            return ea_defs
+        except ib_ex.InfobloxSearchError:
+            return None
+
+    def create_ea_definition(self, ea_def):
+        try:
+            return obj.EADefinition.create(self.connector,
+                                           check_if_exists=False,
+                                           **ea_def)
+        except ib_ex.InfobloxCannotCreateObject:
+            LOG.error('Unable to create Extensible Attribute Definition '
+                      '%s' % ea_def)
+
+    def create_required_ea_definitions(self, required_ea_defs):
+        existing_ea_defs = self.get_all_ea_definitions()
+        missing_ea_defs = filter(lambda x: not next(
+            (y for y in existing_ea_defs if x['name'] == y.name), None),
+            required_ea_defs)
+
+        for ea_def in missing_ea_defs:
+            self.create_ea_definition(ea_def)
+
     def restart_all_services(self, member):
         if not member._ref:
             member.fetch()
