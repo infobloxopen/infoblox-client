@@ -825,11 +825,13 @@ class EADefinition(InfobloxObject):
     """Extensible Attribute Definition"""
     _infoblox_type = 'extensibleattributedef'
     _fields = ['comment', 'default_value', 'flags', 'list_values',
-               'max', 'min', 'name', 'namespace', 'type']
+               'max', 'min', 'name', 'namespace', 'type',
+               'allowed_object_types']
     _search_fields = ['name']
     _shadow_fields = ['_ref']
     _return_fields = ['comment', 'default_value', 'flags', 'list_values',
-                      'max', 'min', 'name', 'namespace', 'type']
+                      'max', 'min', 'name', 'namespace', 'type',
+                      'allowed_object_types']
 
 
 class IPAddress(InfobloxObject):
