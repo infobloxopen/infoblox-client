@@ -68,7 +68,8 @@ class BaseObject(object):
         data = {field: getattr(self, field)
                 for field in self._fields + self._shadow_fields
                 if getattr(self, field) is not None}
-        data_str = ', '.join("{0}={1}".format(key, data[key]) for key in data)
+        data_str = ', '.join(
+            "{0}=\"{1}\"".format(key, data[key]) for key in data)
         return "{0}: {1}".format(self.__class__.__name__, data_str)
 
     @classmethod
@@ -818,6 +819,17 @@ class Member(InfobloxObject):
     _shadow_fields = ['_ref', 'ip']
     _ip_version = 'any'
     _remap = {'name': 'host_name'}
+
+
+class EADefinition(InfobloxObject):
+    """Extensible Attribute Definition"""
+    _infoblox_type = 'extensibleattributedef'
+    _fields = ['comment', 'default_value', 'flags', 'list_values',
+               'max', 'min', 'name', 'namespace', 'type']
+    _search_fields = ['name']
+    _shadow_fields = ['_ref']
+    _return_fields = ['comment', 'default_value', 'flags', 'list_values',
+                      'max', 'min', 'name', 'namespace', 'type']
 
 
 class IPAddress(InfobloxObject):

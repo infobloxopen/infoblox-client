@@ -63,7 +63,7 @@ class PayloadMatcher(object):
         return found
 
 
-class ObjectManipulatorTestCase(base.TestCase):
+class ObjectManagerTestCase(base.TestCase):
     EXT_ATTRS = {'Tenant ID': {'value': '40501209848593'}}
 
     def test_create_net_view_creates_network_view_object(self):
@@ -694,3 +694,48 @@ class ObjectManipulatorTestCase(base.TestCase):
         ibom = om.InfobloxObjectManager(connector)
         ibom.delete_object_by_ref(ref)
         connector.delete_object.assert_called_once_with(ref)
+
+    def test_get_all_ea_defintions(self):
+        connector = mock.Mock()
+        connector.get_object.return_value = []
+
+        ibom = om.InfobloxObjectManager(connector)
+        ibom.get_all_ea_definitions()
+
+        connector.get_object.assert_called_once_with('extensibleattributedef',
+                                                     {},
+                                                     extattrs=None,
+                                                     force_proxy=mock.ANY,
+                                                     return_fields=mock.ANY)
+
+    def test_create_ea_definition(self):
+        connector = mock.Mock()
+        connector.create_object.return_value = {}
+        ea_def = {'name': 'EA Test', 'type': 'ENUM',
+                  'list_values': [{'value': 'True'}, {'value': 'False'}]}
+
+        ibom = om.InfobloxObjectManager(connector)
+        ibom.create_ea_definition(ea_def)
+
+        connector.create_object.assert_called_once_with(
+            'extensibleattributedef',
+            ea_def,
+            mock.ANY)
+
+    def test_create_required_ea_definitions(self):
+        existing_ea_defs = [{'name': 'One'},
+                            {'name': 'Two'}]
+        additional_ea_defs = [{'name': 'Three'}]
+        required_ea_defs = existing_ea_defs + additional_ea_defs
+
+        connector = mock.Mock()
+        connector.create_object.return_value = {}
+        connector.get_object.return_value = existing_ea_defs
+
+        ibom = om.InfobloxObjectManager(connector)
+        ibom.create_required_ea_definitions(required_ea_defs)
+
+        connector.create_object.assert_called_once_with(
+            'extensibleattributedef',
+            additional_ea_defs[0],
+            mock.ANY)
