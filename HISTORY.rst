@@ -3,6 +3,12 @@
 History
 -------
 
+0.0.9 (2015-11-13)
+__________________
+* Add allowed_object_types field for EA Definition
+* Allow to return default fields for object
+* Update README.rst with list of supported objects
+
 0.0.8 (2015-11-12)
 ___________________
 * Add Extensible Attributes Definition support
