@@ -230,7 +230,7 @@ class InfobloxObject(BaseObject):
                 search_extattrs=None, force_proxy=False, **kwargs):
         ib_obj_for_search = cls(connector, **kwargs)
         search_dict = ib_obj_for_search.to_dict(search_fields='only')
-        if not return_fields and ib_obj_for_search.return_fields:
+        if return_fields is None and ib_obj_for_search.return_fields:
             return_fields = ib_obj_for_search.return_fields
         # allow search_extattrs to be instance of EA class
         # or dict in NIOS format
