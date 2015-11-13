@@ -79,6 +79,51 @@ Reply from NIOS is parsed back into objects and contains next data:
   In [22]: hr
   Out[22]: HostRecordV4: _ref=record:host/ZG5zLmhvc3QkLjQuY29tLm15X3pvbmUubXlfaG9zdF9yZWNvcmQ:my_host_record.my_zone.com/my_dns_view, name=my_host_record.my_zone.com, ipv4addrs=[<infoblox_client.objects.IPv4 object at 0x7f7d6b0fe9d0>], view=my_dns_view
 
+Supported NIOS objects
+----------------------
+
+* NetworkView for 'networkview'
+* DNSView for 'view'
+* DNSZone for 'zone_auth'
+* Member for 'member'
+* Network (V4 and V6)
+
+  * NetworkV4 for 'network'
+  * NetworkV6 for 'ipv6network'
+  
+* IPRange (V4 and V6)
+  
+  * IPRangeV4 for 'range'
+  * IPRangeV6 for 'ipv6range'
+  
+* HostRecord (V4 and V6)
+
+  * HostRecordV4 for 'record:host'
+  * HostRecordV6 for 'record:host'
+  
+* FixedAddress (V4 and V6)
+
+  * FixedAddressV4 for 'fixedaddress'
+  * FixedAddressV6 for 'ipv6fixedaddress'
+  
+* IPAddress (V4 and V6)
+  
+  * IPv4Address for 'ipv4address'
+  * IPv6Address for 'ipv6address'
+  
+* ARecordBase
+
+  * ARecord for 'record:a'
+  * AAAARecord for 'record:aaaa'
+   
+* PtrRecord (V4 and V6)
+
+  * PtrRecordV4 for 'record:ptr'
+  * PtrRecordV6 for 'record:ptr'
+   
+* EADefinition for 'extensibleattributedef'
+
+
 Features
 --------
 
