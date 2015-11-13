@@ -79,6 +79,35 @@ Reply from NIOS is parsed back into objects and contains next data:
   In [22]: hr
   Out[22]: HostRecordV4: _ref=record:host/ZG5zLmhvc3QkLjQuY29tLm15X3pvbmUubXlfaG9zdF9yZWNvcmQ:my_host_record.my_zone.com/my_dns_view, name=my_host_record.my_zone.com, ipv4addrs=[<infoblox_client.objects.IPv4 object at 0x7f7d6b0fe9d0>], view=my_dns_view
 
+Objects Interface
+-----------------
+
+All top level objects support interface for CRUD operations. List of supported objects is defined in next section.
+
+- create(cls, connector, check_if_exists=True, update_if_exists=False, **kwargs)
+    Creates object on NIOS side.
+    Requires connector passed as the first argument, check_if_exists and update_if_exists are optional.
+    Object related fields are passed in as kwargs: field=value, field2=value2.
+    
+- search(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)
+    Search single object on NIOS side, returns first object that match search criteria.
+    Requires connector passed as the first argument.
+    'return_fields' can be set to retrieve particular fields from NIOS,
+    for example return_fields=['view', 'name'].
+    If 'return_fields' is '[]' default return_fields are returned by NIOS side for current wapi_version.
+    'search_extattrs' used to filter out results by extensible attributes.
+    'force_proxy' forces search request to be processed on Grid Master (applies only in cloud environment)
+    
+- search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)
+    Search all objects on NIOS side that match search cryteria. Returns list of objects.
+    All other options are equal to search().
+
+- update(self)
+    Update object on NIOS side by pushing changes done in local object.
+    
+- delete(self)
+    Deletes object from NIOS side.
+
 Supported NIOS objects
 ----------------------
 
