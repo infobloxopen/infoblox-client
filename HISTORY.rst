@@ -3,6 +3,11 @@
 History
 -------
 
+0.0.10 (2015-11-19)
+___________________
+* Add utility to determine supported feature
+* Update README.rst with objects interface
+
 0.0.9 (2015-11-13)
 __________________
 * Add allowed_object_types field for EA Definition
