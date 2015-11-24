@@ -485,7 +485,8 @@ class HostRecordV4(HostRecord):
     _search_fields = ['view', 'ipv4addr']
     _shadow_fields = ['_ref', 'ipv4addr']
     _return_fields = ['ipv4addrs', 'extattrs']
-    _remap = {'ip': 'ipv4addrs'}
+    _remap = {'ip': 'ipv4addrs',
+              'ips': 'ipv4addrs'}
     _ip_version = 4
 
     @property
@@ -515,7 +516,9 @@ class HostRecordV6(HostRecord):
     _search_fields = ['ipv6addr', 'view', 'name']
     _shadow_fields = ['_ref', 'ipv6addr']
     _return_fields = ['ipv6addrs', 'extattrs']
-    _remap = {'ip': 'ipv6addrs'}
+    _remap = {'ip': 'ipv6addrs',
+              'ips': 'ipv6addrs'}
+
     _ip_version = 6
 
     @property
