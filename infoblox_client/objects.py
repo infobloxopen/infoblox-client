@@ -337,7 +337,7 @@ class EA(object):
     """
 
     def __init__(self, ea_dict=None):
-        """Optionally accept EAs as a dict on init
+        """Optionally accept EAs as a dict on init.
 
         Expected EA format is {ea_name: ea_value}
         """
@@ -352,18 +352,27 @@ class EA(object):
                    for name in self._ea_dict)
         return "EAs:{0}".format(','.join(eas))
 
+    @staticmethod
+    def _value_to_bool(value):
+        """Converts value returned by NIOS into boolean if possible."""
+        if value == 'True':
+            return True
+        elif value == 'False':
+            return False
+        return value
+
     @classmethod
     def from_dict(cls, eas_from_nios):
         """Converts extensible attributes from the NIOS reply."""
         if not eas_from_nios:
             return
-        return cls({name: eas_from_nios[name]['value']
+        return cls({name: cls._value_to_bool(eas_from_nios[name]['value'])
                     for name in eas_from_nios})
 
     def to_dict(self):
         """Converts extensible attributes into the format suitable for NIOS."""
-        return {name: {'value': value}
-                for name, value in self._ea_dict.items() if value}
+        return {name: {'value': str(value)}
+                for name, value in self._ea_dict.items()}
 
     def get(self, name, default=None):
         """Return value of requested EA."""
