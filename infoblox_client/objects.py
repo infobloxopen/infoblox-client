@@ -565,7 +565,7 @@ class SubObjects(BaseObject):
 
 class IP(SubObjects):
     _fields = []
-    _shadow_fields = ['_ref', 'ip']
+    _shadow_fields = ['_ref', 'ip', 'host']
     _remap = {}
     ip_version = None
 
@@ -609,13 +609,13 @@ class IP(SubObjects):
 
 
 class IPv4(IP):
-    _fields = ['ipv4addr', 'configure_for_dhcp', 'host', 'mac']
+    _fields = ['ipv4addr', 'configure_for_dhcp',  'mac']
     _remap = {'ipv4addr': 'ip'}
     ip_version = 4
 
 
 class IPv6(IP):
-    _fields = ['ipv6addr', 'configure_for_dhcp', 'host', 'duid']
+    _fields = ['ipv6addr', 'configure_for_dhcp', 'duid']
     _remap = {'ipv6addr': 'ip'}
     ip_version = 6
 
