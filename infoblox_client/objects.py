@@ -67,7 +67,7 @@ class BaseObject(object):
     def __repr__(self):
         data = {field: getattr(self, field)
                 for field in self._fields + self._shadow_fields
-                if getattr(self, field) is not None}
+                if hasattr(self, field) and getattr(self, field) is not None}
         data_str = ', '.join(
             "{0}=\"{1}\"".format(key, data[key]) for key in data)
         return "{0}: {1}".format(self.__class__.__name__, data_str)
