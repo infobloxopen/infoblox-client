@@ -231,9 +231,16 @@ class TestObjects(base.TestCase):
 
     def test_ea_parse_generate(self):
         eas = {'Subnet ID': {'value': 'some-id'},
-               'Tenant Name': {'value': 'tenant-name'}}
+               'Tenant Name': {'value': 'tenant-name'},
+               'Cloud API Owned': {'value': 'True'},
+               'Some EA': {'value': 'False'},
+               'Zero EA': {'value': '0'}}
         ea = objects.EA.from_dict(eas)
         self.assertIsInstance(ea, objects.EA)
+        # validate True and False are converted to booleans
+        self.assertEqual(True, ea.get('Cloud API Owned'))
+        self.assertEqual(False, ea.get('Some EA'))
+        self.assertEqual('0', ea.get('Zero EA'))
         self.assertEqual(eas, ea.to_dict())
 
     def test_ea_returns_none(self):
