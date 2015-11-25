@@ -3,6 +3,13 @@
 History
 -------
 
+0.0.11 (2015-11-25)
+___________________
+* Fix adding second ip to HostRecord
+* Fix failing in pdb
+* Convert EA values into boolean if possible
+* Added 'ips' allias for ip field in HostRecord
+
 0.0.10 (2015-11-19)
 ___________________
 * Add utility to determine supported feature
