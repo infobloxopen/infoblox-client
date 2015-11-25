@@ -134,6 +134,19 @@ class TestObjects(base.TestCase):
                          nios_ip.host)
         self.assertEqual(mock_record['ipv4addrs'][0]['configure_for_dhcp'],
                          nios_ip.configure_for_dhcp)
+        # Validate 'host' field is not send on update
+        new_ip = objects.IP.create(ip='22.0.0.10', mac='fa:16:3e:29:87:71',
+                                   configure_for_dhcp=False)
+        host_record.ip.append(new_ip)
+        host_record.extattrs = {}
+        host_record.update()
+        ip_dict['configure_for_dhcp'] = False
+        ip_dict_new = {'ipv4addr': '22.0.0.10', 'mac': 'fa:16:3e:29:87:71',
+                       'configure_for_dhcp': False}
+        connector.update_object.assert_called_once_with(
+            host_record.ref,
+            {'ipv4addrs': [ip_dict, ip_dict_new],
+             'extattrs': {}}, mock.ANY)
 
     def test_search_and_delete_host_record(self):
         host_record_copy = copy.deepcopy(DEFAULT_HOST_RECORD)
