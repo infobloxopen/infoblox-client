@@ -344,6 +344,22 @@ class ObjectManagerTestCase(base.TestCase):
             force_proxy=mock.ANY, return_fields=mock.ANY)
         connector.delete_object.assert_called_once_with(mock.ANY)
 
+    def test_find_hostname(self):
+        dns_view_name = 'dns-view-name'
+        fqdn = 'host.global.com'
+        ip = '192.168.1.1'
+
+        connector = mock.Mock()
+        connector.get_object.return_value = mock.MagicMock()
+        ibom = om.InfobloxObjectManager(connector)
+
+        ibom.find_hostname(dns_view_name, fqdn, ip)
+
+        connector.get_object.assert_called_once_with(
+            'record:host',
+            {'view': dns_view_name, 'name': fqdn, 'ipv4addr': ip},
+            extattrs=None, force_proxy=mock.ANY, return_fields=mock.ANY)
+
     def test_bind_names_updates_host_record(self):
         dns_view_name = 'dns-view-name'
         fqdn = 'host.global.com'

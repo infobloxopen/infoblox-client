@@ -106,6 +106,8 @@ class InfobloxObject(BaseObject):
     _fields - fields that represents NIOS object (WAPI fields) and
         are sent to NIOS on object creation
     _search_fields - fields that can be used to find object on NIOS side
+    _updateable_search_fields - fields that can be used to find object on
+        NIOS side, but also can be changed, so has to be sent on update.
     _shadow_fields - fields that object usually has but they should not
         be sent to NIOS. These fields can be received from NIOS. Examples:
         [_ref, is_default]
@@ -122,6 +124,7 @@ class InfobloxObject(BaseObject):
     """
     _fields = []
     _search_fields = []
+    _updateable_search_fields = []
     _shadow_fields = []
     _infoblox_type = None
     _remap = {}
@@ -178,9 +181,11 @@ class InfobloxObject(BaseObject):
         if search_fields == 'only':
             fields = self._search_fields
         elif search_fields == 'exclude':
-            # exclude search fields for update actions
+            # exclude search fields for update actions,
+            # but include updateable_search_fields
             fields = [field for field in self._fields
-                      if field not in self._search_fields]
+                      if field in self._updateable_search_fields or
+                      field not in self._search_fields]
 
         return {field: self.field_to_dict(field) for field in fields
                 if getattr(self, field, None) is not None}
@@ -491,7 +496,8 @@ class HostRecord(InfobloxObject):
 class HostRecordV4(HostRecord):
     """HostRecord for IPv4"""
     _fields = ['ipv4addrs', 'view', 'extattrs', 'name']
-    _search_fields = ['view', 'ipv4addr']
+    _search_fields = ['view', 'ipv4addr', 'name']
+    _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv4addr']
     _return_fields = ['ipv4addrs', 'extattrs']
     _remap = {'ip': 'ipv4addrs',
@@ -523,6 +529,7 @@ class HostRecordV6(HostRecord):
     """HostRecord for IPv6"""
     _fields = ['ipv6addrs', 'view', 'extattrs',  'name']
     _search_fields = ['ipv6addr', 'view', 'name']
+    _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv6addr']
     _return_fields = ['ipv6addrs', 'extattrs']
     _remap = {'ip': 'ipv6addrs',
