@@ -26,7 +26,7 @@ test_requirements = [
 
 setup(
     name='infoblox-client',
-    version='0.1.0',
+    version='0.1.1',
     description="Client for interacting with Infoblox NIOS over WAPI",
     long_description=readme + '\n\n' + history,
     author="Pavel Bondar",
