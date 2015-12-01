@@ -412,6 +412,28 @@ class ObjectManagerTestCase(base.TestCase):
                         mock.call('record:ptr', exp_for_ptr, mock.ANY)]
         connector.create_object.assert_has_calls(create_calls)
 
+    def test_unbind_names_with_a_record(self):
+        dns_view_name = 'dns-view-name'
+        name = 'host1'
+        ip = '192.168.1.1'
+        bind_list = ['record:a', 'record:aaaa', 'record:ptr']
+
+        def get_object(obj_type, payload=None, return_fields=None,
+                       extattrs=None, force_proxy=False):
+            data_dict = payload.copy()
+            data_dict['_ref'] = 'some-ref/' + obj_type
+            return [data_dict]
+
+        connector = mock.Mock()
+        connector.get_object.side_effect = get_object
+
+        ibom = om.InfobloxObjectManager(connector)
+        ibom.unbind_name_from_record_a(dns_view_name, ip, name, bind_list)
+
+        delete_calls = [mock.call('some-ref/record:a'),
+                        mock.call('some-ref/record:ptr')]
+        connector.delete_object.assert_has_calls(delete_calls)
+
     def test_create_dns_view_creates_view_object(self):
         net_view_name = 'net-view-name'
         dns_view_name = 'dns-view-name'

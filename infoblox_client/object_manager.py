@@ -336,7 +336,7 @@ class InfobloxObjectManager(object):
             ptr_record = obj.PtrRecord.search(self.connector,
                                               view=dns_view,
                                               ip=ip,
-                                              name=name)
+                                              ptrdname=name)
             ptr_record.delete()
 
     def get_member(self, member):
