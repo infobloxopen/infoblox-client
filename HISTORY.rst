@@ -3,6 +3,12 @@
 History
 -------
 
+0.1.0 (2015-12-01)
+__________________
+* Add new field type '_updateable_search_field' to objects and fix HostRecord search
+* Fix 'make docs'
+* Update README.rst (fixed formatting)
+
 0.0.11 (2015-11-25)
 ___________________
 * Fix adding second ip to HostRecord
@@ -64,5 +70,4 @@ ____________________
 0.0.1 (2015-09-11)
 ---------------------
 * Added connector to send wapi requests to NIOS, does not includes NIOS object model at this point.
-
 * First release on PyPI.
