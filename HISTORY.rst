@@ -3,6 +3,10 @@
 History
 -------
 
+0.1.1 (2015-12-01)
+__________________
+* Fix unbind_name_from_record_a
+
 0.1.0 (2015-12-01)
 __________________
 * Add new field type '_updateable_search_field' to objects and fix HostRecord search
