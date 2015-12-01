@@ -84,12 +84,12 @@ Objects Interface
 
 All top level objects support interface for CRUD operations. List of supported objects is defined in next section.
 
-- create(cls, connector, check_if_exists=True, update_if_exists=False, **kwargs)
+- create(cls, connector, check_if_exists=True, update_if_exists=False, \**kwargs)
     Creates object on NIOS side.
     Requires connector passed as the first argument, check_if_exists and update_if_exists are optional.
     Object related fields are passed in as kwargs: field=value, field2=value2.
     
-- search(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)
+- search(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, \**kwargs)
     Search single object on NIOS side, returns first object that match search criteria.
     Requires connector passed as the first argument.
     'return_fields' can be set to retrieve particular fields from NIOS,
@@ -98,7 +98,7 @@ All top level objects support interface for CRUD operations. List of supported o
     'search_extattrs' used to filter out results by extensible attributes.
     'force_proxy' forces search request to be processed on Grid Master (applies only in cloud environment)
     
-- search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)
+- search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, \**kwargs)
     Search all objects on NIOS side that match search cryteria. Returns list of objects.
     All other options are equal to search().
 
