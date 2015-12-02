@@ -41,6 +41,7 @@ class TestInfobloxConnector(base.TestCase):
         opts.username = 'admin'
         opts.password = 'password'
         opts.ssl_verify = False
+        opts.silent_ssl_warnings = True
         opts.http_pool_connections = 10
         opts.http_pool_maxsize = 10
         opts.http_request_timeout = 10
@@ -252,6 +253,7 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
                     username='admin',
                     password='password',
                     ssl_verify=False,
+                    silent_ssl_warnings=True,
                     http_pool_connections=10,
                     http_pool_maxsize=10,
                     http_request_timeout=10)
@@ -261,6 +263,8 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
         self.assertEqual(opts['username'], conn.username)
         self.assertEqual(opts['password'], conn.password)
         self.assertEqual(opts['ssl_verify'], conn.ssl_verify)
+        self.assertEqual(opts['silent_ssl_warnings'],
+                         conn.silent_ssl_warnings)
         self.assertEqual(opts['http_pool_connections'],
                          conn.http_pool_connections)
         self.assertEqual(opts['http_pool_maxsize'], conn.http_pool_maxsize)
@@ -279,6 +283,7 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
                     password='password')
         conn = connector.Connector(opts)
         self.assertEqual(False, conn.ssl_verify)
+        self.assertEqual(False, conn.silent_ssl_warnings)
         self.assertEqual(10, conn.http_request_timeout)
         self.assertEqual(10, conn.http_pool_connections)
         self.assertEqual(10, conn.http_pool_maxsize)

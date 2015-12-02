@@ -52,6 +52,7 @@ class Connector(object):
 
     DEFAULT_HEADER = {'Content-type': 'application/json'}
     DEFAULT_OPTIONS = {'ssl_verify': False,
+                       'silent_ssl_warnings': False,
                        'http_request_timeout': 10,
                        'http_pool_connections': 10,
                        'http_pool_maxsize': 10,
@@ -74,7 +75,8 @@ class Connector(object):
         """Copy needed options to self"""
         attributes = ('host', 'wapi_version', 'username', 'password',
                       'ssl_verify', 'http_request_timeout',
-                      'http_pool_connections', 'http_pool_maxsize')
+                      'http_pool_connections', 'http_pool_maxsize',
+                      'silent_ssl_warnings')
         for attr in attributes:
             if isinstance(options, dict) and attr in options:
                 setattr(self, attr, options[attr])
@@ -105,6 +107,9 @@ class Connector(object):
         self.session.mount('https://', adapter)
         self.session.auth = (self.username, self.password)
         self.session.verify = self.ssl_verify
+
+        if self.silent_ssl_warnings:
+            requests.packages.urllib3.disable_warnings()
 
     def _construct_url(self, relative_path, query_params=None,
                        extattrs=None, force_proxy=False):
