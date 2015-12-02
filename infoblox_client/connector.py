@@ -171,6 +171,17 @@ class Connector(object):
             opts['data'] = jsonutils.dumps(data)
         return opts
 
+    @staticmethod
+    def _parse_reply(request):
+        """Tries to parse reply from NIOS.
+
+        Raises exception with content if reply is not in json format
+        """
+        try:
+            return jsonutils.loads(request.content)
+        except ValueError:
+            raise ib_ex.InfobloxConnectionError(reason=request.content)
+
     @reraise_neutron_exception
     def get_object(self, obj_type, payload=None, return_fields=None,
                    extattrs=None, force_proxy=False):
@@ -233,7 +244,7 @@ class Connector(object):
                 content=r.content,
                 code=r.status_code)
 
-        return jsonutils.loads(r.content)
+        return self._parse_reply(r)
 
     @reraise_neutron_exception
     def create_object(self, obj_type, payload, return_fields=None):
@@ -267,7 +278,7 @@ class Connector(object):
                 args=payload,
                 code=r.status_code)
 
-        return jsonutils.loads(r.content)
+        return self._parse_reply(r)
 
     @reraise_neutron_exception
     def call_func(self, func_name, ref, payload, return_fields=None):
@@ -289,7 +300,7 @@ class Connector(object):
                 content=r.content,
                 code=r.status_code)
 
-        return jsonutils.loads(r.content)
+        return self._parse_reply(r)
 
     @reraise_neutron_exception
     def update_object(self, ref, payload, return_fields=None):
@@ -317,7 +328,7 @@ class Connector(object):
                 content=r.content,
                 code=r.status_code)
 
-        return jsonutils.loads(r.content)
+        return self._parse_reply(r)
 
     @reraise_neutron_exception
     def delete_object(self, ref):
@@ -342,7 +353,7 @@ class Connector(object):
                 content=r.content,
                 code=r.status_code)
 
-        return jsonutils.loads(r.content)
+        return self._parse_reply(r)
 
     @staticmethod
     def is_cloud_wapi(wapi_version):

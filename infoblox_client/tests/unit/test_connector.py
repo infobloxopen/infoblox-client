@@ -304,3 +304,26 @@ class TestInfobloxConnectorStaticMethods(base.TestCase):
             self.assertRaises(ValueError,
                               connector.Connector.is_cloud_wapi,
                               value)
+
+    def test__parse_reply_raises_connection_error(self):
+        request = mock.Mock()
+        request.content = ('<HTML><BODY BGCOLOR="FFFFFF">'
+                           'Some error reply</BODY></HTML>\n')
+        self.assertRaises(exceptions.InfobloxConnectionError,
+                          connector.Connector._parse_reply,
+                          request)
+
+    def test__parse_reply(self):
+        request = mock.Mock()
+        request.content = (
+            '[{"_ref": "network/ZG5zLm5ldHdvcmskMTAuNDAuMjUuMC8yNC8w:'
+            '10.40.25.0/24/default","network": "10.40.25.0/24",'
+            '"network_view": "default"}]')
+        expected_reply = [
+            {'_ref': "network/ZG5zLm5ldHdvcmskMTAuNDAuMjUuMC8yNC8w"
+                     ":10.40.25.0/24/default",
+             'network': "10.40.25.0/24",
+             'network_view': "default"}]
+
+        parsed_reply = connector.Connector._parse_reply(request)
+        self.assertEqual(expected_reply, parsed_reply)
