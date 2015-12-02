@@ -38,7 +38,8 @@ class InfobloxObjectManager(object):
             return
         nview = obj.NetworkView.search(self.connector,
                                        name=network_view)
-        nview.delete()
+        if nview:
+            nview.delete()
 
     def create_dns_view(self, network_view, dns_view):
         return obj.DNSView.create(self.connector,
@@ -48,7 +49,8 @@ class InfobloxObjectManager(object):
     def delete_dns_view(self, dns_view):
         dns_view = obj.DNSView.search(self.connector,
                                       name=dns_view)
-        dns_view.delete()
+        if dns_view:
+            dns_view.delete()
 
     def create_network(self, net_view_name, cidr, nameservers=None,
                        members=None, gateway_ip=None, dhcp_trel_ip=None,
@@ -98,7 +100,8 @@ class InfobloxObjectManager(object):
                                    network_view=network_view,
                                    start_addr=start_ip,
                                    end_addr=end_ip)
-        range.delete()
+        if range:
+            range.delete()
 
     def has_networks(self, network_view_name):
         try:
@@ -121,7 +124,8 @@ class InfobloxObjectManager(object):
         network = obj.Network.search(self.connector,
                                      network_view=network_view,
                                      cidr=cidr)
-        network.delete()
+        if network:
+            network.delete()
 
     def create_network_from_template(self, network_view, cidr, template,
                                      extattrs):
@@ -178,7 +182,8 @@ class InfobloxObjectManager(object):
     def delete_host_record(self, dns_view, ip_address):
         host_record = obj.HostRecord.search(self.connector,
                                             view=dns_view, ip=ip_address)
-        host_record.delete()
+        if host_record:
+            host_record.delete()
 
     def create_fixed_address_for_given_ip(self, network_view, mac, ip,
                                           extattrs):
@@ -264,21 +269,24 @@ class InfobloxObjectManager(object):
         dns_zone = obj.DNSZone.search(self.connector,
                                       fqdn=dns_zone_fqdn,
                                       view=dns_view)
-        dns_zone.delete()
+        if dns_zone:
+            dns_zone.delete()
 
     def update_host_record_eas(self, dns_view, ip, extattrs):
         host_record = obj.HostRecord.search(self.connector,
                                             view=dns_view,
                                             ip=ip)
-        host_record.extattrs = extattrs
-        host_record.update()
+        if host_record:
+            host_record.extattrs = extattrs
+            host_record.update()
 
     def update_fixed_address_eas(self, network_view, ip, extattrs):
         fixed_address = obj.FixedAddress.search(self.connector,
                                                 network_view=network_view,
                                                 ip=ip)
-        fixed_address.extattrs = extattrs
-        fixed_address.update()
+        if fixed_address:
+            fixed_address.extattrs = extattrs
+            fixed_address.update()
 
     def update_dns_record_eas(self, dns_view, ip, extattrs):
         a_record = obj.ARecordBase.search(self.connector,
@@ -330,14 +338,16 @@ class InfobloxObjectManager(object):
                                               view=dns_view,
                                               ip=ip,
                                               name=name)
-            a_record.delete()
+            if a_record:
+                a_record.delete()
 
         if 'record:ptr' in unbind_list:
             ptr_record = obj.PtrRecord.search(self.connector,
                                               view=dns_view,
                                               ip=ip,
                                               ptrdname=name)
-            ptr_record.delete()
+            if ptr_record:
+                ptr_record.delete()
 
     def get_member(self, member):
         member.fetch()
