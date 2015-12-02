@@ -3,6 +3,12 @@
 History
 -------
 
+0.1.2 (2015-12-02)
+__________________
+* Do not fail if object is not found on delete
+* Raise exception with details if reply is not json
+* Add 'silent_ssl_warnings' option to connector
+
 0.1.1 (2015-12-01)
 __________________
 * Fix unbind_name_from_record_a
