@@ -28,6 +28,14 @@ Install infoblox-client using pip:
 Usage
 -----
 
+Configure logger prior to loading infoblox_client to get all debug messages in console:
+
+::
+
+  import logging
+  logging.basicConfig(level=logging.DEBUG)
+
+
 1. Low level API, using connector module.
 
 Retrieve list of network views from NIOS:
