@@ -282,7 +282,8 @@ class ObjectManagerTestCase(base.TestCase):
         ibom.create_ip_range(net_view, start_ip, end_ip, None, disable,
                              self.EXT_ATTRS)
 
-        assert connector.get_object.called
+        # Validate that IPRange is created without searching it first
+        assert not connector.get_object.called
         matcher = PayloadMatcher({'start_addr': start_ip,
                                   'end_addr': end_ip,
                                   'network_view': net_view,
