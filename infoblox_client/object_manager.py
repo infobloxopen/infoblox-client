@@ -87,13 +87,15 @@ class InfobloxObjectManager(object):
 
     def create_ip_range(self, network_view, start_ip, end_ip, network,
                         disable, range_extattrs):
+        """Creates IPRange or fails if already exists."""
         return obj.IPRange.create(self.connector,
                                   network_view=network_view,
                                   start_addr=start_ip,
                                   end_addr=end_ip,
                                   cidr=network,
                                   disable=disable,
-                                  extattrs=range_extattrs)
+                                  extattrs=range_extattrs,
+                                  check_if_exists=False)
 
     def delete_ip_range(self, network_view, start_ip, end_ip):
         range = obj.IPRange.search(self.connector,
