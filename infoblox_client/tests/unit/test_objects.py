@@ -72,6 +72,17 @@ class TestObjects(base.TestCase):
             {'network_view': 'some-view', 'network': 'fffe:2312::/64'},
             extattrs=None, force_proxy=False, return_fields=mock.ANY)
 
+    def test_search_network_v6_using_network_field(self):
+        connector = self._mock_connector()
+
+        objects.Network.search(connector,
+                               network_view='some-view',
+                               network='fffe:2312::/64')
+        connector.get_object.assert_called_once_with(
+            'ipv6network',
+            {'network_view': 'some-view', 'network': 'fffe:2312::/64'},
+            extattrs=None, force_proxy=False, return_fields=mock.ANY)
+
     def test_search_network_with_results(self):
         found = {"_ref": "network/ZG5zLm5ldHdvcmskMTAuMzkuMTEuMC8yNC8w"
                          ":10.39.11.0/24/default",
