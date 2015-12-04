@@ -3,6 +3,12 @@
 History
 -------
 
+0.1.3 (2015-12-04)
+__________________
+* Add 'network' field to ip versioned fields
+* Skip adding DHCP options for IPv6 network
+* Do not search IPRange before creating
+
 0.1.2 (2015-12-02)
 __________________
 * Do not fail if object is not found on delete
