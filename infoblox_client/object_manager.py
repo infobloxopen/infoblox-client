@@ -57,14 +57,18 @@ class InfobloxObjectManager(object):
                        network_extattrs=None):
         """Create NIOS Network."""
 
+        # NIOS does not allow to set Dhcp options for IPv6 over WAPI,
+        # so limit options usage with IPv4 only
+        ipv4 = ib_utils.determine_ip_version(cidr) == 4
+
         options = []
-        if nameservers:
+        if ipv4 and nameservers:
             options.append(obj.DhcpOption(name='domain-name-servers',
                                           value=",".join(nameservers)))
-        if gateway_ip:
+        if ipv4 and gateway_ip:
             options.append(obj.DhcpOption(name='routers',
                                           value=gateway_ip))
-        if dhcp_trel_ip:
+        if ipv4 and dhcp_trel_ip:
             options.append(obj.DhcpOption(name='dhcp-server-identifier',
                                           num=54,
                                           value=dhcp_trel_ip))
