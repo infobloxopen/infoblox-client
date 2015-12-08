@@ -833,9 +833,12 @@ class DNSZone(InfobloxObject):
 
 class Member(InfobloxObject):
     _infoblox_type = 'member'
-    _fields = ['host_name', 'ipv6_setting', 'node_info', 'vip_setting']
-    _search_fields = ['host_name']
-    _shadow_fields = ['_ref', 'ip']
+    _fields = ['host_name', 'ipv6_setting', 'vip_setting',
+               'extattrs', 'ipv4_address', 'ipv6_address']
+    _return_fields = ['host_name', 'ipv6_setting', 'node_info',
+                      'vip_setting', 'extattrs']
+    _search_fields = ['host_name', 'ipv4_address', 'ipv6_address']
+    _shadow_fields = ['_ref', 'ip', 'node_info']
     _ip_version = 'any'
     _remap = {'name': 'host_name'}
 
