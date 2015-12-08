@@ -24,10 +24,12 @@ try:
 except ImportError:
     import urllib.parse as urlparse
 
+from oslo_log import log as logging
 from oslo_serialization import jsonutils
 
 from infoblox_client import exceptions as ib_ex
 
+LOG = logging.getLogger(__name__)
 CLOUD_WAPI_MAJOR_VERSION = 2
 
 
@@ -182,6 +184,11 @@ class Connector(object):
         except ValueError:
             raise ib_ex.InfobloxConnectionError(reason=request.content)
 
+    @staticmethod
+    def _log_request(url, opts):
+        LOG.debug("Sending request to %s with parameters %s",
+                  url, opts)
+
     @reraise_neutron_exception
     def get_object(self, obj_type, payload=None, return_fields=None,
                    extattrs=None, force_proxy=False):
@@ -233,6 +240,7 @@ class Connector(object):
 
     def _get_object(self, obj_type, url):
         opts = self._get_request_options()
+        self._log_request(url, opts)
         r = self.session.get(url, **opts)
 
         self._validate_authorized(r)
@@ -266,6 +274,7 @@ class Connector(object):
 
         url = self._construct_url(obj_type, query_params)
         opts = self._get_request_options(data=payload)
+        self._log_request(url, opts)
         r = self.session.post(url, **opts)
 
         self._validate_authorized(r)
@@ -287,6 +296,7 @@ class Connector(object):
 
         url = self._construct_url(ref, query_params)
         opts = self._get_request_options(data=payload)
+        self._log_request(url, opts)
         r = self.session.post(url, **opts)
 
         self._validate_authorized(r)
@@ -317,7 +327,9 @@ class Connector(object):
         query_params = self._build_query_params(return_fields=return_fields)
 
         opts = self._get_request_options(data=payload)
-        r = self.session.put(self._construct_url(ref, query_params), **opts)
+        url = self._construct_url(ref, query_params)
+        self._log_request(url, opts)
+        r = self.session.put(url, **opts)
 
         self._validate_authorized(r)
 
@@ -342,7 +354,9 @@ class Connector(object):
             InfobloxException
         """
         opts = self._get_request_options()
-        r = self.session.delete(self._construct_url(ref), **opts)
+        url = self._construct_url(ref)
+        self._log_request(url, opts)
+        r = self.session.delete(url, **opts)
 
         self._validate_authorized(r)
 
