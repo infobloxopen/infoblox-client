@@ -3,6 +3,11 @@
 History
 -------
 
+0.1.4 (2015-12-08)
+__________________
+* Field updates for Member object
+* Log all api calls in connector on debug level
+
 0.1.3 (2015-12-04)
 __________________
 * Add 'network' field to ip versioned fields
