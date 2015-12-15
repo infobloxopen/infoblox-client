@@ -582,6 +582,23 @@ class ObjectManagerTestCase(base.TestCase):
             return_fields=mock.ANY, force_proxy=mock.ANY)
         connector.delete_object.assert_called_once_with(mock.ANY)
 
+    def test_delete_fixed_address_not_found(self):
+        network_view = 'test_network_view'
+        ip = '192.168.0.25'
+
+        connector = mock.Mock()
+        connector.get_object.return_value = None
+
+        ibom = om.InfobloxObjectManager(connector)
+        ibom.delete_fixed_address(network_view, ip)
+
+        payload = {'network_view': network_view,
+                   'ipv4addr': ip}
+        connector.get_object.assert_called_once_with(
+            'fixedaddress', payload, extattrs=None,
+            return_fields=mock.ANY, force_proxy=mock.ANY)
+        self.assertFalse(connector.delete_object.called)
+
     def test_member_is_assigned_as_list_on_network_create(self):
         net_view = 'net-view-name'
         cidr = '192.168.1.0/24'

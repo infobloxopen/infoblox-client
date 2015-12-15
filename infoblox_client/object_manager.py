@@ -224,7 +224,8 @@ class InfobloxObjectManager(object):
         fixed_address = obj.FixedAddress.search(self.connector,
                                                 network_view=network_view,
                                                 ip=ip_address)
-        fixed_address.delete()
+        if fixed_address:
+            fixed_address.delete()
 
     def add_ip_to_record(self, host_record, ip, mac, use_dhcp=True):
         ip_obj = obj.IP.create(ip=ip, mac=mac, configure_for_dhcp=use_dhcp)
