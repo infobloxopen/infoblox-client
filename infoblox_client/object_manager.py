@@ -81,13 +81,9 @@ class InfobloxObjectManager(object):
                                   check_if_exists=False)
 
     def get_network(self, network_view, cidr):
-        network = obj.Network.search(self.connector,
-                                     network_view=network_view,
-                                     cidr=cidr)
-        if not network:
-            raise ib_ex.InfobloxNetworkNotAvailable(
-                network_view=network_view, cidr=cidr)
-        return network
+        return obj.Network.search(self.connector,
+                                  network_view=network_view,
+                                  cidr=cidr)
 
     def create_ip_range(self, network_view, start_ip, end_ip, network,
                         disable, range_extattrs):
@@ -116,15 +112,6 @@ class InfobloxObjectManager(object):
             return bool(networks)
         except ib_ex.InfobloxSearchError:
             return False
-
-    def network_exists(self, network_view, cidr):
-        try:
-            network = obj.Network.search(self.connector,
-                                         network_view=network_view,
-                                         cidr=cidr)
-        except ib_ex.InfobloxSearchError:
-            network = None
-        return network is not None
 
     def delete_network(self, network_view, cidr):
         network = obj.Network.search(self.connector,

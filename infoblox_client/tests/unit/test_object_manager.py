@@ -182,26 +182,6 @@ class ObjectManagerTestCase(base.TestCase):
             'network', matcher, extattrs=None,
             force_proxy=mock.ANY, return_fields=mock.ANY)
 
-    def test_throws_network_not_available_on_get_network(self):
-        connector = mock.Mock()
-        connector.get_object.return_value = None
-
-        ibom = om.InfobloxObjectManager(connector)
-
-        net_view_name = 'test_dns_view_name'
-        cidr = '192.168.0.0/24'
-
-        self.assertRaises(exceptions.InfobloxNetworkNotAvailable,
-                          ibom.get_network, net_view_name, cidr)
-
-        matcher = PayloadMatcher({'network_view': net_view_name,
-                                  'network': cidr})
-        connector.get_object.assert_called_once_with('network',
-                                                     matcher,
-                                                     extattrs=mock.ANY,
-                                                     force_proxy=mock.ANY,
-                                                     return_fields=mock.ANY)
-
     def test_object_is_not_created_if_already_exists(self):
         net_view_name = 'test_dns_view_name'
         connector = mock.Mock()
@@ -471,22 +451,6 @@ class ObjectManagerTestCase(base.TestCase):
         result = ibom.has_networks(net_view_name)
 
         matcher = PayloadMatcher({'network_view': net_view_name})
-        connector.get_object.assert_called_once_with(
-            'network', matcher, return_fields=mock.ANY,
-            force_proxy=mock.ANY, extattrs=None)
-        self.assertEqual(False, result)
-
-    def test_network_exists(self):
-        connector = mock.Mock()
-        connector.get_object.return_value = None
-        ibom = om.InfobloxObjectManager(connector)
-        net_view_name = 'some-view'
-        cidr = '192.168.1.0/24'
-
-        result = ibom.network_exists(net_view_name, cidr)
-
-        matcher = PayloadMatcher({'network_view': net_view_name,
-                                  'network': cidr})
         connector.get_object.assert_called_once_with(
             'network', matcher, return_fields=mock.ANY,
             force_proxy=mock.ANY, extattrs=None)
