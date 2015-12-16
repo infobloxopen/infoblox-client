@@ -64,6 +64,14 @@ class BaseObject(object):
         else:
             super(BaseObject, self).__setattr__(name, value)
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            for field in self._fields:
+                if getattr(self, field) != getattr(other, field):
+                    return False
+            return True
+        return False
+
     def __repr__(self):
         data = {field: getattr(self, field)
                 for field in self._fields + self._shadow_fields
@@ -146,14 +154,6 @@ class InfobloxObject(BaseObject):
         for field in self._fields + self._shadow_fields:
             if field in ip_dict:
                 setattr(self, field, mapped_args[field])
-
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            for field in self._fields:
-                if getattr(self, field) != getattr(other, field):
-                    return False
-            return True
-        return False
 
     @classmethod
     def from_dict(cls, connector, ip_dict):
