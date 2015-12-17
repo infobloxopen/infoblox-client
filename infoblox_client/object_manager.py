@@ -113,6 +113,17 @@ class InfobloxObjectManager(object):
         except ib_ex.InfobloxSearchError:
             return False
 
+    def network_exists(self, network_view, cidr):
+        """Deprecated, use get_network() instead."""
+        LOG.warning(
+            "DEPRECATION WARNING! Using network_exists() is deprecated "
+            "and to be removed in next releases. "
+            "Use get_network() or objects.Network.search instead")
+        network = obj.Network.search(self.connector,
+                                     network_view=network_view,
+                                     cidr=cidr)
+        return network is not None
+
     def delete_network(self, network_view, cidr):
         network = obj.Network.search(self.connector,
                                      network_view=network_view,
