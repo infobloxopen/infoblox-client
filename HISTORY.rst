@@ -3,6 +3,17 @@
 History
 -------
 
+0.2.0 (2015-12-17)
+------------------
+* Deprecate network_exists method in object_manager
+* Add _global_field_processing for objects
+* Add parsing 'extattrs' into EA objects for all InfobloxObject childs
+* Add docs badge to README.rst
+* Reworked get_network in object_manager
+* Move _eq_ to BaseObject
+* Check if fixed address is found before delete
+
+
 0.1.4 (2015-12-08)
 __________________
 * Field updates for Member object
