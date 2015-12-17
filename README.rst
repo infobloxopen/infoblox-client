@@ -11,6 +11,9 @@ Infoblox Client
 .. image:: https://codecov.io/github/infobloxopen/infoblox-client/coverage.svg?branch=master
         :target: https://codecov.io/github/infobloxopen/infoblox-client?branch=master
 
+.. image:: https://readthedocs.org/projects/infoblox-client/badge/?version=latest
+        :target: http://infoblox-client.readthedocs.org/en/latest/?badge=latest
+
 Client for interacting with Infoblox NIOS over WAPI.
 
 * Free software: Apache license
