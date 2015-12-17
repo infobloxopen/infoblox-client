@@ -171,6 +171,9 @@ class TestObjects(base.TestCase):
             {'view': 'some-dns-view', 'ipv4addr': '192.168.15.20'},
             extattrs=None, force_proxy=False, return_fields=mock.ANY)
 
+        # Validate extattrs in host_record are converted to EA object
+        self.assertIsInstance(host_record.extattrs, objects.EA)
+
         host_record.delete()
         connector.delete_object.assert_called_once_with(
             DEFAULT_HOST_RECORD['_ref'])

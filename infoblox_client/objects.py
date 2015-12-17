@@ -180,7 +180,15 @@ class InfobloxObject(BaseObject):
     _remap - dict that maps user faced names into internal
          representation (_fields)
     _custom_field_processing - dict that define rules (lambda) for building
-         objects from data returned by NIOS side
+         objects from data returned by NIOS side.
+         Expected to be redefined in child class as needed,
+         _custom_field_processing has priority over _global_field_processing,
+         so can redefine for child class global rules
+         defined in _global_field_processing.
+    _global_field_processing - almost the same as _custom_field_processing,
+         but defines rules for building field on global level.
+         Fields defined in this dict will be processed in the same way in all
+         child classes. Is not expected to be redefined in child classes.
     _ip_version - ip version of the object, used to mark version
         specific classes. Value other than None indicates that
         no versioned class lookup needed.
@@ -194,6 +202,7 @@ class InfobloxObject(BaseObject):
 
     _return_fields = []
     _custom_field_processing = {}
+    _global_field_processing = {'extattrs': EA.from_dict}
     _ip_version = None
 
     def __new__(cls, connector, **kwargs):
@@ -212,7 +221,14 @@ class InfobloxObject(BaseObject):
 
     @classmethod
     def from_dict(cls, connector, ip_dict):
-        mapping = cls._custom_field_processing
+        """Build dict fields as SubObjects if needed.
+
+        Checks if lambda for building object from dict exists.
+        _global_field_processing and _custom_field_processing rules
+        are checked.
+        """
+        mapping = cls._global_field_processing.copy()
+        mapping.update(cls._custom_field_processing)
         # Process fields that require building themselves as objects
         for field in mapping:
             if field in ip_dict:
@@ -421,8 +437,7 @@ class Network(InfobloxObject):
         return [DhcpOption.from_dict(m) for m in members]
 
     _custom_field_processing = {'members': _build_member.__func__,
-                                'options': _build_options.__func__,
-                                'extattrs': EA.from_dict}
+                                'options': _build_options.__func__}
 
 
 class NetworkV4(Network):

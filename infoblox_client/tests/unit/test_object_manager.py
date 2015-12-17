@@ -467,7 +467,7 @@ class ObjectManagerTestCase(base.TestCase):
                        'mac': mac}
 
         connector = mock.Mock()
-        connector.create_object.return_value = exp_payload
+        connector.create_object.return_value = exp_payload.copy()
 
         ibom = om.InfobloxObjectManager(connector)
         ibom.create_fixed_address_for_given_ip(network_view, mac,
@@ -489,7 +489,7 @@ class ObjectManagerTestCase(base.TestCase):
                   'mac': mac}
 
         connector = mock.Mock()
-        connector.create_object.return_value = result
+        connector.create_object.return_value = result.copy()
 
         ibom = om.InfobloxObjectManager(connector)
         ibom.create_fixed_address_from_range(network_view, mac, first_ip,
@@ -515,7 +515,7 @@ class ObjectManagerTestCase(base.TestCase):
                   'mac': mac}
 
         connector = mock.Mock()
-        connector.create_object.return_value = result
+        connector.create_object.return_value = result.copy()
 
         ibom = om.InfobloxObjectManager(connector)
         ibom.create_fixed_address_from_cidr(network_view, mac, cidr,
