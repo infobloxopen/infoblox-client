@@ -108,6 +108,61 @@ class BaseObject(object):
             return self._ref
 
 
+class EA(object):
+    """Extensible Attributes
+
+    This class represents extensible attributes (EA).
+    Converts EAs into format suitable for NIOS (to_dict)
+    and builds EA class from NIOS reply (from_dict).
+    """
+
+    def __init__(self, ea_dict=None):
+        """Optionally accept EAs as a dict on init.
+
+        Expected EA format is {ea_name: ea_value}
+        """
+        if ea_dict is None:
+            ea_dict = {}
+        self._ea_dict = ea_dict
+
+    def __repr__(self):
+        eas = ()
+        if self._ea_dict:
+            eas = ("{0}={1}".format(name, self._ea_dict[name])
+                   for name in self._ea_dict)
+        return "EAs:{0}".format(','.join(eas))
+
+    @staticmethod
+    def _value_to_bool(value):
+        """Converts value returned by NIOS into boolean if possible."""
+        if value == 'True':
+            return True
+        elif value == 'False':
+            return False
+        return value
+
+    @classmethod
+    def from_dict(cls, eas_from_nios):
+        """Converts extensible attributes from the NIOS reply."""
+        if not eas_from_nios:
+            return
+        return cls({name: cls._value_to_bool(eas_from_nios[name]['value'])
+                    for name in eas_from_nios})
+
+    def to_dict(self):
+        """Converts extensible attributes into the format suitable for NIOS."""
+        return {name: {'value': str(value)}
+                for name, value in self._ea_dict.items()}
+
+    def get(self, name, default=None):
+        """Return value of requested EA."""
+        return self._ea_dict.get(name, default)
+
+    def set(self, name, value):
+        """Set value of requested EA."""
+        self._ea_dict[name] = value
+
+
 class InfobloxObject(BaseObject):
     """Base class for all Infoblox related objects
 
@@ -331,61 +386,6 @@ class InfobloxObject(BaseObject):
     @classmethod
     def get_v6_class(cls):
         return cls
-
-
-class EA(object):
-    """Extensible Attributes
-
-    This class represents extensible attributes (EA).
-    Converts EAs into format suitable for NIOS (to_dict)
-    and builds EA class from NIOS reply (from_dict).
-    """
-
-    def __init__(self, ea_dict=None):
-        """Optionally accept EAs as a dict on init.
-
-        Expected EA format is {ea_name: ea_value}
-        """
-        if ea_dict is None:
-            ea_dict = {}
-        self._ea_dict = ea_dict
-
-    def __repr__(self):
-        eas = ()
-        if self._ea_dict:
-            eas = ("{0}={1}".format(name, self._ea_dict[name])
-                   for name in self._ea_dict)
-        return "EAs:{0}".format(','.join(eas))
-
-    @staticmethod
-    def _value_to_bool(value):
-        """Converts value returned by NIOS into boolean if possible."""
-        if value == 'True':
-            return True
-        elif value == 'False':
-            return False
-        return value
-
-    @classmethod
-    def from_dict(cls, eas_from_nios):
-        """Converts extensible attributes from the NIOS reply."""
-        if not eas_from_nios:
-            return
-        return cls({name: cls._value_to_bool(eas_from_nios[name]['value'])
-                    for name in eas_from_nios})
-
-    def to_dict(self):
-        """Converts extensible attributes into the format suitable for NIOS."""
-        return {name: {'value': str(value)}
-                for name, value in self._ea_dict.items()}
-
-    def get(self, name, default=None):
-        """Return value of requested EA."""
-        return self._ea_dict.get(name, default)
-
-    def set(self, name, value):
-        """Set value of requested EA."""
-        self._ea_dict[name] = value
 
 
 class Network(InfobloxObject):
