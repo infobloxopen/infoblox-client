@@ -152,7 +152,8 @@ class EA(object):
     def to_dict(self):
         """Converts extensible attributes into the format suitable for NIOS."""
         return {name: {'value': str(value)}
-                for name, value in self._ea_dict.items()}
+                for name, value in self._ea_dict.items()
+                if not (value is None or value == "" or value == [])}
 
     def get(self, name, default=None):
         """Return value of requested EA."""

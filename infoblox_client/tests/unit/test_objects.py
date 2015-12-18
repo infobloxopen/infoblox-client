@@ -270,6 +270,40 @@ class TestObjects(base.TestCase):
         self.assertEqual('0', ea.get('Zero EA'))
         self.assertEqual(eas, ea.to_dict())
 
+    def test_ea_to_dict(self):
+        ea = {'Subnet ID': 'some-id',
+              'Tenant Name':  'tenant-name',
+              'Cloud API Owned': 'True',
+              'DNS Record Types': ['record_a', 'record_ptr'],
+              'False String EA': 'False',
+              'Empty String EA': '',
+              'False EA': False,
+              'Zero EA': 0,
+              'None EA': None,
+              'None String EA': 'None',
+              'Empty List EA': [],
+              'Zero String EA': '0'}
+        ea_exist = ['Subnet ID',
+                    'Tenant Name',
+                    'Cloud API Owned',
+                    'DNS Record Types',
+                    'False String EA',
+                    'False EA',
+                    'Zero EA',
+                    'None String EA',
+                    'Zero String EA']
+        ea_purged = ['Empty String EA',
+                     'None EA',
+                     'Empty List EA']
+        ea_dict = objects.EA(ea).to_dict()
+        self.assertIsInstance(ea_dict, dict)
+        for key in ea_exist:
+            self.assertEqual(True, key in ea_dict)
+        for key in ea_purged:
+            self.assertEqual(False, key in ea_dict)
+        for key in ea_exist:
+            self.assertEqual(str(ea.get(key)), ea_dict.get(key).get('value'))
+
     def test_ea_returns_none(self):
         for ea in (None, '', 0):
             self.assertEqual(None, objects.EA.from_dict(ea))
