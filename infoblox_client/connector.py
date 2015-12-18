@@ -58,7 +58,8 @@ class Connector(object):
                        'http_request_timeout': 10,
                        'http_pool_connections': 10,
                        'http_pool_maxsize': 10,
-                       'wapi_version': '1.4'}
+                       'wapi_version': '1.4',
+                       'log_api_calls_as_info': False}
 
     def __init__(self, options):
         self._parse_options(options)
@@ -78,7 +79,7 @@ class Connector(object):
         attributes = ('host', 'wapi_version', 'username', 'password',
                       'ssl_verify', 'http_request_timeout',
                       'http_pool_connections', 'http_pool_maxsize',
-                      'silent_ssl_warnings')
+                      'silent_ssl_warnings', 'log_api_calls_as_info')
         for attr in attributes:
             if isinstance(options, dict) and attr in options:
                 setattr(self, attr, options[attr])
@@ -184,10 +185,13 @@ class Connector(object):
         except ValueError:
             raise ib_ex.InfobloxConnectionError(reason=request.content)
 
-    @staticmethod
-    def _log_request(url, opts):
-        LOG.debug("Sending request to %s with parameters %s",
-                  url, opts)
+    def _log_request(self, url, opts):
+        message = ("Sending request to %s with parameters %s",
+                   url, opts)
+        if self.log_api_calls_as_info:
+            LOG.info(*message)
+        else:
+            LOG.debug(*message)
 
     @reraise_neutron_exception
     def get_object(self, obj_type, payload=None, return_fields=None,
