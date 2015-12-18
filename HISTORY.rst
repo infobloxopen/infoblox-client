@@ -3,6 +3,13 @@
 History
 -------
 
+0.2.1 (2015-12-18)
+__________________
+* Add InfobloxMemberAlreadyAssigned exception
+* Update dns record if already exists
+* Add 'log_api_calls_as_info' option for connector
+* Check for empty values in EA
+
 0.2.0 (2015-12-17)
 ------------------
 * Deprecate network_exists method in object_manager
