@@ -34,3 +34,12 @@ class TestUtils(base.TestCase):
                '192.168.159.658')
         for ip in ips:
             self.assertEqual(False, utils.is_valid_ip(ip))
+
+    def test_safe_json_load_no_exception(self):
+        data = 'Some regular not json text'
+        self.assertEqual(None, utils.safe_json_load(data))
+
+    def test_safe_json_load(self):
+        data = '{"array":[1,2,3]}'
+        expected_data = {'array': [1, 2, 3]}
+        self.assertEqual(expected_data, utils.safe_json_load(data))

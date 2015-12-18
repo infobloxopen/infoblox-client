@@ -45,6 +45,10 @@ class InfobloxCannotCreateObject(InfobloxException):
                "%(content)s [code %(code)s]")
 
 
+class InfobloxMemberAlreadyAssigned(InfobloxCannotCreateObject):
+    pass
+
+
 class InfobloxCannotDeleteObject(InfobloxException):
     message = ("Cannot delete object with ref %(ref)s: "
                "%(content)s [code %(code)s]")

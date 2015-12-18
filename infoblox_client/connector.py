@@ -28,6 +28,7 @@ from oslo_log import log as logging
 from oslo_serialization import jsonutils
 
 from infoblox_client import exceptions as ib_ex
+from infoblox_client import utils
 
 LOG = logging.getLogger(__name__)
 CLOUD_WAPI_MAJOR_VERSION = 2
@@ -284,8 +285,14 @@ class Connector(object):
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.CREATED:
-            raise ib_ex.InfobloxCannotCreateObject(
-                response=jsonutils.loads(r.content),
+            response = utils.safe_json_load(r.content)
+            already_assigned = 'is assigned to another network view'
+            if (response and already_assigned in response.text):
+                exception = ib_ex.InfobloxMemberAlreadyAssigned
+            else:
+                exception = ib_ex.InfobloxCannotCreateObject
+            raise exception(
+                response=response,
                 obj_type=obj_type,
                 content=r.content,
                 args=payload,
