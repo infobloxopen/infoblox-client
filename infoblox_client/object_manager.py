@@ -326,14 +326,16 @@ class InfobloxObjectManager(object):
                                    view=dns_view,
                                    ip=ip,
                                    name=name,
-                                   extattrs=extattrs)
+                                   extattrs=extattrs,
+                                   update_if_exists=True)
 
         if 'record:ptr' in bind_list:
             obj.PtrRecord.create(self.connector,
                                  view=dns_view,
                                  ip=ip,
                                  ptrdname=name,
-                                 extattrs=extattrs)
+                                 extattrs=extattrs,
+                                 update_if_exists=True)
 
     def unbind_name_from_record_a(self, dns_view, ip, name, unbind_list):
         is_ipv4 = ib_utils.determine_ip_version(ip) == 4
