@@ -287,7 +287,7 @@ class Connector(object):
         if r.status_code != requests.codes.CREATED:
             response = utils.safe_json_load(r.content)
             already_assigned = 'is assigned to another network view'
-            if (response and already_assigned in response.text):
+            if response and already_assigned in response.get('text'):
                 exception = ib_ex.InfobloxMemberAlreadyAssigned
             else:
                 exception = ib_ex.InfobloxCannotCreateObject
