@@ -21,7 +21,7 @@ from infoblox_client import exceptions as ib_ex
 FEATURE_VERSIONS = {
     'create_ea_def': '2.2',
     'cloud_api': '2.0',
-    'member_ipv6_setting': '2.0',
+    'member_ipv6_setting': '2.2',
     'member_licenses': '2.0',
     'enable_member_dns': '2.2.1',
     'enable_member_dhcp': '2.2.1'}
