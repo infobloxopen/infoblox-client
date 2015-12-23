@@ -81,6 +81,22 @@ class TestInfobloxConnector(base.TestCase):
                 verify=False
             )
 
+    def test_create_object_raises_member_assigned(self):
+        nios_error = (
+            '{ "Error": "AdmConDataError: None (IBDataConflictError:'
+            'IB.Data.Conflict:Member 10.39.12.91 is assigned to another '
+            'network view \'test2\')",'
+            '"code": "Client.Ibap.Data.Conflict",'
+            '"text": "Member 10.39.12.91 is assigned to another '
+            'network view \'test2\'"}')
+        with patch.object(requests.Session, 'post',
+                          return_value=mock.Mock()) as patched_create:
+            patched_create.return_value.status_code = 400
+            patched_create.return_value.content = nios_error
+            self.assertRaises(exceptions.InfobloxMemberAlreadyAssigned,
+                              self.connector.create_object,
+                              'network', {'network': '192.178.1.0/24'})
+
     def test_get_object(self):
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
