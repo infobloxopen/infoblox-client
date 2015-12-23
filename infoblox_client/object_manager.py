@@ -346,6 +346,9 @@ class InfobloxObjectManager(object):
                                               ip=ip,
                                               name=name)
             if a_record:
+                self.delete_objects_associated_with_a_record(a_record.name,
+                                                             a_record.view,
+                                                             unbind_list)
                 a_record.delete()
 
         if 'record:ptr' in unbind_list:
@@ -392,53 +395,30 @@ class InfobloxObjectManager(object):
                                  {'restart_option': 'RESTART_IF_NEEDED',
                                   'service_option': 'ALL'})
 
-    def get_object_refs_associated_with_a_record(self, a_record_ref):
-        # record should in the format: {object_type, search_field}
-        associated_with_a_record = [
-            {'type': 'record:cname', 'search': 'canonical'},
-            {'type': 'record:txt', 'search': 'name'}
-        ]
+    def delete_objects_associated_with_a_record(self, name, view, delete_list):
+        """Deletes records associated with record:a or record:aaaa."""
+        search_objects = {}
+        if 'record:cname' in delete_list:
+            search_objects['record:cname'] = 'canonical'
+        if 'record:txt' in delete_list:
+            search_objects['record:txt'] = 'name'
 
-        ib_obj_refs = []
-        a_record = self.connector.get_object(a_record_ref)
+        if not search_objects:
+            return
 
-        for rec_inf in associated_with_a_record:
-            obj_type = rec_inf['type']
-            payload = {'view': a_record['view'],
-                       rec_inf['search']: a_record['name']}
+        for obj_type, search_type in search_objects.items():
+            payload = {'view': view,
+                       search_type: name}
             ib_objs = self.connector.get_object(obj_type, payload)
             if ib_objs:
                 for ib_obj in ib_objs:
-                    ib_obj_refs.append(ib_obj['_ref'])
-        return ib_obj_refs
-
-    def get_all_associated_objects(self, network_view, ip):
-        ip_objects = obj.IPAddress.search(self.connector,
-                                          network_view=network_view,
-                                          ip_address=ip)
-        if ip_objects:
-            return ip_objects.objects
-        return []
-
-    @staticmethod
-    def _get_object_type_from_ref(ref):
-        return ref.split('/', 1)[0]
+                    self.delete_object_by_ref(ib_obj['_ref'])
 
     def delete_all_associated_objects(self, network_view, ip, delete_list):
-        del_ib_objs = []
-        ib_obj_refs = self.get_all_associated_objects(network_view, ip)
-
-        for ib_obj_ref in ib_obj_refs:
-            del_ib_objs.append(ib_obj_ref)
-            obj_type = self._get_object_type_from_ref(ib_obj_ref)
-            if obj_type in ['record:a', 'record:aaaa']:
-                del_ib_objs.extend(
-                    self.get_object_refs_associated_with_a_record(ib_obj_ref))
-
-        for ib_obj_ref in del_ib_objs:
-            obj_type = self._get_object_type_from_ref(ib_obj_ref)
-            if obj_type in delete_list:
-                self.connector.delete_object(ib_obj_ref)
+        LOG.warning(
+            "DEPRECATION WARNING! Using delete_all_associated_objects() "
+            "is deprecated and to be removed in next releases. "
+            "Use unbind_name_from_record_a() instead.")
 
     def delete_object_by_ref(self, ref):
         try:
