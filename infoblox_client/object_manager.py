@@ -255,20 +255,15 @@ class InfobloxObjectManager(object):
                         grid_primary=None, grid_secondaries=None,
                         zone_format=None, ns_group=None, prefix=None,
                         extattrs=None):
-        try:
-            return obj.DNSZone.create(self.connector,
-                                      fqdn=dns_zone,
-                                      view=dns_view,
-                                      extattrs=extattrs,
-                                      zone_format=zone_format,
-                                      ns_group=ns_group,
-                                      prefix=prefix,
-                                      grid_primary=grid_primary,
-                                      grid_secondaries=grid_secondaries)
-        except ib_ex.InfobloxCannotCreateObject:
-            LOG.warning('Unable to create DNS zone %(dns_zone_fqdn)s '
-                        'for %(dns_view)s',
-                        {'dns_zone_fqdn': dns_zone, 'dns_view': dns_view})
+        return obj.DNSZone.create(self.connector,
+                                  fqdn=dns_zone,
+                                  view=dns_view,
+                                  extattrs=extattrs,
+                                  zone_format=zone_format,
+                                  ns_group=ns_group,
+                                  prefix=prefix,
+                                  grid_primary=grid_primary,
+                                  grid_secondaries=grid_secondaries)
 
     def delete_dns_zone(self, dns_view, dns_zone_fqdn):
         dns_zone = obj.DNSZone.search(self.connector,
