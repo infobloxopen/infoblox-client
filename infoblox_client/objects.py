@@ -214,7 +214,11 @@ class InfobloxObject(BaseObject):
         self.connector = connector
         super(InfobloxObject, self).__init__(**kwargs)
 
-    def update_from_dict(self, ip_dict):
+    def update_from_dict(self, ip_dict, only_ref=False):
+        if only_ref:
+            self._ref = ip_dict['_ref']
+            return
+
         mapped_args = self._remap_fields(ip_dict)
         for field in self._fields + self._shadow_fields:
             if field in ip_dict:
@@ -279,7 +283,7 @@ class InfobloxObject(BaseObject):
                update_if_exists=False, **kwargs):
         local_obj = cls(connector, **kwargs)
         if check_if_exists:
-            if local_obj.fetch():
+            if local_obj.fetch(only_ref=True):
                 LOG.info(("Infoblox %(obj_type)s already exists: "
                           "%(ib_obj)s"),
                          {'obj_type': local_obj.infoblox_type,
@@ -337,7 +341,7 @@ class InfobloxObject(BaseObject):
                     for obj in ib_objects]
         return []
 
-    def fetch(self):
+    def fetch(self, only_ref=False):
         """Fetch object from NIOS by _ref or searchfields
 
         Update existent object with fields returned from NIOS
@@ -351,11 +355,12 @@ class InfobloxObject(BaseObject):
                 return True
 
         search_dict = self.to_dict(search_fields='only')
+        return_fields = [] if only_ref else self.return_fields
         reply = self.connector.get_object(self.infoblox_type,
                                           search_dict,
-                                          return_fields=self.return_fields)
+                                          return_fields=return_fields)
         if reply:
-            self.update_from_dict(reply[0])
+            self.update_from_dict(reply[0], only_ref=True)
             return True
         return False
 

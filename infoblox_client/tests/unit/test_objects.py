@@ -316,3 +316,34 @@ class TestObjects(base.TestCase):
         ea.set(ea_name, id)
         self.assertEqual(id, ea.get(ea_name))
         self.assertEqual(generated_eas, ea.to_dict())
+
+    def test_update_from_dict(self):
+        net = objects.Network(mock.Mock(), network='192.168.1.0/24')
+        self.assertEqual(None, net._ref)
+
+        reply = {'_ref': 'network/asdwdqwecaszxcrqqwe',
+                 'network': '192.168.100.0/24',
+                 'network_view': 'default'}
+        net.update_from_dict(reply, only_ref=True)
+        self.assertEqual(reply['_ref'], net._ref)
+        self.assertEqual('192.168.1.0/24', net.network)
+        self.assertEqual(None, net.network_view)
+
+    def test_update_fields_on_create(self):
+        a_record = [{'_ref': 'record:a/Awsdrefsasdwqoijvoriibtrni',
+                     'ip': '192.168.1.52',
+                     'name': 'other_name'}]
+        connector = self._mock_connector(get_object=a_record)
+        objects.ARecordBase.create(connector,
+                                   ip='192.168.1.52',
+                                   name='some-new_name',
+                                   view='view',
+                                   update_if_exists=True)
+        connector.get_object.assert_called_once_with(
+            'record:a',
+            {'view': 'view', 'ipv4addr': '192.168.1.52'},
+            return_fields=[])
+        connector.update_object.assert_called_once_with(
+            a_record[0]['_ref'],
+            {'name': 'some-new_name'},
+            mock.ANY)
