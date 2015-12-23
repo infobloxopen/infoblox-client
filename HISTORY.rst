@@ -3,6 +3,14 @@
 History
 -------
 
+0.2.2 (2015-12-23)
+__________________
+* Fix updating object from create method
+* Rework delete_all_associated_objects logic
+* Fix error handling in create_object
+* Do not catch exception on create_dns_zone level
+* Update feature version for member_ipv6_setting
+
 0.2.1 (2015-12-18)
 __________________
 * Add InfobloxMemberAlreadyAssigned exception
