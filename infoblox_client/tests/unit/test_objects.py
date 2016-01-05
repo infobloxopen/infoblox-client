@@ -347,3 +347,10 @@ class TestObjects(base.TestCase):
             a_record[0]['_ref'],
             {'name': 'some-new_name'},
             mock.ANY)
+
+    def test_ip_version(self):
+        conn = mock.Mock()
+        net_v4 = objects.Network(conn, network='192.168.1.0/24')
+        self.assertEqual(4, net_v4.ip_version)
+        net_v6 = objects.Network(conn, network='fffe::/64')
+        self.assertEqual(6, net_v6.ip_version)
