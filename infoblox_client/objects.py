@@ -386,6 +386,10 @@ class InfobloxObject(BaseObject):
     def return_fields(self):
         return self._return_fields
 
+    @property
+    def ip_version(self):
+        return self._ip_version
+
     @classmethod
     def get_class_from_args(cls, kwargs):
         # skip processing if cls already versioned class
