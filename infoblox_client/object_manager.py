@@ -106,12 +106,9 @@ class InfobloxObjectManager(object):
             range.delete()
 
     def has_networks(self, network_view_name):
-        try:
-            networks = obj.Network.search_all(self.connector,
-                                              network_view=network_view_name)
-            return bool(networks)
-        except ib_ex.InfobloxSearchError:
-            return False
+        networks = obj.Network.search_all(self.connector,
+                                          network_view=network_view_name)
+        return bool(networks)
 
     def network_exists(self, network_view, cidr):
         """Deprecated, use get_network() instead."""
@@ -245,11 +242,8 @@ class InfobloxObjectManager(object):
         return host_record.update()
 
     def has_dns_zones(self, dns_view):
-        try:
-            zones = obj.DNSZone.search_all(self.connector, view=dns_view)
-            return bool(zones)
-        except ib_ex.InfobloxSearchError:
-            return False
+        zones = obj.DNSZone.search_all(self.connector, view=dns_view)
+        return bool(zones)
 
     def create_dns_zone(self, dns_view, dns_zone,
                         grid_primary=None, grid_secondaries=None,
@@ -359,11 +353,7 @@ class InfobloxObjectManager(object):
         return member
 
     def get_all_ea_definitions(self):
-        try:
-            ea_defs = obj.EADefinition.search_all(self.connector)
-            return ea_defs
-        except ib_ex.InfobloxSearchError:
-            return None
+        return obj.EADefinition.search_all(self.connector)
 
     def create_ea_definition(self, ea_def):
         try:

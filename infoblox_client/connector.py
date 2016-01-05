@@ -251,12 +251,8 @@ class Connector(object):
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.ok:
-            raise ib_ex.InfobloxSearchError(
-                response=jsonutils.loads(r.content),
-                obj_type=obj_type,
-                content=r.content,
-                code=r.status_code)
-
+            LOG.debug("Error occured on object search: %s", r.content)
+            return None
         return self._parse_reply(r)
 
     @reraise_neutron_exception

@@ -213,6 +213,16 @@ class TestInfobloxConnector(base.TestCase):
                            mock.call('network', {}, None, force_proxy=True)]
         self.connector._construct_url.assert_has_calls(construct_calls)
 
+    def test__get_object_search_error_return_none(self):
+        response = mock.Mock()
+        response.status_code = '404'
+        response.content = 'Object not found'
+        self.connector.session = mock.Mock()
+        self.connector.session.get.return_value = response
+
+        url = 'http://some-url/'
+        self.assertEqual(None, self.connector._get_object('network', url))
+
 
 class TestInfobloxConnectorStaticMethods(base.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
