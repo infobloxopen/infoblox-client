@@ -3,6 +3,11 @@
 History
 -------
 
+0.2.3 (2016-01-06)
+__________________
+* Return None if search failed instead of exception
+* Add ip_version as a public property for objects
+
 0.2.2 (2015-12-23)
 __________________
 * Fix updating object from create method
