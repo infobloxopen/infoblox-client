@@ -14,15 +14,12 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
-requirements = [
-    'requests>=2.5.2',
-    'oslo.serialization>=1.4.0',
-    'oslo.log>=1.8.0',
-]
+with open('requirements.txt') as requirements_file:
+    requirements = requirements_file.read().splitlines()
 
-test_requirements = [
-    'mock>=1.2'
-]
+with open('testing_requirements.txt') as requirements_file:
+    testing_requirements = requirements_file.read().splitlines()
+
 
 setup(
     name='infoblox-client',
@@ -53,5 +50,5 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
     test_suite='infoblox_client.tests',
-    tests_require=test_requirements
+    tests_require=testing_requirements
 )
