@@ -12,13 +12,13 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+import unittest
 
 from infoblox_client import utils
 
-from infoblox_client.tests import base
 
 
-class TestUtils(base.TestCase):
+class TestUtils(unittest.TestCase):
 
     def test_is_valid_ip(self):
         ips = ('192.168.0.1',

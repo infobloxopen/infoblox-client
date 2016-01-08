@@ -12,10 +12,10 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
+import unittest
 import mock
-from mock import patch
 import requests
+from mock import patch
 from requests import exceptions as req_exc
 
 from oslo_serialization import jsonutils
@@ -23,10 +23,9 @@ from oslo_serialization import jsonutils
 from infoblox_client import connector
 from infoblox_client import exceptions
 
-from infoblox_client.tests import base
 
 
-class TestInfobloxConnector(base.TestCase):
+class TestInfobloxConnector(unittest.TestCase):
     def setUp(self):
         super(TestInfobloxConnector, self).setUp()
 
@@ -224,7 +223,7 @@ class TestInfobloxConnector(base.TestCase):
         self.assertEqual(None, self.connector._get_object('network', url))
 
 
-class TestInfobloxConnectorStaticMethods(base.TestCase):
+class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
         # timeout exception raises InfobloxTimeoutError
         f = mock.Mock()

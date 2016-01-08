@@ -12,14 +12,13 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
+import unittest
 import mock
 
 from infoblox_client import feature
-from infoblox_client.tests import base
 
 
-class TestFeature(base.TestCase):
+class TestFeature(unittest.TestCase):
 
     def test_wapi_version_util(self):
         wapi1 = feature.WapiVersionUtil('2.3')
