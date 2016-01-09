@@ -344,4 +344,4 @@ def safe_json_load(data):
     try:
         return jsonutils.loads(data)
     except ValueError:
-        LOG.warn("Could not decode reply into json:", data)
+        LOG.warn("Could not decode reply into json: %s", data)
