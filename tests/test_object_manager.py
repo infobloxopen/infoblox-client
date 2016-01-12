@@ -13,13 +13,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import unittest
 import mock
 import six
 
 from infoblox_client import exceptions
 from infoblox_client import object_manager as om
 from infoblox_client import objects
-from infoblox_client.tests import base
 
 
 class PayloadMatcher(object):
@@ -63,7 +63,7 @@ class PayloadMatcher(object):
         return found
 
 
-class ObjectManagerTestCase(base.TestCase):
+class ObjectManagerTestCase(unittest.TestCase):
     EXT_ATTRS = {'Tenant ID': {'value': '40501209848593'}}
 
     def test_create_net_view_creates_network_view_object(self):

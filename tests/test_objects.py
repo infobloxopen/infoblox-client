@@ -13,11 +13,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import unittest
 import copy
 import mock
 
 from infoblox_client import objects
-from infoblox_client.tests import base
 
 DEFAULT_HOST_RECORD = {
     '_ref': 'record:host/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYWwuY22NA'
@@ -40,7 +40,7 @@ DEFAULT_HOST_RECORD = {
 }
 
 
-class TestObjects(base.TestCase):
+class TestObjects(unittest.TestCase):
 
     def _mock_connector(self, get_object=None, create_object=None,
                         delete_object=None):
