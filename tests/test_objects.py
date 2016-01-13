@@ -317,6 +317,16 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(id, ea.get(ea_name))
         self.assertEqual(generated_eas, ea.to_dict())
 
+    def test_ea_returns_ea_dict(self):
+        ea_dict = {'Subnet ID': 'some-id'}
+        ea = objects.EA(ea_dict)
+        ea_dict_from_EA_object = ea.ea_dict
+        self.assertEqual(ea_dict, ea_dict_from_EA_object)
+        # Make sure a copy of dict is returned,
+        # and updating returned value do not affect EA object
+        ea_dict_from_EA_object['Subnet ID'] = 'another-id'
+        self.assertEqual('some-id', ea.get('Subnet ID'))
+
     def test_update_from_dict(self):
         net = objects.Network(mock.Mock(), network='192.168.1.0/24')
         self.assertEqual(None, net._ref)

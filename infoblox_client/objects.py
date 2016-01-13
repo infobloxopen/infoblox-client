@@ -132,6 +132,11 @@ class EA(object):
                    for name in self._ea_dict)
         return "EAs:{0}".format(','.join(eas))
 
+    @property
+    def ea_dict(self):
+        """Returns dict with EAs in {ea_name: ea_value} format."""
+        return self._ea_dict.copy()
+
     @staticmethod
     def _value_to_bool(value):
         """Converts value returned by NIOS into boolean if possible."""

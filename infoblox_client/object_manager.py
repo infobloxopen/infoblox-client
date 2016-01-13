@@ -139,7 +139,14 @@ class InfobloxObjectManager(object):
 
     def update_network_options(self, ib_network, extattrs=None):
         if extattrs:
-            ib_network.extattrs = extattrs
+            if ib_network.extattrs:
+                # Merge EA values as dicts
+                ea_dict = ib_network.extattrs.ea_dict
+                ea_dict.update(extattrs.ea_dict)
+                merged_ea = obj.EA(ea_dict)
+                ib_network.extattrs = merged_ea
+            else:
+                ib_network.extattrs = extattrs
         return ib_network.update()
 
     def get_host_record(self, dns_view, ip):
