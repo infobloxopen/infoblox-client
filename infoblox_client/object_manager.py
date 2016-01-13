@@ -62,7 +62,7 @@ class InfobloxObjectManager(object):
         ipv4 = ib_utils.determine_ip_version(cidr) == 4
 
         options = []
-        if ipv4 and nameservers:
+        if nameservers:
             options.append(obj.DhcpOption(name='domain-name-servers',
                                           value=",".join(nameservers)))
         if ipv4 and gateway_ip:
