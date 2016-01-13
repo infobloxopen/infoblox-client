@@ -234,20 +234,36 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.update_object.assert_called_once_with(ref, {'options': opts},
                                                         mock.ANY)
 
-    def test_update_network_updates_eas_if_not_null(self):
+    def _update_network_updates_eas(self, origina_ea, new_ea, merged_ea):
         ref = 'infoblox_object_id'
         opts = 'infoblox_options'
-        eas = 'some-eas'
-
         connector = mock.Mock()
         ib_network = objects.Network(connector,
-                                     _ref=ref, options=opts)
+                                     _ref=ref,
+                                     options=opts,
+                                     extattrs=origina_ea)
         ibom = om.InfobloxObjectManager(connector)
-        ibom.update_network_options(ib_network, eas)
+        ibom.update_network_options(ib_network, new_ea)
 
-        connector.update_object.assert_called_once_with(ref, {'options': opts,
-                                                              'extattrs': eas},
-                                                        mock.ANY)
+        connector.update_object.assert_called_once_with(
+            ref,
+            {'options': opts,
+             'extattrs': merged_ea},
+            mock.ANY)
+
+    def test_update_network_merges_eas(self):
+        original_ea = objects.EA({'User EA': 'user value',
+                                 'Subnet ID': 'one'})
+        new_ea = objects.EA({'Subnet ID': 'two'})
+        merged_ea = objects.EA({'User EA': 'user value',
+                                'Subnet ID': 'two'}).to_dict()
+        self._update_network_updates_eas(original_ea, new_ea, merged_ea)
+
+    def test_update_network_updates_eas(self):
+        original_ea = None
+        new_ea = objects.EA({'Subnet ID': 'two'})
+        merged_ea = new_ea.to_dict()
+        self._update_network_updates_eas(original_ea, new_ea, merged_ea)
 
     def test_create_ip_range_creates_range_object(self):
         net_view = 'net-view-name'
