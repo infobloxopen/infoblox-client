@@ -732,8 +732,8 @@ class FixedAddress(InfobloxObject):
 
 class FixedAddressV4(FixedAddress):
     _infoblox_type = 'fixedaddress'
-    _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs']
-    _search_fields = ['ipv4addr', 'mac', 'network_view']
+    _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'network']
+    _search_fields = ['ipv4addr', 'mac', 'network_view', 'network']
     _shadow_fields = ['_ref', 'ip']
     _return_fields = ['ipv4addr', 'mac', 'network_view', 'extattrs']
     _remap = {'ipv4addr': 'ip'}
@@ -743,8 +743,8 @@ class FixedAddressV4(FixedAddress):
 class FixedAddressV6(FixedAddress):
     """FixedAddress for IPv6"""
     _infoblox_type = 'ipv6fixedaddress'
-    _fields = ['ipv6addr', 'duid', 'network_view', 'extattrs']
-    _search_fields = ['ipv6addr', 'duid', 'network_view']
+    _fields = ['ipv6addr', 'duid', 'network_view', 'extattrs', 'network']
+    _search_fields = ['ipv6addr', 'duid', 'network_view', 'network']
     _return_fields = ['ipv6addr', 'duid', 'network_view', 'extattrs']
     _shadow_fields = ['_ref', 'mac', 'ip']
     _remap = {'ipv6addr': 'ip'}
