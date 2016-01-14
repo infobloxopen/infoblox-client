@@ -525,8 +525,8 @@ class HostRecord(InfobloxObject):
 
 class HostRecordV4(HostRecord):
     """HostRecord for IPv4"""
-    _fields = ['ipv4addrs', 'view', 'extattrs', 'name']
-    _search_fields = ['view', 'ipv4addr', 'name']
+    _fields = ['ipv4addrs', 'view', 'extattrs', 'name', 'zone']
+    _search_fields = ['view', 'ipv4addr', 'name', 'zone']
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv4addr']
     _return_fields = ['ipv4addrs', 'extattrs']
@@ -557,8 +557,8 @@ class HostRecordV4(HostRecord):
 
 class HostRecordV6(HostRecord):
     """HostRecord for IPv6"""
-    _fields = ['ipv6addrs', 'view', 'extattrs',  'name']
-    _search_fields = ['ipv6addr', 'view', 'name']
+    _fields = ['ipv6addrs', 'view', 'extattrs',  'name', 'zone']
+    _search_fields = ['ipv6addr', 'view', 'name', 'zone']
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv6addr']
     _return_fields = ['ipv6addrs', 'extattrs']
