@@ -3,6 +3,16 @@
 History
 -------
 
+
+0.3.0 (2016-01-14)
+------------------
+* Update development status from Pre-Alpha to Alpha
+* Feature/tox testing (huge changes in testing env)
+* Add 'network' to search fields of FixedAddress
+* Allow domain-name-servers for ipv6
+* Update existent EA for network instead of replace
+
+
 0.2.3 (2016-01-06)
 __________________
 * Return None if search failed instead of exception
