@@ -151,8 +151,9 @@ class EA(object):
         """Converts extensible attributes from the NIOS reply."""
         if not eas_from_nios:
             return
-        return cls({name: cls._value_to_bool(eas_from_nios[name]['value'])
-                    for name in eas_from_nios})
+        return cls(
+            {name: ib_utils.try_value_to_bool(eas_from_nios[name]['value'])
+             for name in eas_from_nios})
 
     def to_dict(self):
         """Converts extensible attributes into the format suitable for NIOS."""

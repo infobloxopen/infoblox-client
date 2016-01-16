@@ -43,3 +43,35 @@ class TestUtils(unittest.TestCase):
         data = '{"array":[1,2,3]}'
         expected_data = {'array': [1, 2, 3]}
         self.assertEqual(expected_data, utils.safe_json_load(data))
+
+    def test_try_value_to_bool(self):
+        test_data = ((True, True),
+                     (False, False),
+                     (str(True), True),
+                     (str(False), False),
+                     ('True', True),
+                     ('False', False),
+                     ('TRUE', 'TRUE'),
+                     ('FALSE', 'FALSE'),
+                     ('/path/to/file', '/path/to/file'))
+        for value, result in test_data:
+            self.assertEqual(result, utils.try_value_to_bool(value))
+
+    def test_try_value_to_bool_not_strict(self):
+        true_values = (True, 'True', 'true', 'TRUE', 'tRUE',
+                       'On', 'ON', 'on', 'oN',
+                       'Yes', 'YES', 'yes')
+        for v in true_values:
+            self.assertEqual(True,
+                             utils.try_value_to_bool(v, strict_mode=False))
+
+        false_values = (False, 'False', 'false', 'FALSE', 'fALSE',
+                        'Off', 'OFF', 'off',
+                        'No', 'NO', 'no')
+        for v in false_values:
+            self.assertEqual(False,
+                             utils.try_value_to_bool(v, strict_mode=False))
+
+        unchanged_values = ('/path/to/file', 'YES!', '/tmp/certificate')
+        for v in unchanged_values:
+            self.assertEqual(v, utils.try_value_to_bool(v, strict_mode=False))

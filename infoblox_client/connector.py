@@ -110,7 +110,8 @@ class Connector(object):
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
         self.session.auth = (self.username, self.password)
-        self.session.verify = self.ssl_verify
+        self.session.verify = utils.try_value_to_bool(self.ssl_verify,
+                                                      strict_mode=False)
 
         if self.silent_ssl_warnings:
             requests.packages.urllib3.disable_warnings()
