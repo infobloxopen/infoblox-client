@@ -10,4 +10,6 @@ Development Lead
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Robert Grant <rhgrant10@gmail.com>
+
+More are always welcome!
