@@ -81,3 +81,35 @@ def safe_json_load(data):
         return jsonutils.loads(data)
     except ValueError:
         LOG.warn("Could not decode reply into json: %s", data)
+
+
+def try_value_to_bool(value, strict_mode=True):
+    """Tries to convert value into boolean.
+
+    strict_mode is True:
+    - Only string representation of str(True) and str(False)
+      are converted into booleans;
+    - Otherwise unchanged incoming value is returned;
+
+    strict_mode is False:
+    - Anything that looks like True or False is converted into booleans.
+    Values accepted as True:
+    - 'true', 'on', 'yes' (case independent)
+    Values accepted as False:
+    - 'false', 'off', 'no' (case independent)
+    - all other values are returned unchanged
+    """
+    if strict_mode:
+        true_list = ('True',)
+        false_list = ('False',)
+        val = value
+    else:
+        true_list = ('true', 'on', 'yes')
+        false_list = ('false', 'off', 'no')
+        val = str(value).lower()
+
+    if val in true_list:
+        return True
+    elif val in false_list:
+        return False
+    return value
