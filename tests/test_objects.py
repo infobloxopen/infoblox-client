@@ -59,7 +59,8 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'network',
             {'network_view': 'some-view', 'network': '192.68.1.0/20'},
-            extattrs=None, force_proxy=False, return_fields=mock.ANY)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY,
+            max_results=None)
 
     def test_search_network_v6(self):
         connector = self._mock_connector()
@@ -70,7 +71,8 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'ipv6network',
             {'network_view': 'some-view', 'network': 'fffe:2312::/64'},
-            extattrs=None, force_proxy=False, return_fields=mock.ANY)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY,
+            max_results=None)
 
     def test_search_network_v6_using_network_field(self):
         connector = self._mock_connector()
@@ -81,7 +83,8 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'ipv6network',
             {'network_view': 'some-view', 'network': 'fffe:2312::/64'},
-            extattrs=None, force_proxy=False, return_fields=mock.ANY)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY,
+            max_results=None)
 
     def test_search_network_with_results(self):
         found = {"_ref": "network/ZG5zLm5ldHdvcmskMTAuMzkuMTEuMC8yNC8w"
@@ -96,7 +99,8 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'network',
             {'network_view': 'some-view', 'network': '192.68.1.0/20'},
-            extattrs=None, force_proxy=False, return_fields=mock.ANY)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY,
+            max_results=None)
         self.assertEqual('192.68.1.0/20', network.network)
         self.assertEqual('some-view', network.network_view)
         # verify aliased fields works too
@@ -169,7 +173,8 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'record:host',
             {'view': 'some-dns-view', 'ipv4addr': '192.168.15.20'},
-            extattrs=None, force_proxy=False, return_fields=mock.ANY)
+            extattrs=None, force_proxy=False, return_fields=mock.ANY,
+            max_results=None)
 
         # Validate extattrs in host_record are converted to EA object
         self.assertIsInstance(host_record.extattrs, objects.EA)
@@ -252,7 +257,7 @@ class TestObjects(unittest.TestCase):
         payload = {'network_view': 'some_view', 'ip_address': '192.168.1.5'}
         connector.get_object.assert_called_once_with(
             'ipv4address', payload, return_fields=mock.ANY,
-            extattrs=None, force_proxy=mock.ANY)
+            extattrs=None, force_proxy=mock.ANY, max_results=None)
         self.assertIsInstance(ip, objects.IPv4Address)
         self.assertEqual(ip_mock[0]['objects'], ip.objects)
 

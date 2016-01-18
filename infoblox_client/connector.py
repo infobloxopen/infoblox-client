@@ -158,7 +158,8 @@ class Connector(object):
             raise ib_ex.InfobloxBadWAPICredential(response='')
 
     @staticmethod
-    def _build_query_params(payload=None, return_fields=None):
+    def _build_query_params(payload=None, return_fields=None,
+                            max_results=None):
         if payload:
             query_params = payload
         else:
@@ -166,6 +167,8 @@ class Connector(object):
 
         if return_fields:
             query_params['_return_fields'] = ','.join(return_fields)
+        if max_results:
+            query_params['_max_results'] = max_results
         return query_params
 
     def _get_request_options(self, data=None):
@@ -196,7 +199,7 @@ class Connector(object):
 
     @reraise_neutron_exception
     def get_object(self, obj_type, payload=None, return_fields=None,
-                   extattrs=None, force_proxy=False):
+                   extattrs=None, force_proxy=False, max_results=None):
         """Retrieve a list of Infoblox objects of type 'obj_type'
 
         Some get requests like 'ipv4address' should be always
@@ -214,6 +217,11 @@ class Connector(object):
             extattrs      (list): List of Extensible Attributes
             force_proxy   (bool): Set _proxy_search flag
                                   to process requests on GM
+            max_results   (int): Maximum number of objects to be returned.
+                If set to a negative number the appliance will return an error
+                when the number of returned objects would exceed the setting.
+                The default is -1000. If this is set to a positive number,
+                the results will be truncated when necessary.
         Returns:
             A list of the Infoblox objects requested
         Raises:
@@ -222,7 +230,8 @@ class Connector(object):
         self._validate_obj_type_or_die(obj_type, obj_type_expected=False)
 
         query_params = self._build_query_params(payload=payload,
-                                                return_fields=return_fields)
+                                                return_fields=return_fields,
+                                                max_results=max_results)
 
         # Clear proxy flag if wapi version is too old (non-cloud)
         proxy_flag = self.cloud_api_enabled and force_proxy

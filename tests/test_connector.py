@@ -126,6 +126,20 @@ class TestInfobloxConnector(unittest.TestCase):
                 timeout=self.default_opts.http_request_timeout,
             )
 
+    def test_get_objects_with_max_results(self):
+        objtype = 'network'
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            patched_get.return_value.status_code = 200
+            patched_get.return_value.content = '{}'
+            self.connector.get_object(objtype, {}, max_results=20)
+            patched_get.assert_called_once_with(
+                'https://infoblox.example.org/wapi/'
+                'v1.1/network?_max_results=20',
+                headers=self.connector.DEFAULT_HEADER,
+                timeout=self.default_opts.http_request_timeout,
+            )
+
     def test_update_object(self):
         ref = 'network'
         payload = {'ip': '0.0.0.0'}
