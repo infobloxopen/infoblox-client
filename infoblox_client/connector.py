@@ -55,6 +55,7 @@ class Connector(object):
 
     DEFAULT_HEADER = {'Content-type': 'application/json'}
     DEFAULT_OPTIONS = {'ssl_verify': False,
+                       'certificate_path': None,
                        'silent_ssl_warnings': False,
                        'http_request_timeout': 10,
                        'http_pool_connections': 10,
@@ -80,7 +81,8 @@ class Connector(object):
         attributes = ('host', 'wapi_version', 'username', 'password',
                       'ssl_verify', 'http_request_timeout',
                       'http_pool_connections', 'http_pool_maxsize',
-                      'silent_ssl_warnings', 'log_api_calls_as_info')
+                      'silent_ssl_warnings', 'log_api_calls_as_info',
+                      'certificate_path')
         for attr in attributes:
             if isinstance(options, dict) and attr in options:
                 setattr(self, attr, options[attr])
@@ -110,7 +112,7 @@ class Connector(object):
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
         self.session.auth = (self.username, self.password)
-        self.session.verify = self.ssl_verify
+        self.session.verify = self.certificate_path or self.ssl_verify
 
         if self.silent_ssl_warnings:
             requests.packages.urllib3.disable_warnings()
@@ -168,7 +170,8 @@ class Connector(object):
         return query_params
 
     def _get_request_options(self, data=None):
-        opts = dict(verify=self.ssl_verify,
+        verify = self.certificate_path or self.ssl_verify
+        opts = dict(verify=verify,
                     timeout=self.http_request_timeout,
                     headers=self.DEFAULT_HEADER)
         if data:
