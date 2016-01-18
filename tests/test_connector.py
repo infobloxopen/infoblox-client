@@ -40,11 +40,34 @@ class TestInfobloxConnector(unittest.TestCase):
         opts.username = 'admin'
         opts.password = 'password'
         opts.ssl_verify = False
+        opts.certificate_path = None
         opts.silent_ssl_warnings = True
         opts.http_pool_connections = 10
         opts.http_pool_maxsize = 10
         opts.http_request_timeout = 10
         return opts
+
+    def test_certificate_path(self):
+        objtype = 'network'
+        payload = {'ip': '0.0.0.0'}
+        certificate_path = '/path/to/certificate'
+
+        with patch.object(requests.Session, 'post',
+                          return_value=mock.Mock()) as patched_create:
+            patched_create.return_value.status_code = 201
+            patched_create.return_value.content = '{}'
+
+            opts_mock = self._prepare_options()
+            opts_mock.certificate_path = certificate_path
+            conn = connector.Connector(opts_mock)
+            conn.create_object(objtype, payload)
+            patched_create.assert_called_once_with(
+                'https://infoblox.example.org/wapi/v1.1/network',
+                data=jsonutils.dumps(payload),
+                headers=self.connector.DEFAULT_HEADER,
+                timeout=self.default_opts.http_request_timeout,
+                verify=certificate_path
+            )
 
     def test_create_object(self):
         objtype = 'network'
@@ -308,6 +331,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
                     password='password')
         conn = connector.Connector(opts)
         self.assertEqual(False, conn.ssl_verify)
+        self.assertEqual(None, conn.certificate_path)
         self.assertEqual(False, conn.silent_ssl_warnings)
         self.assertEqual(10, conn.http_request_timeout)
         self.assertEqual(10, conn.http_pool_connections)
