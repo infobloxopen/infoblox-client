@@ -13,11 +13,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import datetime
-import decimal
 import netaddr
 import random
-import re
 import six
 
 from oslo_log import log as logging

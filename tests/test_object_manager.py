@@ -766,8 +766,9 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.get_object.return_value = existing_ea_defs
 
         ibom = om.InfobloxObjectManager(connector)
-        ibom.create_required_ea_definitions(required_ea_defs)
+        created = ibom.create_required_ea_definitions(required_ea_defs)
 
+        self.assertEqual(created, additional_ea_defs)
         connector.create_object.assert_called_once_with(
             'extensibleattributedef',
             additional_ea_defs[0],
