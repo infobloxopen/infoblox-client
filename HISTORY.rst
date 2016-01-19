@@ -3,8 +3,14 @@
 History
 -------
 
+0.3.2 (2016-01-19)
+__________________
+* Convert strings into booleans for ssl_verify
+* Update AUTHORS.rst, add contributors
+* Remove unused methods from utils.py
+
 0.3.1 (2016-01-14)
-_________________
+__________________
 * Add 'zone' to search fields of Host Record
 
 
