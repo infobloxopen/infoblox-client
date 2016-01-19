@@ -379,6 +379,7 @@ class InfobloxObjectManager(object):
 
         for ea_def in missing_ea_defs:
             self.create_ea_definition(ea_def)
+        return missing_ea_defs
 
     def restart_all_services(self, member):
         if not member._ref:
