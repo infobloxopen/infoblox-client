@@ -402,7 +402,8 @@ class InfobloxObject(BaseObject):
         if cls._ip_version:
             return cls
 
-        for field in ['ip', 'cidr', 'start_ip', 'ip_address', 'network']:
+        for field in ['ip', 'cidr', 'start_ip', 'ip_address', 'network',
+                      'start_addr', 'end_addr']:
             if field in kwargs:
                 if ib_utils.determine_ip_version(kwargs[field]) == 6:
                     return cls.get_v6_class()
