@@ -373,12 +373,16 @@ class InfobloxObjectManager(object):
 
     def create_required_ea_definitions(self, required_ea_defs):
         existing_ea_defs = self.get_all_ea_definitions()
-        missing_ea_defs = filter(lambda x: not next(
-            (y for y in existing_ea_defs if x['name'] == y.name), None),
-            required_ea_defs)
+        missing_ea_defs = []
+        for req_def in required_ea_defs:
+            if not [ea_def for ea_def in existing_ea_defs
+                    if ea_def.name == req_def['name']]:
+                missing_ea_defs.append(req_def)
 
         for ea_def in missing_ea_defs:
             self.create_ea_definition(ea_def)
+
+        return missing_ea_defs
 
     def restart_all_services(self, member):
         if not member._ref:
