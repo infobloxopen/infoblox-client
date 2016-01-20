@@ -3,6 +3,13 @@
 History
 -------
 
+0.3.3 (2016-01-20)
+__________________
+* create_required_ea_definitions return created list
+* Add 'start_addr', 'end_addr' to ip detection list
+* Add request type to connector logger
+* Flake8 fixes
+
 0.3.2 (2016-01-19)
 __________________
 * Convert strings into booleans for ssl_verify
