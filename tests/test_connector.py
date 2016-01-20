@@ -24,7 +24,6 @@ from infoblox_client import connector
 from infoblox_client import exceptions
 
 
-
 class TestInfobloxConnector(unittest.TestCase):
     def setUp(self):
         super(TestInfobloxConnector, self).setUp()

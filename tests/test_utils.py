@@ -17,7 +17,6 @@ import unittest
 from infoblox_client import utils
 
 
-
 class TestUtils(unittest.TestCase):
 
     def test_is_valid_ip(self):
