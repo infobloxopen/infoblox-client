@@ -187,9 +187,9 @@ class Connector(object):
         except ValueError:
             raise ib_ex.InfobloxConnectionError(reason=request.content)
 
-    def _log_request(self, url, opts):
-        message = ("Sending request to %s with parameters %s",
-                   url, opts)
+    def _log_request(self, type, url, opts):
+        message = ("Sending %s request to %s with parameters %s",
+                   type, url, opts)
         if self.log_api_calls_as_info:
             LOG.info(*message)
         else:
@@ -246,7 +246,7 @@ class Connector(object):
 
     def _get_object(self, obj_type, url):
         opts = self._get_request_options()
-        self._log_request(url, opts)
+        self._log_request('get', url, opts)
         r = self.session.get(url, **opts)
 
         self._validate_authorized(r)
@@ -276,7 +276,7 @@ class Connector(object):
 
         url = self._construct_url(obj_type, query_params)
         opts = self._get_request_options(data=payload)
-        self._log_request(url, opts)
+        self._log_request('post', url, opts)
         r = self.session.post(url, **opts)
 
         self._validate_authorized(r)
@@ -304,7 +304,7 @@ class Connector(object):
 
         url = self._construct_url(ref, query_params)
         opts = self._get_request_options(data=payload)
-        self._log_request(url, opts)
+        self._log_request('post', url, opts)
         r = self.session.post(url, **opts)
 
         self._validate_authorized(r)
@@ -336,7 +336,7 @@ class Connector(object):
 
         opts = self._get_request_options(data=payload)
         url = self._construct_url(ref, query_params)
-        self._log_request(url, opts)
+        self._log_request('put', url, opts)
         r = self.session.put(url, **opts)
 
         self._validate_authorized(r)
@@ -363,7 +363,7 @@ class Connector(object):
         """
         opts = self._get_request_options()
         url = self._construct_url(ref)
-        self._log_request(url, opts)
+        self._log_request('delete', url, opts)
         r = self.session.delete(url, **opts)
 
         self._validate_authorized(r)
