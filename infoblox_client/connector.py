@@ -169,8 +169,7 @@ class Connector(object):
         return query_params
 
     def _get_request_options(self, data=None):
-        opts = dict(verify=self.ssl_verify,
-                    timeout=self.http_request_timeout,
+        opts = dict(timeout=self.http_request_timeout,
                     headers=self.DEFAULT_HEADER)
         if data:
             opts['data'] = jsonutils.dumps(data)
