@@ -59,7 +59,6 @@ class TestInfobloxConnector(unittest.TestCase):
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
-                verify=False
             )
 
     def test_create_object_with_extattrs(self):
@@ -76,7 +75,6 @@ class TestInfobloxConnector(unittest.TestCase):
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
-                verify=False
             )
 
     def test_create_object_raises_member_assigned(self):
@@ -108,7 +106,6 @@ class TestInfobloxConnector(unittest.TestCase):
                 'https://infoblox.example.org/wapi/v1.1/network?ip=0.0.0.0',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
-                verify=False
             )
 
     def test_get_objects_with_extattrs(self):
@@ -127,7 +124,6 @@ class TestInfobloxConnector(unittest.TestCase):
                 'v1.1/network?*Subnet ID=fake_subnet_id&ip=0.0.0.0',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
-                verify=False
             )
 
     def test_update_object(self):
@@ -144,7 +140,6 @@ class TestInfobloxConnector(unittest.TestCase):
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
-                verify=False
             )
 
     def test_delete_object(self):
@@ -158,7 +153,6 @@ class TestInfobloxConnector(unittest.TestCase):
                 'https://infoblox.example.org/wapi/v1.1/network',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
-                verify=False
             )
 
     def test_construct_url_absolute_path_fails(self):
