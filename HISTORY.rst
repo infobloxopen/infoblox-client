@@ -3,6 +3,10 @@
 History
 -------
 
+0.3.4 (2016-01-21)
+__________________
+* Do not override verify flag on request level
+
 0.3.3 (2016-01-20)
 __________________
 * create_required_ea_definitions return created list
