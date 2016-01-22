@@ -3,6 +3,10 @@
 History
 -------
 
+0.3.5 (2016-01-22)
+__________________
+* No changes
+
 0.3.4 (2016-01-21)
 __________________
 * Do not override verify flag on request level
