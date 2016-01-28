@@ -3,6 +3,11 @@
 History
 -------
 
+0.3.6 (2016-01-28)
+__________________
+* Add support for list and tuple values to EA object
+* Remove _value_to_bool
+
 0.3.5 (2016-01-22)
 __________________
 * No changes
