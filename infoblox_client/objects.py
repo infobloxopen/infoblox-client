@@ -137,15 +137,6 @@ class EA(object):
         """Returns dict with EAs in {ea_name: ea_value} format."""
         return self._ea_dict.copy()
 
-    @staticmethod
-    def _value_to_bool(value):
-        """Converts value returned by NIOS into boolean if possible."""
-        if value == 'True':
-            return True
-        elif value == 'False':
-            return False
-        return value
-
     @classmethod
     def from_dict(cls, eas_from_nios):
         """Converts extensible attributes from the NIOS reply."""
