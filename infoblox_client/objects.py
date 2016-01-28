@@ -151,15 +151,28 @@ class EA(object):
         """Converts extensible attributes from the NIOS reply."""
         if not eas_from_nios:
             return
-        return cls(
-            {name: ib_utils.try_value_to_bool(eas_from_nios[name]['value'])
-             for name in eas_from_nios})
+        return cls({name: cls._process_value(ib_utils.try_value_to_bool,
+                                             eas_from_nios[name]['value'])
+                    for name in eas_from_nios})
 
     def to_dict(self):
         """Converts extensible attributes into the format suitable for NIOS."""
-        return {name: {'value': str(value)}
+        return {name: {'value': self._process_value(str, value)}
                 for name, value in self._ea_dict.items()
                 if not (value is None or value == "" or value == [])}
+
+    @staticmethod
+    def _process_value(func, value):
+        """Applies processing method for value or each element in it.
+
+        :param func: method to be called with value
+        :param value: value to process
+        :return: if 'value' is list/tupe, returns iterable with func results,
+                 else func result is returned
+        """
+        if isinstance(value, (list, tuple)):
+            return [func(item) for item in value]
+        return func(value)
 
     def get(self, name, default=None):
         """Return value of requested EA."""

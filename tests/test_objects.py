@@ -256,6 +256,14 @@ class TestObjects(unittest.TestCase):
         self.assertIsInstance(ip, objects.IPv4Address)
         self.assertEqual(ip_mock[0]['objects'], ip.objects)
 
+    def test__process_value(self):
+        data = (([1, 2, 3], ['1', '2', '3']),
+                ((1, 2), ['1', '2']),
+                (1, '1'),
+                ('string', 'string'))
+        for input, output in data:
+            self.assertEqual(output, objects.EA._process_value(str, input))
+
     def test_ea_parse_generate(self):
         eas = {'Subnet ID': {'value': 'some-id'},
                'Tenant Name': {'value': 'tenant-name'},
@@ -283,6 +291,15 @@ class TestObjects(unittest.TestCase):
               'None String EA': 'None',
               'Empty List EA': [],
               'Zero String EA': '0'}
+        processed_ea = {'Subnet ID': 'some-id',
+                        'Tenant Name':  'tenant-name',
+                        'Cloud API Owned': 'True',
+                        'DNS Record Types': ['record_a', 'record_ptr'],
+                        'False String EA': 'False',
+                        'False EA': 'False',
+                        'Zero EA': '0',
+                        'None String EA': 'None',
+                        'Zero String EA': '0'}
         ea_exist = ['Subnet ID',
                     'Tenant Name',
                     'Cloud API Owned',
@@ -301,8 +318,8 @@ class TestObjects(unittest.TestCase):
             self.assertEqual(True, key in ea_dict)
         for key in ea_purged:
             self.assertEqual(False, key in ea_dict)
-        for key in ea_exist:
-            self.assertEqual(str(ea.get(key)), ea_dict.get(key).get('value'))
+        for key in processed_ea:
+            self.assertEqual(processed_ea[key], ea_dict.get(key).get('value'))
 
     def test_ea_returns_none(self):
         for ea in (None, '', 0):
