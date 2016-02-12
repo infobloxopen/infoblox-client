@@ -835,6 +835,7 @@ class PtrRecordV6(PtrRecord):
 class NetworkView(InfobloxObject):
     _infoblox_type = 'networkview'
     _fields = ['name', 'extattrs']
+    _return_fields = ['name', 'extattrs', 'is_default']
     _search_fields = ['name']
     _shadow_fields = ['_ref', 'is_default']
     _ip_version = 'any'
