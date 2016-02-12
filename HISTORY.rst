@@ -3,6 +3,10 @@
 History
 -------
 
+0.3.7 (2016-02-12)
+__________________
+* Add return_fields to NetworkView
+
 0.3.6 (2016-01-28)
 __________________
 * Add support for list and tuple values to EA object
