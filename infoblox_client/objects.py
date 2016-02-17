@@ -843,7 +843,8 @@ class NetworkView(InfobloxObject):
 
 class DNSView(InfobloxObject):
     _infoblox_type = 'view'
-    _fields = ['name', 'network_view']
+    _fields = ['name', 'network_view', 'extattrs']
+    _return_fields = ['name', 'network_view', 'extattrs']
     _search_fields = ['name', 'network_view']
     _shadow_fields = ['_ref', 'is_default']
     _ip_version = 'any'
@@ -853,6 +854,8 @@ class DNSZone(InfobloxObject):
     _infoblox_type = 'zone_auth'
     _fields = ['_ref', 'fqdn', 'view', 'extattrs', 'zone_format', 'ns_group',
                'prefix', 'grid_primary', 'grid_secondaries']
+    _return_fields = ['fqdn', 'view', 'extattrs', 'zone_format', 'ns_group',
+                      'prefix', 'grid_primary', 'grid_secondaries']
     _search_fields = ['fqdn', 'view']
     _shadow_fields = ['_ref']
     _ip_version = 'any'
