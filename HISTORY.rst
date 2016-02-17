@@ -3,6 +3,10 @@
 History
 -------
 
+0.3.8 (2016-02-17)
+__________________
+* Add 'extattrs' to DNSZone/DNSView return_fields
+
 0.3.7 (2016-02-12)
 __________________
 * Add return_fields to NetworkView
