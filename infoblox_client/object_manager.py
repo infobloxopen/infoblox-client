@@ -162,19 +162,21 @@ class InfobloxObjectManager(object):
 
     def create_host_record_for_given_ip(self, dns_view, zone_auth,
                                         hostname, mac, ip, extattrs,
-                                        use_dhcp):
+                                        use_dhcp, use_dns=True):
         name = '.'.join([hostname, zone_auth])
         ip_obj = obj.IP.create(ip=ip, mac=mac, configure_for_dhcp=use_dhcp)
         return obj.HostRecord.create(self.connector,
                                      view=dns_view,
                                      name=name,
                                      ip=ip_obj,
+                                     configure_for_dns=use_dns,
                                      extattrs=extattrs,
                                      check_if_exists=False)
 
     def create_host_record_from_range(self, dns_view, network_view_name,
                                       zone_auth, hostname, mac, first_ip,
-                                      last_ip, extattrs, use_dhcp):
+                                      last_ip, extattrs, use_dhcp,
+                                      use_dns=True):
         name = '.'.join([hostname, zone_auth])
         ip_alloc = obj.IPAllocation.next_available_ip_from_range(
             network_view_name, first_ip, last_ip)
@@ -184,6 +186,7 @@ class InfobloxObjectManager(object):
                                      view=dns_view,
                                      name=name,
                                      ip=ip_obj,
+                                     configure_for_dns=use_dns,
                                      extattrs=extattrs,
                                      check_if_exists=False)
 
