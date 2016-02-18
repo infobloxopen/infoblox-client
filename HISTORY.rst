@@ -3,6 +3,10 @@
 History
 -------
 
+0.3.9 (2016-02-18)
+__________________
+* Add 'configure_for_dns' field for HostRecord
+
 0.3.8 (2016-02-17)
 __________________
 * Add 'extattrs' to DNSZone/DNSView return_fields
