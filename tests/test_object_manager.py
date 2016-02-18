@@ -91,6 +91,7 @@ class ObjectManagerTestCase(unittest.TestCase):
         ip = '192.168.0.1'
         mac = 'aa:bb:cc:dd:ee:ff'
         use_dhcp = True
+        use_dns = True
 
         host_record = {'_ref': 'host_record_ref'}
         connector = mock.Mock()
@@ -100,14 +101,15 @@ class ObjectManagerTestCase(unittest.TestCase):
 
         ibom.create_host_record_for_given_ip(dns_view_name, zone_auth,
                                              hostname, mac, ip, self.EXT_ATTRS,
-                                             use_dhcp)
+                                             use_dhcp, use_dns)
 
         exp_payload = {
             'name': 'test_hostname.test.dns.zone.com',
             'view': dns_view_name,
+            'configure_for_dns': use_dns,
             'extattrs': self.EXT_ATTRS,
             'ipv4addrs': [
-                {'mac': mac, 'configure_for_dhcp': True, 'ipv4addr': ip}
+                {'mac': mac, 'configure_for_dhcp': use_dhcp, 'ipv4addr': ip}
             ]
         }
 
@@ -123,6 +125,8 @@ class ObjectManagerTestCase(unittest.TestCase):
         net_view_name = 'test_net_view_name'
         first_ip = '192.168.0.1'
         last_ip = '192.168.0.254'
+        use_dhcp = True
+        use_dns = False
 
         host_record = {'_ref': 'host_record_ref'}
         connector = mock.Mock()
@@ -132,16 +136,19 @@ class ObjectManagerTestCase(unittest.TestCase):
 
         ibom.create_host_record_from_range(
             dns_view_name, net_view_name, zone_auth, hostname, mac, first_ip,
-            last_ip, self.EXT_ATTRS, True)
+            last_ip, self.EXT_ATTRS, use_dhcp, use_dns)
 
         next_ip = \
             'func:nextavailableip:192.168.0.1-192.168.0.254,test_net_view_name'
         exp_payload = {
             'name': 'test_hostname.test.dns.zone.com',
+            'configure_for_dns': use_dns,
             'view': dns_view_name,
             'extattrs': self.EXT_ATTRS,
             'ipv4addrs': [
-                {'mac': mac, 'configure_for_dhcp': True, 'ipv4addr': next_ip}
+                {'mac': mac,
+                 'configure_for_dhcp': use_dhcp,
+                 'ipv4addr': next_ip}
             ]
         }
         connector.create_object.assert_called_once_with(
