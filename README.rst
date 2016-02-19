@@ -51,15 +51,24 @@ Retrieve list of network views from NIOS:
   conn = connector.Connector(opts)
   # get all network_views
   network_views = conn.get_object('networkview')
+  # search network by cidr in specific network view
+  network conn.get_object('network', {'network': '100.0.0.0/8', 'network_view': 'default'})
 
 
-For this request data is returned as list of dicts:
+For these request data is returned as list of dicts:
 
 ::
 
+  network_views:
   [{u'_ref': u'networkview/ZG5zLm5ldHdvcmtfdmlldyQw:default/true',
     u'is_default': True,
     u'name': u'default'}]
+
+  network:
+  [{u'_ref': u'network/ZG5zLm5ldHdvcmskMTAwLjAuMC4wLzgvMA:100.0.0.0/8/default',
+    u'network': u'100.0.0.0/8',
+    u'network_view': u'default'}]
+
 
 2. High level API, using objects.
 
