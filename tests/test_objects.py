@@ -398,7 +398,8 @@ class TestObjects(unittest.TestCase):
         tenant = objects.Tenant.search(conn, id=id)
         conn.get_object.assert_called_once_with(
             'grid:cloudapi:tenant', {'id': id},
-            return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY)
+            return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
+            max_results=None)
         self.assertEqual(fake_tenant['id'], tenant.id)
         self.assertEqual(fake_tenant['name'], tenant.name)
         self.assertEqual(fake_tenant['comment'], tenant.comment)
