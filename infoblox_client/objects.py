@@ -318,7 +318,8 @@ class InfobloxObject(BaseObject):
 
     @classmethod
     def _search(cls, connector, return_fields=None,
-                search_extattrs=None, force_proxy=False, **kwargs):
+                search_extattrs=None, force_proxy=False,
+                max_results=None, **kwargs):
         ib_obj_for_search = cls(connector, **kwargs)
         search_dict = ib_obj_for_search.to_dict(search_fields='only')
         if return_fields is None and ib_obj_for_search.return_fields:
@@ -332,7 +333,8 @@ class InfobloxObject(BaseObject):
                                      search_dict,
                                      return_fields=return_fields,
                                      extattrs=extattrs,
-                                     force_proxy=force_proxy)
+                                     force_proxy=force_proxy,
+                                     max_results=max_results)
         return reply, ib_obj_for_search
 
     @classmethod
