@@ -946,3 +946,10 @@ class IPAllocation(object):
     def next_available_ip_from_range(cls, net_view_name, first_ip, last_ip):
         return cls(first_ip, 'func:nextavailableip:{first_ip}-{last_ip},'
                              '{net_view_name}'.format(**locals()))
+
+
+class Tenant(InfobloxObject):
+    _infoblox_type = 'grid:cloudapi:tenant'
+    _fields = ['id', 'name', 'comment']
+    _search_fields = ['id']
+    _shadow_fields = ['_ref']
