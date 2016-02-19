@@ -381,3 +381,19 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(4, net_v4.ip_version)
         net_v6 = objects.Network(conn, network='fffe::/64')
         self.assertEqual(6, net_v6.ip_version)
+
+    def test_get_tenant(self):
+        id = 'tenant_id'
+        fake_tenant = {
+            '_ref': 'grid:cloudapi:tenant/ZG5zLm5ldHdvcmskMTAuMzk',
+            'id': id,
+            'name': 'Tenant Name',
+            'comment': 'Some comment'}
+        conn = self._mock_connector(get_object=[fake_tenant])
+        tenant = objects.Tenant.search(conn, id=id)
+        conn.get_object.assert_called_once_with(
+            'grid:cloudapi:tenant', {'id': id},
+            return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY)
+        self.assertEqual(fake_tenant['id'], tenant.id)
+        self.assertEqual(fake_tenant['name'], tenant.name)
+        self.assertEqual(fake_tenant['comment'], tenant.comment)
