@@ -3,6 +3,13 @@
 History
 -------
 
+0.4.0 (2016-02-19)
+------------------
+* Add max_results option to connector and objects
+* Add Tenant object
+* Update README.rst with more examples
+
+
 0.3.9 (2016-02-18)
 __________________
 * Add 'configure_for_dns' field for HostRecord
