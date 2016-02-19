@@ -269,19 +269,19 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
             connector.Connector._validate_authorized(response)
 
     def test_non_cloud_api_detection(self):
-        wapi_not_cloud = ('v1.4.1', 'v1.9/', 'v1.99', 'asd')
+        wapi_not_cloud = ('1.4.1', '1.9/', '1.99', 'asd', 'v1.4')
         for url in wapi_not_cloud:
             self.assertFalse(connector.Connector.is_cloud_wapi(url))
 
     def test_cloud_api_detection(self):
-        wapi_cloud = ('v2.1/', '/v2.0/', 'v2.0.1',
-                      'v3.0/', 'v11.0.1/')
+        wapi_cloud = ('2.1/', '/2.0/', '2.0.1',
+                      '3.0/', '11.0.1/', 'v2.1', 'v2.0')
         for url in wapi_cloud:
             self.assertTrue(connector.Connector.is_cloud_wapi(url))
 
     def test_allow_options_as_dict(self):
         opts = dict(host='infoblox.example.org',
-                    wapi_version='v1.1',
+                    wapi_version='1.1',
                     username='admin',
                     password='password',
                     ssl_verify=False,
@@ -305,7 +305,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
 
     def test_incomplete_options_raises_exception(self):
         opts = dict(host='infoblox.example.org',
-                    wapi_version='v1.1')
+                    wapi_version='1.1')
         self.assertRaises(exceptions.InfobloxConfigException,
                           connector.Connector, opts)
 
