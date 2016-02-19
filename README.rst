@@ -52,7 +52,7 @@ Retrieve list of network views from NIOS:
   # get all network_views
   network_views = conn.get_object('networkview')
   # search network by cidr in specific network view
-  network conn.get_object('network', {'network': '100.0.0.0/8', 'network_view': 'default'})
+  network = conn.get_object('network', {'network': '100.0.0.0/8', 'network_view': 'default'})
 
 
 For these request data is returned as list of dicts:
