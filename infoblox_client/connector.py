@@ -60,6 +60,7 @@ class Connector(object):
                        'http_pool_connections': 10,
                        'http_pool_maxsize': 10,
                        'wapi_version': '1.4',
+                       'max_results': None,
                        'log_api_calls_as_info': False}
 
     def __init__(self, options):
@@ -80,7 +81,8 @@ class Connector(object):
         attributes = ('host', 'wapi_version', 'username', 'password',
                       'ssl_verify', 'http_request_timeout',
                       'http_pool_connections', 'http_pool_maxsize',
-                      'silent_ssl_warnings', 'log_api_calls_as_info')
+                      'silent_ssl_warnings', 'log_api_calls_as_info',
+                      'max_results')
         for attr in attributes:
             if isinstance(options, dict) and attr in options:
                 setattr(self, attr, options[attr])
@@ -228,6 +230,11 @@ class Connector(object):
             InfobloxObjectNotFound
         """
         self._validate_obj_type_or_die(obj_type, obj_type_expected=False)
+
+        # max_results passed to get_object has priority over
+        # one defined as connector option
+        if max_results is None and self.max_results:
+            max_results = self.max_results
 
         query_params = self._build_query_params(payload=payload,
                                                 return_fields=return_fields,
