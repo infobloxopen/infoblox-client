@@ -43,6 +43,7 @@ class TestInfobloxConnector(unittest.TestCase):
         opts.http_pool_connections = 10
         opts.http_pool_maxsize = 10
         opts.http_request_timeout = 10
+        opts.max_results = None
         return opts
 
     def test_create_object(self):
@@ -136,6 +137,44 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.assert_called_once_with(
                 'https://infoblox.example.org/wapi/'
                 'v1.1/network?_max_results=20',
+                headers=self.connector.DEFAULT_HEADER,
+                timeout=self.default_opts.http_request_timeout,
+            )
+
+    def test_get_objects_with_max_results_as_connector_opt(self):
+        objtype = 'network'
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            patched_get.return_value.status_code = 200
+            patched_get.return_value.content = '{}'
+
+            opts = self._prepare_options()
+            opts.max_results = 10
+            conn = connector.Connector(opts)
+            conn.get_object(objtype, {})
+            patched_get.assert_called_once_with(
+                'https://infoblox.example.org/wapi/'
+                'v1.1/network?_max_results=10',
+                headers=self.connector.DEFAULT_HEADER,
+                timeout=self.default_opts.http_request_timeout,
+            )
+
+    def test_max_results_priority(self):
+        objtype = 'network'
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            patched_get.return_value.status_code = 200
+            patched_get.return_value.content = '{}'
+
+            opts = self._prepare_options()
+            opts.max_results = 10
+            conn = connector.Connector(opts)
+            # max_results passed to get_object should have higher priority
+            # over max_results connector option
+            conn.get_object(objtype, {}, max_results=-20)
+            patched_get.assert_called_once_with(
+                'https://infoblox.example.org/wapi/'
+                'v1.1/network?_max_results=-20',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
@@ -286,6 +325,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
                     password='password',
                     ssl_verify=False,
                     silent_ssl_warnings=True,
+                    max_results=50,
                     http_pool_connections=10,
                     http_pool_maxsize=10,
                     http_request_timeout=10)
@@ -297,6 +337,8 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
         self.assertEqual(opts['ssl_verify'], conn.ssl_verify)
         self.assertEqual(opts['silent_ssl_warnings'],
                          conn.silent_ssl_warnings)
+        self.assertEqual(opts['max_results'],
+                         conn.max_results)
         self.assertEqual(opts['http_pool_connections'],
                          conn.http_pool_connections)
         self.assertEqual(opts['http_pool_maxsize'], conn.http_pool_maxsize)
@@ -320,6 +362,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
         self.assertEqual(10, conn.http_pool_connections)
         self.assertEqual(10, conn.http_pool_maxsize)
         self.assertEqual('1.4', conn.wapi_version)
+        self.assertEqual(None, conn.max_results)
 
     def test_blank_values_not_allowed(self):
         base_dict = {'host': '192.168.1.15',
