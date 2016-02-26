@@ -3,6 +3,10 @@
 History
 -------
 
+0.4.1 (2016-02-26)
+__________________
+* Add 'max_results' as connector option
+
 0.4.0 (2016-02-19)
 ------------------
 * Add max_results option to connector and objects
