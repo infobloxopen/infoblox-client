@@ -43,6 +43,7 @@ class TestInfobloxConnector(unittest.TestCase):
         opts.http_pool_connections = 10
         opts.http_pool_maxsize = 10
         opts.http_request_timeout = 10
+        opts.max_retries = 3
         opts.max_results = None
         return opts
 
@@ -361,6 +362,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
         self.assertEqual(10, conn.http_request_timeout)
         self.assertEqual(10, conn.http_pool_connections)
         self.assertEqual(10, conn.http_pool_maxsize)
+        self.assertEqual(3, conn.max_retries)
         self.assertEqual('1.4', conn.wapi_version)
         self.assertEqual(None, conn.max_results)
 

@@ -59,6 +59,7 @@ class Connector(object):
                        'http_request_timeout': 10,
                        'http_pool_connections': 10,
                        'http_pool_maxsize': 10,
+                       'max_retries': 3,
                        'wapi_version': '1.4',
                        'max_results': None,
                        'log_api_calls_as_info': False}
@@ -79,7 +80,7 @@ class Connector(object):
     def _parse_options(self, options):
         """Copy needed options to self"""
         attributes = ('host', 'wapi_version', 'username', 'password',
-                      'ssl_verify', 'http_request_timeout',
+                      'ssl_verify', 'http_request_timeout', 'max_retries',
                       'http_pool_connections', 'http_pool_maxsize',
                       'silent_ssl_warnings', 'log_api_calls_as_info',
                       'max_results')
@@ -108,7 +109,8 @@ class Connector(object):
         self.session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(
             pool_connections=self.http_pool_connections,
-            pool_maxsize=self.http_pool_maxsize)
+            pool_maxsize=self.http_pool_maxsize,
+            max_retries=self.max_retries)
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
         self.session.auth = (self.username, self.password)
