@@ -269,7 +269,7 @@ class Connector(object):
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.ok:
-            LOG.debug("Error occured on object search: %s", r.content)
+            LOG.error("Error occurred on object search: %s", r.content)
             return None
         return self._parse_reply(r)
 
