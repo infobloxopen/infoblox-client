@@ -3,6 +3,11 @@
 History
 -------
 
+0.4.2 (2016-03-04)
+__________________
+* Add max_retries option to connector
+* Log failure on get with Error log level
+
 0.4.1 (2016-02-26)
 __________________
 * Add 'max_results' as connector option
