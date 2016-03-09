@@ -742,12 +742,21 @@ class FixedAddress(InfobloxObject):
 
 class FixedAddressV4(FixedAddress):
     _infoblox_type = 'fixedaddress'
-    _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'network']
+    _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'network',
+               'options']
     _search_fields = ['ipv4addr', 'mac', 'network_view', 'network']
     _shadow_fields = ['_ref', 'ip']
     _return_fields = ['ipv4addr', 'mac', 'network_view', 'extattrs']
     _remap = {'ipv4addr': 'ip'}
     _ip_version = 4
+
+    @staticmethod
+    def _build_options(members):
+        if not members:
+            return None
+        return [DhcpOption.from_dict(m) for m in members]
+
+    _custom_field_processing = {'options': _build_options.__func__}
 
 
 class FixedAddressV6(FixedAddress):
@@ -901,8 +910,8 @@ class EADefinition(InfobloxObject):
 
 
 class IPAddress(InfobloxObject):
-    _fields = ['network_view', 'ip_address', 'objects']
-    _search_fields = ['network_view', 'ip_address']
+    _fields = ['network_view', 'ip_address', 'objects', 'network', 'status']
+    _search_fields = ['network_view', 'ip_address', 'network', 'status']
     _shadow_fields = ['_ref']
     _return_fields = ['objects']
 
