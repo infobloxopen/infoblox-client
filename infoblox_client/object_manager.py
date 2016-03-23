@@ -55,10 +55,22 @@ class InfobloxObjectManager(object):
     def create_network(self, net_view_name, cidr, nameservers=None,
                        members=None, gateway_ip=None, dhcp_trel_ip=None,
                        network_extattrs=None):
-        """Create NIOS Network."""
+        """Create NIOS Network and prepare DHCP options.
 
-        # NIOS does not allow to set Dhcp options for IPv6 over WAPI,
-        # so limit options usage with IPv4 only
+        Some DHCP options are valid for IPv4 only, so just skip processing
+        them for IPv6 case.
+
+        :param net_view_name: network view name
+        :param cidr: network to allocate, example '172.23.23.0/24'
+        :param nameservers: list of name servers hosts/ip
+        :param members: list of objects.AnyMember objects that are expected
+            to serve dhcp for created network
+        :param gateway_ip: gateway ip for the network (valid for IPv4 only)
+        :param dhcp_trel_ip: ip address of dhcp relay (valid for IPv4 only)
+        :param network_extattrs: extensible attributes for network (instance of
+            objects.EA)
+        :returns: created network (instance of objects.Network)
+        """
         ipv4 = ib_utils.determine_ip_version(cidr) == 4
 
         options = []
