@@ -401,7 +401,7 @@ class InfobloxObjectManager(object):
 
     def restart_all_services(self, member):
         if not member._ref:
-            member.fetch()
+            member.fetch(only_ref=True)
         self.connector.call_func('restartservices', member._ref,
                                  {'restart_option': 'RESTART_IF_NEEDED',
                                   'service_option': 'ALL'})
