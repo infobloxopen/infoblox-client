@@ -3,6 +3,12 @@
 History
 -------
 
+0.4.3 (2016-03-28)
+__________________
+* Add default fields for Member
+* Update docstring for create_network
+* Add  fields to FixedAddressV4 and IPAddress
+
 0.4.2 (2016-03-04)
 __________________
 * Add max_retries option to connector
