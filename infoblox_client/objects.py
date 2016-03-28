@@ -372,7 +372,7 @@ class InfobloxObject(BaseObject):
                                           search_dict,
                                           return_fields=return_fields)
         if reply:
-            self.update_from_dict(reply[0], only_ref=True)
+            self.update_from_dict(reply[0], only_ref=only_ref)
             return True
         return False
 
