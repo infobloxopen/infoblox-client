@@ -887,7 +887,8 @@ class DNSZone(InfobloxObject):
 class Member(InfobloxObject):
     _infoblox_type = 'member'
     _fields = ['host_name', 'ipv6_setting', 'vip_setting',
-               'extattrs', 'ipv4_address', 'ipv6_address']
+               'extattrs', 'ipv4_address', 'ipv6_address', 'platform',
+               'config_addr_type', 'service_type_configuration']
     _return_fields = ['host_name', 'ipv6_setting', 'node_info',
                       'vip_setting', 'extattrs']
     _search_fields = ['host_name', 'ipv4_address', 'ipv6_address']
