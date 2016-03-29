@@ -403,3 +403,8 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(fake_tenant['id'], tenant.id)
         self.assertEqual(fake_tenant['name'], tenant.name)
         self.assertEqual(fake_tenant['comment'], tenant.comment)
+
+    def test__remap_fields_support_unknown_fields(self):
+        data = {'host_name': 'cp.com',
+                'unknown_field': 'some_data'}
+        self.assertEqual(data, objects.Member._remap_fields(data))

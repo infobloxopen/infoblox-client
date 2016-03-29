@@ -87,11 +87,8 @@ class BaseObject(object):
         for key in kwargs:
             if key in cls._remap:
                 mapped[cls._remap[key]] = kwargs[key]
-            elif key in cls._fields or key in cls._shadow_fields:
-                mapped[key] = kwargs[key]
             else:
-                raise ValueError("Unknown parameter %s for class %s" %
-                                 (key, cls))
+                mapped[key] = kwargs[key]
         return mapped
 
     @classmethod
