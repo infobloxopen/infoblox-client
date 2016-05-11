@@ -177,6 +177,29 @@ Supported NIOS objects
 * EADefinition for 'extensibleattributedef'
 
 
+Search by regular expression
+----------------------------
+
+Search for partial match is supported only by low-level API for now.
+Use '~' with field name to search by regular expressions. Not all
+fields support search by regular expression. Refer to wapidoc to find
+out complete list of fields that can be searched this way. Examples:
+
+Find all networks that starts with '10.10.':
+
+::
+
+  conn = connector.Connector(opts)
+  nw = conn.get_object('network', {'network~': '10.10.'})
+
+
+Find all host records that starts with '10.10.':
+
+::
+
+  conn = connector.Connector(opts)
+  hr = conn.get_object('record:host', {'ipv4addr~': '10.10.'})
+
 Features
 --------
 
