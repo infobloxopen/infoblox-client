@@ -3,6 +3,13 @@
 History
 -------
 
+0.4.4 (2016-05-11)
+__________________
+* Pass only_ref option to update_from_dict
+* Do not fail on processing unknown fields
+* Fetch only object reference for service restart
+* Update README with example of using EA
+
 0.4.3 (2016-03-28)
 __________________
 * Add default fields for Member
