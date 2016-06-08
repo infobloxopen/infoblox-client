@@ -764,6 +764,42 @@ class ObjectManagerTestCase(unittest.TestCase):
             ea_def,
             mock.ANY)
 
+    def _prepare_ibom_with_exception(self, exception):
+        connector = mock.Mock()
+        connector.create_object.side_effect = exception(
+            response='',
+            obj_type='extensibleattributedef',
+            content='',
+            args={},
+            code=500)
+        ibom = om.InfobloxObjectManager(connector)
+        return ibom, connector
+
+    def test_create_ea_definition_exception_reraise(self):
+        create_exc = exceptions.InfobloxCannotCreateObject
+        ibom, conn = self._prepare_ibom_with_exception(create_exc)
+        ea_def = {'name': 'EA Test', 'type': 'ENUM',
+                  'list_values': [{'value': 'True'}, {'value': 'False'}]}
+
+        self.assertRaises(create_exc, ibom.create_ea_definition,
+                          ea_def, reraise=True)
+        conn.create_object.assert_called_once_with(
+            'extensibleattributedef',
+            ea_def,
+            mock.ANY)
+
+    def test_create_ea_definition_exception_silenced(self):
+        create_exc = exceptions.InfobloxCannotCreateObject
+        ibom, conn = self._prepare_ibom_with_exception(create_exc)
+        ea_def = {'name': 'EA Test', 'type': 'ENUM',
+                  'list_values': [{'value': 'True'}, {'value': 'False'}]}
+
+        self.assertFalse(ibom.create_ea_definition(ea_def, reraise=False))
+        conn.create_object.assert_called_once_with(
+            'extensibleattributedef',
+            ea_def,
+            mock.ANY)
+
     def test_create_required_ea_definitions(self):
         existing_ea_defs = [{'name': 'One'},
                             {'name': 'Two'}]
@@ -771,7 +807,7 @@ class ObjectManagerTestCase(unittest.TestCase):
         required_ea_defs = existing_ea_defs + additional_ea_defs
 
         connector = mock.Mock()
-        connector.create_object.return_value = {}
+        connector.create_object.return_value = {'name': 'Three'}
         connector.get_object.return_value = existing_ea_defs
 
         ibom = om.InfobloxObjectManager(connector)
@@ -782,3 +818,32 @@ class ObjectManagerTestCase(unittest.TestCase):
             'extensibleattributedef',
             additional_ea_defs[0],
             mock.ANY)
+
+    def test_create_required_ea_definitions_with_exception(self):
+        allowed_eas = ['One', 'Three']
+        required_ea_defs = [{'name': 'One'},
+                            {'name': 'Two'},
+                            {'name': 'Three'},
+                            {'name': 'Four'}]
+        created_ea_defs = [{'name': 'One'},
+                           {'name': 'Three'}]
+
+        def create_object_mock(obj_type, payload, return_fields=None):
+            if payload['name'] in allowed_eas:
+                return payload
+            else:
+                raise exceptions.InfobloxCannotCreateObject(
+                    response='',
+                    obj_type='extensibleattributedef',
+                    content='',
+                    args={},
+                    code=500)
+
+        connector = mock.Mock()
+        connector.create_object.side_effect = create_object_mock
+        connector.get_object.return_value = {}
+
+        ibom = om.InfobloxObjectManager(connector)
+        created = ibom.create_required_ea_definitions(required_ea_defs)
+
+        self.assertEqual(created_ea_defs, created)

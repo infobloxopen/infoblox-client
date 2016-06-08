@@ -377,7 +377,7 @@ class InfobloxObjectManager(object):
     def get_all_ea_definitions(self):
         return obj.EADefinition.search_all(self.connector)
 
-    def create_ea_definition(self, ea_def):
+    def create_ea_definition(self, ea_def, reraise=False):
         try:
             return obj.EADefinition.create(self.connector,
                                            check_if_exists=False,
@@ -385,8 +385,10 @@ class InfobloxObjectManager(object):
         except ib_ex.InfobloxCannotCreateObject:
             LOG.error('Unable to create Extensible Attribute Definition '
                       '%s' % ea_def)
+            if reraise:
+                raise
 
-    def create_required_ea_definitions(self, required_ea_defs):
+    def create_required_ea_definitions(self, required_ea_defs, reraise=False):
         existing_ea_defs = self.get_all_ea_definitions()
         missing_ea_defs = []
         for req_def in required_ea_defs:
@@ -394,10 +396,11 @@ class InfobloxObjectManager(object):
                     if ea_def.name == req_def['name']]:
                 missing_ea_defs.append(req_def)
 
+        created_ea_defs = []
         for ea_def in missing_ea_defs:
-            self.create_ea_definition(ea_def)
-
-        return missing_ea_defs
+            if self.create_ea_definition(ea_def, reraise=reraise):
+                created_ea_defs.append(ea_def)
+        return created_ea_defs
 
     def restart_all_services(self, member):
         if not member._ref:
