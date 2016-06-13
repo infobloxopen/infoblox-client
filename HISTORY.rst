@@ -3,6 +3,13 @@
 History
 -------
 
+0.4.5 (2016-06-13)
+__________________
+* Allow raising exception in create_ea_definition
+* Add pep8 check to tox
+* Add pep8 check to Travis CI
+* Add examples of searching by regular expression
+
 0.4.4 (2016-05-11)
 __________________
 * Pass only_ref option to update_from_dict
