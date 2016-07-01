@@ -3,6 +3,10 @@
 History
 -------
 
+0.4.6 (2016-07-01)
+__________________
+* Add network_view support for host records
+
 0.4.5 (2016-06-13)
 __________________
 * Allow raising exception in create_ea_definition
