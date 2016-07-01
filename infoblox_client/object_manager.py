@@ -161,16 +161,18 @@ class InfobloxObjectManager(object):
                 ib_network.extattrs = extattrs
         return ib_network.update()
 
-    def get_host_record(self, dns_view, ip):
+    def get_host_record(self, dns_view, ip, network_view=None):
         return obj.HostRecord.search(self.connector,
                                      view=dns_view,
-                                     ip=ip)
+                                     ip=ip,
+                                     network_view=network_view)
 
-    def find_hostname(self, dns_view, hostname, ip):
+    def find_hostname(self, dns_view, hostname, ip, network_view=None):
         return obj.HostRecord.search(self.connector,
                                      name=hostname,
                                      view=dns_view,
-                                     ip=ip)
+                                     ip=ip,
+                                     network_view=network_view)
 
     def create_host_record_for_given_ip(self, dns_view, zone_auth,
                                         hostname, mac, ip, extattrs,
@@ -202,9 +204,10 @@ class InfobloxObjectManager(object):
                                      extattrs=extattrs,
                                      check_if_exists=False)
 
-    def delete_host_record(self, dns_view, ip_address):
+    def delete_host_record(self, dns_view, ip_address, network_view=None):
         host_record = obj.HostRecord.search(self.connector,
-                                            view=dns_view, ip=ip_address)
+                                            view=dns_view, ip=ip_address,
+                                            network_view=network_view)
         if host_record:
             host_record.delete()
 
@@ -319,10 +322,12 @@ class InfobloxObjectManager(object):
             ptr_record.extattrs = extattrs
             ptr_record.update()
 
-    def bind_name_with_host_record(self, dns_view, ip, name, extattrs):
+    def bind_name_with_host_record(self, dns_view, ip, name, extattrs,
+                                   network_view=None):
         host_record = obj.HostRecord.search(self.connector,
                                             view=dns_view,
-                                            ip=ip)
+                                            ip=ip,
+                                            network_view=network_view)
         if host_record:
             host_record.name = name
             host_record.extattrs = extattrs

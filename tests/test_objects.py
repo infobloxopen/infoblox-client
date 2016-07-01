@@ -169,10 +169,12 @@ class TestObjects(unittest.TestCase):
 
         host_record = objects.HostRecord.search(connector,
                                                 view='some-dns-view',
-                                                ip='192.168.15.20')
+                                                ip='192.168.15.20',
+                                                network_view='test-netview')
         connector.get_object.assert_called_once_with(
             'record:host',
-            {'view': 'some-dns-view', 'ipv4addr': '192.168.15.20'},
+            {'view': 'some-dns-view', 'ipv4addr': '192.168.15.20',
+             'network_view': 'test-netview'},
             extattrs=None, force_proxy=False, return_fields=mock.ANY,
             max_results=None)
 
