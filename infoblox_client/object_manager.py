@@ -291,6 +291,16 @@ class InfobloxObjectManager(object):
         if dns_zone:
             dns_zone.delete()
 
+    def update_dns_zone_attrs(self, dns_view, dns_zone_fqdn, extattrs):
+        if not extattrs:
+            return
+        dns_zone = obj.DNSZone.search(self.connector,
+                                      fqdn=dns_zone_fqdn,
+                                      view=dns_view)
+        if dns_zone:
+            dns_zone.extattrs = extattrs
+            dns_zone.update()
+
     def update_host_record_eas(self, dns_view, ip, extattrs):
         host_record = obj.HostRecord.search(self.connector,
                                             view=dns_view,
