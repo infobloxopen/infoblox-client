@@ -3,6 +3,10 @@
 History
 -------
 
+0.4.7 (2016-07-14)
+__________________
+* Add zones extensible attribute update support
+
 0.4.6 (2016-07-01)
 __________________
 * Add network_view support for host records
