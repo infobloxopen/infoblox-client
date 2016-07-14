@@ -700,6 +700,39 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.create_object.assert_called_once_with('zone_auth', matcher,
                                                         mock.ANY)
 
+    def test_update_dns_zone_attrs(self):
+        dns_view_name = 'dns-view-name'
+        fqdn = 'host.global.com'
+        zone_ref = 'zone_ref'
+        old_attrs = {'old_key': {'value': 'old_value'}}
+        new_attrs = {'new_key': {'value': 'new_value'}}
+        zone = {
+            '_ref': zone_ref,
+            'view': dns_view_name,
+            'fqdn': fqdn,
+            'zone_format': 'FORWARD',
+            'ns_group': 'test_group',
+            'extattrs': old_attrs
+            }
+
+        connector = mock.Mock()
+        connector.get_object.return_value = [zone]
+
+        return_fields = [
+            'fqdn', 'view', 'extattrs', 'zone_format', 'ns_group', 'prefix',
+            'grid_primary', 'grid_secondaries']
+        ibom = om.InfobloxObjectManager(connector)
+        ibom.update_dns_zone_attrs(dns_view_name, fqdn, new_attrs)
+        connector.get_object.assert_called_once_with(
+            'zone_auth',
+            {'fqdn': 'host.global.com', 'view': 'dns-view-name'},
+            extattrs=None, force_proxy=False, max_results=None,
+            return_fields=return_fields)
+        connector.update_object.assert_called_once_with(
+            zone_ref,
+            {'extattrs': new_attrs},
+            return_fields)
+
     def _mock_for_get_connector(self, reply_map):
         def get_object(ref, *args, **kwargs):
             if ref in reply_map:

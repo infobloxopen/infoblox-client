@@ -862,12 +862,12 @@ class DNSView(InfobloxObject):
 
 class DNSZone(InfobloxObject):
     _infoblox_type = 'zone_auth'
-    _fields = ['_ref', 'fqdn', 'view', 'extattrs', 'zone_format', 'ns_group',
+    _fields = ['fqdn', 'view', 'extattrs', 'zone_format',
                'prefix', 'grid_primary', 'grid_secondaries']
     _return_fields = ['fqdn', 'view', 'extattrs', 'zone_format', 'ns_group',
                       'prefix', 'grid_primary', 'grid_secondaries']
-    _search_fields = ['fqdn', 'view']
-    _shadow_fields = ['_ref']
+    _search_fields = ['fqdn', 'view', 'zone_format']
+    _shadow_fields = ['_ref', 'ns_group']
     _ip_version = 'any'
 
     @staticmethod
