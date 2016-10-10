@@ -3,6 +3,10 @@
 History
 -------
 
+0.4.8 (2016-10-10)
+__________________
+* Add ptrdname search option to PtrRecord objects
+
 0.4.7 (2016-07-14)
 __________________
 * Add zones extensible attribute update support
