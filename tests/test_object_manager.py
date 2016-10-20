@@ -604,6 +604,20 @@ class ObjectManagerTestCase(unittest.TestCase):
             return_fields=mock.ANY, force_proxy=mock.ANY)
         self.assertFalse(connector.delete_object.called)
 
+    @mock.patch('infoblox_client.objects.FixedAddress')
+    def test_get_fixed_addresses_by_mac(self, fixed_address_mock):
+        network_view = 'test_network_view'
+        mac = 'aa:bb:cc:dd:ee:ff'
+        test_result = 'test_result'
+        connector = mock.Mock()
+        ibom = om.InfobloxObjectManager(connector)
+        fixed_address_mock.search_all.return_value = test_result
+
+        res = ibom.get_fixed_addresses_by_mac(network_view, mac)
+        assert res == test_result
+        fixed_address_mock.search_all.assert_called_once_with(
+            connector, network_view=network_view, mac=mac)
+
     def test_member_is_assigned_as_list_on_network_create(self):
         net_view = 'net-view-name'
         cidr = '192.168.1.0/24'
