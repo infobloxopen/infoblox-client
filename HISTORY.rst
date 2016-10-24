@@ -3,6 +3,14 @@
 History
 -------
 
+0.4.10 (2016-10-24)
+__________________
+* Updated history and author
+
+0.4.9 (2016-10-24)
+__________________
+* Add function to get fixed addresses by mac
+
 0.4.8 (2016-10-10)
 __________________
 * Add ptrdname search option to PtrRecord objects

@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Infoblox Client'
-copyright = u'2015, Pavel Bondar'
+copyright = u'2015-2016, Infoblox'
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -210,7 +210,7 @@ latex_elements = {
 latex_documents = [
     ('index', 'infoblox-client.tex',
      u'Infoblox Client Documentation',
-     u'Pavel Bondar', 'manual'),
+     u'John Belamaric', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at
@@ -241,7 +241,7 @@ latex_documents = [
 man_pages = [
     ('index', 'infoblox-client',
      u'Infoblox Client Documentation',
-     [u'Pavel Bondar'], 1)
+     [u'John Belamaric'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -256,7 +256,7 @@ man_pages = [
 texinfo_documents = [
     ('index', 'infoblox-client',
      u'Infoblox Client Documentation',
-     u'Pavel Bondar',
+     u'John Belamaric',
      'infoblox-client',
      'One line description of project.',
      'Miscellaneous'),
