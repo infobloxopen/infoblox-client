@@ -174,6 +174,25 @@ class InfobloxObjectManager(object):
                                      ip=ip,
                                      network_view=network_view)
 
+    def find_host_records_by_mac(self, dns_view, mac, network_view=None):
+        host_records = []
+        host_records.extend(obj.HostRecord.search_all(
+            self.connector, view=dns_view, mac=mac, network_view=network_view))
+        # Unfortunately WAPI does not support search host records by DUID, so
+        # search host addresses by duid and then search hosts by name
+        ipv6_host_addresses = obj.IPv6HostAddress.search_all(
+            self.connector, duid=mac, network_view=network_view)
+        ipv6_hosts = []
+        for addr in ipv6_host_addresses:
+            hosts = obj.HostRecordV6.search_all(
+                self.connector, name=addr.host, view=dns_view,
+                network_view=network_view)
+            for host in hosts:
+                if host not in ipv6_hosts:
+                    ipv6_hosts.append(host)
+        host_records.extend(ipv6_hosts)
+        return host_records
+
     def create_host_record_for_given_ip(self, dns_view, zone_auth,
                                         hostname, mac, ip, extattrs,
                                         use_dhcp, use_dns=True):

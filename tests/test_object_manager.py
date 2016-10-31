@@ -367,6 +367,36 @@ class ObjectManagerTestCase(unittest.TestCase):
             extattrs=None, force_proxy=mock.ANY, return_fields=mock.ANY,
             max_results=None)
 
+    def test_find_host_records_by_mac(self):
+        dns_view_name = 'dns-view-name'
+        network_view_name = 'network-view-name'
+        mac = '11:22:33:44:55:66'
+        host_name = 'test_host_name'
+
+        connector = mock.Mock()
+        connector.get_object.return_value = [{'host': host_name}]
+        ibom = om.InfobloxObjectManager(connector)
+
+        ibom.find_host_records_by_mac(dns_view_name, mac, network_view_name)
+
+        assert connector.get_object.call_args_list == [
+            mock.call('record:host',
+                      {'view': dns_view_name, 'mac': mac,
+                       'network_view': network_view_name},
+                      extattrs=None, force_proxy=mock.ANY,
+                      return_fields=mock.ANY, max_results=None),
+            mock.call('record:host_ipv6addr',
+                      {'network_view': 'network-view-name',
+                       'duid': '11:22:33:44:55:66'},
+                      extattrs=None, force_proxy=mock.ANY,
+                      return_fields=mock.ANY, max_results=None),
+            mock.call('record:host',
+                      {'name': 'test_host_name',
+                       'network_view': 'network-view-name',
+                       'view': 'dns-view-name'},
+                      extattrs=None, force_proxy=mock.ANY,
+                      return_fields=mock.ANY, max_results=None)]
+
     def _check_bind_names_calls(self, args, expected_get, expected_update):
         connector = mock.Mock()
         connector.get_object.return_value = mock.MagicMock()
