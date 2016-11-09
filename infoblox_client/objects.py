@@ -852,6 +852,20 @@ class PtrRecordV6(PtrRecord):
     _ip_version = 6
 
 
+class SRVRecord(InfobloxObject):
+    _infoblox_type = 'record:srv'
+    _fields = ['name', 'port', 'priority', 'target', 'weight',
+               'aws_rte53_record_info', 'cloud_info', 'comment',
+               'creation_time', 'creator', 'ddns_principal',
+               'ddns_protected', 'disable', 'dns_name', 'dns_target',
+               'extattrs', 'forbid_reclamation', 'reclaimable',
+               'ttl', 'use_ttl', 'view', 'zone']
+    _search_fields = ['comment', 'creator', 'ddns_principal',
+                      'name', 'port', 'priority', 'reclaimable',
+                      'target', 'view', 'weight', 'zone']
+    _shadow_fields = ['_ref']
+
+
 class NetworkView(InfobloxObject):
     _infoblox_type = 'networkview'
     _fields = ['name', 'extattrs']
