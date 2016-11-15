@@ -1013,8 +1013,8 @@ class Tenant(InfobloxObject):
 
 class CNAMERecord(InfobloxObject):
     _infoblox_type = 'record:cname'
-    _fields = ['canonical', 'name', 'view']
+    _fields = ['name', 'canonical', 'view']
     _search_fields = ['name', 'view']
-    _updateable_search_fields = ['name', 'view']
+    _updateable_search_fields = ['canonical']
     _return_fields = ['canonical', 'name', 'view']
     _shadow_fields = ['_ref']
