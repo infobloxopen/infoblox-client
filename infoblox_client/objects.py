@@ -1009,3 +1009,12 @@ class Tenant(InfobloxObject):
     _search_for_update_fields = ['id']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
+
+
+class CNAMERecord(InfobloxObject):
+    _infoblox_type = 'record:cname'
+    _fields = ['canonical', 'name', 'view']
+    _search_fields = ['name', 'view']
+    _updateable_search_fields = ['name', 'view']
+    _return_fields = ['canonical', 'name', 'view']
+    _shadow_fields = ['_ref']
