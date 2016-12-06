@@ -838,7 +838,7 @@ class PtrRecord(InfobloxObject):
 
 class PtrRecordV4(PtrRecord):
     _fields = ['view', 'ipv4addr', 'ptrdname', 'extattrs']
-    _search_fields = ['view', 'ipv4addr', 'ptrdname']
+    _search_fields = ['view', 'ipv4addr']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
@@ -846,7 +846,7 @@ class PtrRecordV4(PtrRecord):
 
 class PtrRecordV6(PtrRecord):
     _fields = ['view', 'ipv6addr', 'ptrdname', 'extattrs']
-    _search_fields = ['view', 'ipv6addr', 'ptrdname']
+    _search_fields = ['view', 'ipv6addr']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
