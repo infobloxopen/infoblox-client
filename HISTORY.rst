@@ -3,6 +3,11 @@
 History
 -------
 
+0.4.12 (2016-12-08)
+___________________
+* Allow search all fields
+* Remove ptrdname from PTR record search attributes
+
 0.4.11 (2016-10-31)
 ___________________
 * Add search HostRecords by MAC
