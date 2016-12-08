@@ -451,7 +451,6 @@ class ObjectManagerTestCase(unittest.TestCase):
         exp_for_a = {'view': dns_view_name,
                      'ipv4addr': ip}
         exp_for_ptr = {'view': dns_view_name,
-                       'ptrdname': name,
                        'ipv4addr': ip}
         calls = [mock.call('record:a', exp_for_a, return_fields=mock.ANY),
                  mock.call('record:ptr', exp_for_ptr, return_fields=mock.ANY)]

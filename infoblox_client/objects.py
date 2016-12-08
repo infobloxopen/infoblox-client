@@ -202,7 +202,8 @@ class InfobloxObject(BaseObject):
         no versioned class lookup needed.
     """
     _fields = []
-    _search_fields = []
+    _search_for_update_fields = []
+    _all_searchable_fields = []
     _updateable_search_fields = []
     _shadow_fields = []
     _infoblox_type = None
@@ -261,14 +262,16 @@ class InfobloxObject(BaseObject):
     def to_dict(self, search_fields=None):
         """Builds dict without None object fields"""
         fields = self._fields
-        if search_fields == 'only':
-            fields = self._search_fields
+        if search_fields == 'update':
+            fields = self._search_for_update_fields
+        elif search_fields == 'all':
+            fields = self._all_searchable_fields
         elif search_fields == 'exclude':
             # exclude search fields for update actions,
             # but include updateable_search_fields
             fields = [field for field in self._fields
                       if field in self._updateable_search_fields or
-                      field not in self._search_fields]
+                      field not in self._search_for_update_fields]
 
         return {field: self.field_to_dict(field) for field in fields
                 if getattr(self, field, None) is not None}
@@ -318,7 +321,7 @@ class InfobloxObject(BaseObject):
                 search_extattrs=None, force_proxy=False,
                 max_results=None, **kwargs):
         ib_obj_for_search = cls(connector, **kwargs)
-        search_dict = ib_obj_for_search.to_dict(search_fields='only')
+        search_dict = ib_obj_for_search.to_dict(search_fields='all')
         if return_fields is None and ib_obj_for_search.return_fields:
             return_fields = ib_obj_for_search.return_fields
         # allow search_extattrs to be instance of EA class
@@ -363,7 +366,7 @@ class InfobloxObject(BaseObject):
                 self.update_from_dict(reply)
                 return True
 
-        search_dict = self.to_dict(search_fields='only')
+        search_dict = self.to_dict(search_fields='update')
         return_fields = [] if only_ref else self.return_fields
         reply = self.connector.get_object(self.infoblox_type,
                                           search_dict,
@@ -427,7 +430,8 @@ class InfobloxObject(BaseObject):
 class Network(InfobloxObject):
     _fields = ['network_view', 'network', 'template',
                'options', 'members', 'extattrs']
-    _search_fields = ['network_view', 'network']
+    _search_for_update_fields = ['network_view', 'network']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
     _return_fields = ['network_view', 'network', 'options', 'members',
                       'extattrs']
@@ -532,8 +536,9 @@ class HostRecordV4(HostRecord):
     """HostRecord for IPv4"""
     _fields = ['ipv4addrs', 'view', 'extattrs', 'name', 'zone',
                'configure_for_dns', 'network_view', 'mac']
-    _search_fields = ['view', 'ipv4addr', 'name', 'zone', 'network_view',
-                      'mac']
+    _search_for_update_fields = ['view', 'ipv4addr', 'name',
+                                 'zone', 'network_view', 'mac']
+    _all_searchable_fields = _search_for_update_fields
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv4addr']
     _return_fields = ['ipv4addrs', 'extattrs']
@@ -566,7 +571,9 @@ class HostRecordV6(HostRecord):
     """HostRecord for IPv6"""
     _fields = ['ipv6addrs', 'view', 'extattrs',  'name', 'zone',
                'configure_for_dns', 'network_view']
-    _search_fields = ['ipv6addr', 'view', 'name', 'zone', 'network_view']
+    _search_for_update_fields = ['ipv6addr', 'view', 'name',
+                                 'zone', 'network_view']
+    _all_searchable_fields = _search_for_update_fields
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv6addr']
     _return_fields = ['ipv6addrs', 'extattrs']
@@ -599,7 +606,8 @@ class HostRecordV6(HostRecord):
 class IPv6HostAddress(InfobloxObject):
     _infoblox_type = 'record:host_ipv6addr'
     _fields = ['duid', 'network_view', 'host']
-    _search_fields = ['duid', 'network_view']
+    _search_for_update_fields = ['duid', 'network_view']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
     _return_fields = ['host']
     _ip_version = 6
@@ -705,7 +713,9 @@ class IPRange(InfobloxObject):
     _fields = ['start_addr', 'end_addr', 'network_view',
                'network', 'extattrs', 'disable']
     _remap = {'cidr': 'network'}
-    _search_fields = ['network_view', 'start_addr', 'network']
+    _search_for_update_fields = ['network_view', 'start_addr',
+                                 'end_addr', 'network']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
     _return_fields = ['start_addr', 'end_addr', 'network_view', 'extattrs']
 
@@ -751,7 +761,8 @@ class FixedAddressV4(FixedAddress):
     _infoblox_type = 'fixedaddress'
     _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'network',
                'options']
-    _search_fields = ['ipv4addr', 'mac', 'network_view', 'network']
+    _search_for_update_fields = ['ipv4addr', 'mac', 'network_view', 'network']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ip']
     _return_fields = ['ipv4addr', 'mac', 'network_view', 'extattrs']
     _remap = {'ipv4addr': 'ip'}
@@ -770,7 +781,8 @@ class FixedAddressV6(FixedAddress):
     """FixedAddress for IPv6"""
     _infoblox_type = 'ipv6fixedaddress'
     _fields = ['ipv6addr', 'duid', 'network_view', 'extattrs', 'network']
-    _search_fields = ['ipv6addr', 'duid', 'network_view', 'network']
+    _search_for_update_fields = ['ipv6addr', 'duid', 'network_view', 'network']
+    _all_searchable_fields = _search_for_update_fields
     _return_fields = ['ipv6addr', 'duid', 'network_view', 'extattrs']
     _shadow_fields = ['_ref', 'mac', 'ip']
     _remap = {'ipv6addr': 'ip'}
@@ -809,7 +821,8 @@ class ARecordBase(InfobloxObject):
 class ARecord(ARecordBase):
     _infoblox_type = 'record:a'
     _fields = ['ipv4addr', 'name', 'view', 'extattrs']
-    _search_fields = ['ipv4addr', 'view']
+    _search_for_update_fields = ['ipv4addr', 'view']
+    _all_searchable_fields = _search_for_update_fields + ['name']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
@@ -818,7 +831,8 @@ class ARecord(ARecordBase):
 class AAAARecord(ARecordBase):
     _infoblox_type = 'record:aaaa'
     _fields = ['ipv6addr', 'name', 'view', 'extattrs']
-    _search_fields = ['ipv6addr', 'view']
+    _search_for_update_fields = ['ipv6addr', 'view']
+    _all_searchable_fields = _search_for_update_fields + ['name']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
@@ -838,7 +852,8 @@ class PtrRecord(InfobloxObject):
 
 class PtrRecordV4(PtrRecord):
     _fields = ['view', 'ipv4addr', 'ptrdname', 'extattrs']
-    _search_fields = ['view', 'ipv4addr', 'ptrdname']
+    _search_for_update_fields = ['view', 'ipv4addr']
+    _all_searchable_fields = _search_for_update_fields + ['ptrdname']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
@@ -846,7 +861,8 @@ class PtrRecordV4(PtrRecord):
 
 class PtrRecordV6(PtrRecord):
     _fields = ['view', 'ipv6addr', 'ptrdname', 'extattrs']
-    _search_fields = ['view', 'ipv6addr', 'ptrdname']
+    _search_for_update_fields = ['view', 'ipv6addr']
+    _all_searchable_fields = _search_for_update_fields + ['ptrdname']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
@@ -860,9 +876,10 @@ class SRVRecord(InfobloxObject):
                'ddns_protected', 'disable', 'dns_name', 'dns_target',
                'extattrs', 'forbid_reclamation', 'reclaimable',
                'ttl', 'use_ttl', 'view', 'zone']
-    _search_fields = ['comment', 'creator', 'ddns_principal',
-                      'name', 'port', 'priority', 'reclaimable',
-                      'target', 'view', 'weight', 'zone']
+    _search_for_update_fields = ['comment', 'creator', 'ddns_principal',
+                                 'name', 'port', 'priority', 'reclaimable',
+                                 'target', 'view', 'weight', 'zone']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
 
 
@@ -870,7 +887,8 @@ class NetworkView(InfobloxObject):
     _infoblox_type = 'networkview'
     _fields = ['name', 'extattrs']
     _return_fields = ['name', 'extattrs', 'is_default']
-    _search_fields = ['name']
+    _search_for_update_fields = ['name']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'is_default']
     _ip_version = 'any'
 
@@ -879,7 +897,8 @@ class DNSView(InfobloxObject):
     _infoblox_type = 'view'
     _fields = ['name', 'network_view', 'extattrs']
     _return_fields = ['name', 'network_view', 'extattrs']
-    _search_fields = ['name', 'network_view']
+    _search_for_update_fields = ['name', 'network_view']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'is_default']
     _ip_version = 'any'
 
@@ -890,7 +909,8 @@ class DNSZone(InfobloxObject):
                'prefix', 'grid_primary', 'grid_secondaries']
     _return_fields = ['fqdn', 'view', 'extattrs', 'zone_format', 'ns_group',
                       'prefix', 'grid_primary', 'grid_secondaries']
-    _search_fields = ['fqdn', 'view', 'zone_format']
+    _search_for_update_fields = ['fqdn', 'view', 'zone_format']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ns_group']
     _ip_version = 'any'
 
@@ -912,7 +932,8 @@ class Member(InfobloxObject):
                'config_addr_type', 'service_type_configuration']
     _return_fields = ['host_name', 'ipv6_setting', 'node_info',
                       'vip_setting', 'extattrs']
-    _search_fields = ['host_name', 'ipv4_address', 'ipv6_address']
+    _search_for_update_fields = ['host_name', 'ipv4_address', 'ipv6_address']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ip', 'node_info']
     _ip_version = 'any'
     _remap = {'name': 'host_name'}
@@ -924,7 +945,8 @@ class EADefinition(InfobloxObject):
     _fields = ['comment', 'default_value', 'flags', 'list_values',
                'max', 'min', 'name', 'namespace', 'type',
                'allowed_object_types']
-    _search_fields = ['name']
+    _search_for_update_fields = ['name']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
     _return_fields = ['comment', 'default_value', 'flags', 'list_values',
                       'max', 'min', 'name', 'namespace', 'type',
@@ -933,7 +955,9 @@ class EADefinition(InfobloxObject):
 
 class IPAddress(InfobloxObject):
     _fields = ['network_view', 'ip_address', 'objects', 'network', 'status']
-    _search_fields = ['network_view', 'ip_address', 'network', 'status']
+    _search_for_update_fields = ['network_view', 'ip_address',
+                                 'network', 'status']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
     _return_fields = ['objects']
 
@@ -982,5 +1006,6 @@ class IPAllocation(object):
 class Tenant(InfobloxObject):
     _infoblox_type = 'grid:cloudapi:tenant'
     _fields = ['id', 'name', 'comment']
-    _search_fields = ['id']
+    _search_for_update_fields = ['id']
+    _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
