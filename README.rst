@@ -175,6 +175,7 @@ Supported NIOS objects
   * PtrRecordV6 for 'record:ptr'
    
 * EADefinition for 'extensibleattributedef'
+* CNAMERecord for 'record:cname'
 
 
 Search by regular expression
