@@ -176,7 +176,10 @@ class InfobloxObject(BaseObject):
 
     _fields - fields that represents NIOS object (WAPI fields) and
         are sent to NIOS on object creation
-    _search_fields - fields that can be used to find object on NIOS side
+    _search_for_update_fields - field/fields used to find an object during an update
+        operation. this should be the smallest number of fields that uniquely identify
+        an object
+    _all_searchable_fields - all fields that can be used to find object on NIOS side
     _updateable_search_fields - fields that can be used to find object on
         NIOS side, but also can be changed, so has to be sent on update.
     _shadow_fields - fields that object usually has but they should not
@@ -1013,8 +1016,15 @@ class Tenant(InfobloxObject):
 
 class CNAMERecord(InfobloxObject):
     _infoblox_type = 'record:cname'
-    _fields = ['name', 'canonical', 'view']
-    _search_fields = ['name', 'view']
-    _updateable_search_fields = ['canonical']
+    _fields = ['name', 'canonical', 'view', 'extattrs', 'comment',
+               'aws_rte53_record_info', 'cloud_info', 'creation_time',
+               'creator', 'ddns_principal', 'ddns_protected', 'disable',
+               'dns_canonical', 'dns_name', 'forbid_reclamation', 'reclaimable',
+               'ttl', 'use_ttl', 'zone']
+    _search_for_update_fields = ['name', 'view']
+    _updateable_search_fields = ['canonical', 'view', 'name', 'comment',
+                                 'creator', 'ddns_principal']
+    _all_searchable_fields = _search_for_update_fields + ['reclaimable',
+                                                          'zone']
     _return_fields = ['canonical', 'name', 'view']
     _shadow_fields = ['_ref']
