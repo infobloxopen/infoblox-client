@@ -1018,8 +1018,7 @@ class Tenant(InfobloxObject):
 class CNAMERecord(InfobloxObject):
     _infoblox_type = 'record:cname'
     _fields = ['name', 'canonical', 'view', 'extattrs', 'comment',
-               'aws_rte53_record_info', 'cloud_info', 'creator',
-               'ddns_principal', 'ddns_protected', 'disable',
+               'creator', 'ddns_principal', 'ddns_protected', 'disable',
                'forbid_reclamation', 'ttl', 'use_ttl']
     _search_for_update_fields = ['name', 'view']
     _updateable_search_fields = ['name']
