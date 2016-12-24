@@ -176,7 +176,11 @@ class InfobloxObject(BaseObject):
 
     _fields - fields that represents NIOS object (WAPI fields) and
         are sent to NIOS on object creation
-    _search_fields - fields that can be used to find object on NIOS side
+    _search_for_update_fields - field/fields used to find an object during an
+        update operation. this should be the smallest number of fields that
+        uniquely identify an object
+    _all_searchable_fields - all fields that can be used to find object on NIOS
+        side
     _updateable_search_fields - fields that can be used to find object on
         NIOS side, but also can be changed, so has to be sent on update.
     _shadow_fields - fields that object usually has but they should not
@@ -1008,4 +1012,17 @@ class Tenant(InfobloxObject):
     _fields = ['id', 'name', 'comment']
     _search_for_update_fields = ['id']
     _all_searchable_fields = _search_for_update_fields
+    _shadow_fields = ['_ref']
+
+
+class CNAMERecord(InfobloxObject):
+    _infoblox_type = 'record:cname'
+    _fields = ['name', 'canonical', 'view', 'extattrs', 'comment',
+               'creator', 'ddns_principal', 'ddns_protected', 'disable',
+               'forbid_reclamation', 'ttl', 'use_ttl']
+    _search_for_update_fields = ['name', 'view']
+    _updateable_search_fields = ['name']
+    _all_searchable_fields = _search_for_update_fields + ['reclaimable',
+                                                          'zone']
+    _return_fields = ['canonical', 'name', 'view', 'extattrs']
     _shadow_fields = ['_ref']
