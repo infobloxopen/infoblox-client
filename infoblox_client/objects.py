@@ -534,7 +534,7 @@ class HostRecord(InfobloxObject):
 class HostRecordV4(HostRecord):
     """HostRecord for IPv4"""
     _fields = ['ipv4addrs', 'view', 'extattrs', 'name', 'zone',
-               'configure_for_dns']
+               'configure_for_dns', 'ttl']
     _search_fields = ['view', 'ipv4addr', 'name', 'zone']
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv4addr']
