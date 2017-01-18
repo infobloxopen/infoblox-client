@@ -91,6 +91,10 @@ Example of creating Network View, Network, DNS View, DNSZone and HostRecord usin
   my_ip = objects.IP.create(ip='192.168.1.25', mac='aa:bb:cc:11:22:33')
   hr = objects.HostRecord.create(conn, view='my_dns_view', 
                                  name='my_host_record.my_zone.com', ip=my_ip)
+  # set TTL to 30minutes
+  hr = objects.HostRecord.create(conn, view='my_dns_view', 
+                                 name='my_host_record.my_zone.com', ip=my_ip,
+                                 ttl = 30)
 
 Reply from NIOS is parsed back into objects and contains next data:
 

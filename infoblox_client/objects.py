@@ -567,7 +567,7 @@ class HostRecordV4(HostRecord):
 class HostRecordV6(HostRecord):
     """HostRecord for IPv6"""
     _fields = ['ipv6addrs', 'view', 'extattrs',  'name', 'zone',
-               'configure_for_dns']
+               'configure_for_dns', 'ttl']
     _search_fields = ['ipv6addr', 'view', 'name', 'zone']
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv6addr']
