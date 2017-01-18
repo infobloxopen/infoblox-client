@@ -115,6 +115,28 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(None, ip.configure_for_dhcp)
         self.assertEqual(None, ip.host)
 
+    def test_create_host_record_with_ttl(self):
+        mock_record = DEFAULT_HOST_RECORD
+        host_record_copy = copy.deepcopy(mock_record)
+        connector = self._mock_connector(create_object=host_record_copy)
+
+        ip = objects.IP.create(ip='22.0.0.2', mac='fa:16:3e:29:87:70')
+        self.assertIsInstance(ip, objects.IPv4)
+
+        host_record = objects.HostRecord.create(connector,
+                                                ttl=42,
+                                                view='some-dns-view',
+                                                ip=[ip])
+        self.assertIsInstance(host_record, objects.HostRecordV4)
+        connector.create_object.assert_called_once_with(
+            'record:host',
+            {'ttl': 42,
+             'ipv4addrs': [
+                {'mac': 'fa:16:3e:29:87:70',
+                 'ipv4addr': '22.0.0.2'}],
+             'view': 'some-dns-view'},
+            ['ipv4addrs', 'extattrs'])
+
     def test_create_host_record_with_ip(self):
         mock_record = DEFAULT_HOST_RECORD
         host_record_copy = copy.deepcopy(mock_record)
