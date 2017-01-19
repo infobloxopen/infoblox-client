@@ -884,6 +884,7 @@ class SRVRecord(InfobloxObject):
                                  'name', 'port', 'priority', 'reclaimable',
                                  'target', 'view', 'weight', 'zone']
     _all_searchable_fields = _search_for_update_fields
+    _return_fields = ['name', 'port', 'priority', 'weight', 'target', 'view']
     _shadow_fields = ['_ref']
 
 
