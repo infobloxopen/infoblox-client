@@ -95,6 +95,10 @@ Example of creating Network View, Network, DNS View, DNSZone and HostRecord usin
   ea = objects.EA({'Tenant ID': tenantid, 'CMP Type': cmptype,
                    'Cloud API Owned': True})
   host = objects.HostRecord.create(conn, name='new_host', ip=my_ip, extattrs=ea)
+  # set TTL to 30minutes
+  hr = objects.HostRecord.create(conn, view='my_dns_view', 
+                                 name='my_host_record.my_zone.com', ip=my_ip,
+                                 ttl = 30)
 
 Reply from NIOS is parsed back into objects and contains next data:
 
