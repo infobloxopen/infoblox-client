@@ -3,6 +3,12 @@
 History
 -------
 
+0.4.13 (2017-03-01)
+___________________
+* Add TTL field to HostRecordV*
+* Add CNAME record support
+* Specify return fields for an SRV record
+
 0.4.12 (2016-12-08)
 ___________________
 * Allow search all fields
