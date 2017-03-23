@@ -218,7 +218,7 @@ class Connector(object):
                             'range', etc.
             payload (dict): Payload with data to send
             return_fields (list): List of fields to be returned
-            extattrs      (list): List of Extensible Attributes
+            extattrs      (dict): List of Extensible Attributes
             force_proxy   (bool): Set _proxy_search flag
                                   to process requests on GM
             max_results   (int): Maximum number of objects to be returned.
