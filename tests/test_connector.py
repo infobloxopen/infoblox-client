@@ -123,7 +123,7 @@ class TestInfobloxConnector(unittest.TestCase):
             self.connector.get_object(objtype, payload, extattrs=extattrs)
             patched_get.assert_called_once_with(
                 'https://infoblox.example.org/wapi/'
-                'v1.1/network?*Subnet ID=fake_subnet_id&ip=0.0.0.0',
+                'v1.1/network?%2ASubnet+ID=fake_subnet_id&ip=0.0.0.0',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
@@ -222,7 +222,7 @@ class TestInfobloxConnector(unittest.TestCase):
                                             query_params=query_params,
                                             extattrs=ext_attrs)
         self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?'
-                         '*Subnet ID=fake_subnet_id&some_option=some_value',
+                         '%2ASubnet+ID=fake_subnet_id&some_option=some_value',
                          url)
 
     def test_construct_url_with_force_proxy(self):
@@ -231,7 +231,7 @@ class TestInfobloxConnector(unittest.TestCase):
                                             extattrs=ext_attrs,
                                             force_proxy=True)
         self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?'
-                         '*Subnet ID=fake_subnet_id&_proxy_search=GM',
+                         '%2ASubnet+ID=fake_subnet_id&_proxy_search=GM',
                          url)
 
     def test_get_object_with_proxy_flag(self):

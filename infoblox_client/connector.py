@@ -138,7 +138,13 @@ class Connector(object):
         if extattrs:
             attrs_queries = []
             for key, value in extattrs.items():
-                attrs_queries.append('*' + key + '=' + value['value'])
+                param = "*%s" % key
+                value = value['value']
+                if isinstance(value, list):
+                    for item in value:
+                        attrs_queries.append(self._urlencode({param: item}))
+                else:
+                    attrs_queries.append(self._urlencode({param: value}))
             query += '&'.join(attrs_queries)
         if query_params:
             if len(query) > 1:
@@ -218,7 +224,7 @@ class Connector(object):
                             'range', etc.
             payload (dict): Payload with data to send
             return_fields (list): List of fields to be returned
-            extattrs      (list): List of Extensible Attributes
+            extattrs      (dict): List of Extensible Attributes
             force_proxy   (bool): Set _proxy_search flag
                                   to process requests on GM
             max_results   (int): Maximum number of objects to be returned.
