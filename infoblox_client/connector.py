@@ -138,7 +138,13 @@ class Connector(object):
         if extattrs:
             attrs_queries = []
             for key, value in extattrs.items():
-                attrs_queries.append('*' + key + '=' + value['value'])
+                param = "*%s" % key
+                value = value['value']
+                if isinstance(value, list):
+                    for item in value:
+                        attrs_queries.append(self._urlencode({param: item}))
+                else:
+                    attrs_queries.append(self._urlencode({param: value}))
             query += '&'.join(attrs_queries)
         if query_params:
             if len(query) > 1:
