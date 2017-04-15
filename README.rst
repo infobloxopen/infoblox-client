@@ -82,20 +82,40 @@ Example of creating Network View, Network, DNS View, DNSZone and HostRecord usin
   opts = {'host': '192.168.1.10', 'username': 'admin', 'password': 'admin'}
   conn = connector.Connector(opts)
 
+Create a network view, and network:
+
+.. code:: python
+
   nview = objects.NetworkView.create(conn, name='my_view')
   network = objects.Network.create(conn, network_view='my_view', cidr='192.168.1.0/24')
+
+Create a DNS view and zone:
+
+.. code:: python
 
   view = objects.DNSView.create(conn, network_view='my_view', name='my_dns_view')
   zone = objects.DNSZone.create(conn, view='my_dns_view', fqdn='my_zone.com')
 
+Create a host record:
+
+.. code:: python
+
   my_ip = objects.IP.create(ip='192.168.1.25', mac='aa:bb:cc:11:22:33')
   hr = objects.HostRecord.create(conn, view='my_dns_view', 
                                  name='my_host_record.my_zone.com', ip=my_ip)
-  # Create host record with Extensible Attributes (EA)
+  
+Create host record with Extensible Attributes (EA):
+
+.. code:: python
+
   ea = objects.EA({'Tenant ID': tenantid, 'CMP Type': cmptype,
                    'Cloud API Owned': True})
   host = objects.HostRecord.create(conn, name='new_host', ip=my_ip, extattrs=ea)
-  # set TTL to 30 minutes
+  
+Set the TTL to 30 minutes:
+
+.. code:: python
+
   hr = objects.HostRecord.create(conn, view='my_dns_view', 
                                  name='my_host_record.my_zone.com', ip=my_ip,
                                  ttl = 1800)
@@ -122,12 +142,12 @@ Objects Interface
 
 All top level objects support interface for CRUD operations. List of supported objects is defined in next section.
 
-- ``create(cls, connector, check_if_exists=True, update_if_exists=False, \**kwargs)``
+- ``create(cls, connector, check_if_exists=True, update_if_exists=False, **kwargs)``
     Creates object on NIOS side.
     Requires connector passed as the first argument, ``check_if_exists`` and ``update_if_exists`` are optional.
     Object related fields are passed in as kwargs: ``field=value``, ``field2=value2``.
     
-- ``search(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, \**kwargs)``
+- ``search(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)``
     Search single object on NIOS side, returns first object that match search criteria.
     Requires connector passed as the first argument.
     ``return_fields`` can be set to retrieve particular fields from NIOS,
@@ -136,7 +156,7 @@ All top level objects support interface for CRUD operations. List of supported o
     ``search_extattrs`` is used to filter out results by extensible attributes.
     ``force_proxy`` forces search request to be processed on Grid Master (applies only in cloud environment)
     
-- ``search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, \**kwargs)``
+- ``search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)``
     Search all objects on NIOS side that match search criteria. Returns a list of objects.
     All other options are equal to ``search()``.
 
