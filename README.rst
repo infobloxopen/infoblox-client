@@ -135,7 +135,7 @@ Reply from NIOS is parsed back into objects and contains next data:
   In [22]: hr
   Out[22]: HostRecordV4: _ref=record:host/ZG5zLmhvc3QkLjQuY29tLm15X3pvbmUubXlfaG9zdF9yZWNvcmQ:my_host_record.my_zone.com/my_dns_view, name=my_host_record.my_zone.com, ipv4addrs=[<infoblox_client.objects.IPv4 object at 0x7f7d6b0fe9d0>], view=my_dns_view
 
-High level API, using objects
+High level API, using InfobloxObjectManager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create a new fixed address, selecting it from the next available IP in a CIDR:
