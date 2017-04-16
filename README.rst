@@ -103,7 +103,7 @@ Create a host record:
   my_ip = objects.IP.create(ip='192.168.1.25', mac='aa:bb:cc:11:22:33')
   hr = objects.HostRecord.create(conn, view='my_dns_view', 
                                  name='my_host_record.my_zone.com', ip=my_ip)
-  
+
 Create host record with Extensible Attributes (EA):
 
 .. code:: python
@@ -111,7 +111,7 @@ Create host record with Extensible Attributes (EA):
   ea = objects.EA({'Tenant ID': tenantid, 'CMP Type': cmptype,
                    'Cloud API Owned': True})
   host = objects.HostRecord.create(conn, name='new_host', ip=my_ip, extattrs=ea)
-  
+
 Set the TTL to 30 minutes:
 
 .. code:: python
@@ -125,9 +125,7 @@ Create a new host record, from the next available IP in a CIDR, with a MAC addre
 .. code:: python
 
     next = objects.IPAllocation.next_available_ip_from_cidr('default', '10.0.0.0/24')
-
     my_ip = objects.IP.create(ip=next, mac='aa:bb:cc:11:22:33', configure_for_dhcp=True)
-
     host = objects.HostRecord.create(conn, name='some.valid.fqdn', view='Internal', ip=my_ip)
 
 Reply from NIOS is parsed back into objects and contains next data:
@@ -136,6 +134,19 @@ Reply from NIOS is parsed back into objects and contains next data:
 
   In [22]: hr
   Out[22]: HostRecordV4: _ref=record:host/ZG5zLmhvc3QkLjQuY29tLm15X3pvbmUubXlfaG9zdF9yZWNvcmQ:my_host_record.my_zone.com/my_dns_view, name=my_host_record.my_zone.com, ipv4addrs=[<infoblox_client.objects.IPv4 object at 0x7f7d6b0fe9d0>], view=my_dns_view
+
+High level API, using objects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a new fixed address, selecting it from the next available IP in a CIDR:
+
+.. code:: python
+
+  from infoblox_client.object_manager import InfobloxObjectManager
+
+  new_address = InfobloxObjectManager(conn).create_fixed_address_from_cidr(netview='default', mac='aa:bb:cc:11:22:33', cidr='10.0.0.0/24', extattrs=[])
+
+What you get back is a ``FixedAddressV4`` object.
 
 Objects Interface
 -----------------
