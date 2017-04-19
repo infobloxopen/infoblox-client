@@ -539,7 +539,8 @@ class HostRecord(InfobloxObject):
 class HostRecordV4(HostRecord):
     """HostRecord for IPv4"""
     _fields = ['ipv4addrs', 'view', 'extattrs', 'name', 'zone',
-               'configure_for_dns', 'network_view', 'mac', 'ttl']
+               'configure_for_dns', 'network_view', 'mac', 'ttl',
+               'comment']
     _search_for_update_fields = ['view', 'ipv4addr', 'name',
                                  'zone', 'network_view', 'mac']
     _all_searchable_fields = _search_for_update_fields
@@ -574,7 +575,7 @@ class HostRecordV4(HostRecord):
 class HostRecordV6(HostRecord):
     """HostRecord for IPv6"""
     _fields = ['ipv6addrs', 'view', 'extattrs',  'name', 'zone',
-               'configure_for_dns', 'network_view', 'ttl']
+               'configure_for_dns', 'network_view', 'ttl', 'comment']
     _search_for_update_fields = ['ipv6addr', 'view', 'name',
                                  'zone', 'network_view']
     _all_searchable_fields = _search_for_update_fields
@@ -764,7 +765,7 @@ class FixedAddress(InfobloxObject):
 class FixedAddressV4(FixedAddress):
     _infoblox_type = 'fixedaddress'
     _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'network',
-               'options']
+               'options', 'comment']
     _search_for_update_fields = ['ipv4addr', 'mac', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ip']
@@ -784,7 +785,7 @@ class FixedAddressV4(FixedAddress):
 class FixedAddressV6(FixedAddress):
     """FixedAddress for IPv6"""
     _infoblox_type = 'ipv6fixedaddress'
-    _fields = ['ipv6addr', 'duid', 'network_view', 'extattrs', 'network']
+    _fields = ['ipv6addr', 'duid', 'network_view', 'extattrs', 'network', 'comment']
     _search_for_update_fields = ['ipv6addr', 'duid', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _return_fields = ['ipv6addr', 'duid', 'network_view', 'extattrs']
