@@ -303,6 +303,9 @@ class InfobloxObject(BaseObject):
                          {'obj_type': local_obj.infoblox_type,
                           'ib_obj': local_obj})
                 if not update_if_exists:
+                    local_obj = local_obj.fetch()
+                    local_obj.extattrs = (
+                        EA.from_dict(local_obj.extattrs))
                     return local_obj
         reply = None
         if not local_obj.ref:
