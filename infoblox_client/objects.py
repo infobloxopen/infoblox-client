@@ -39,6 +39,7 @@ class BaseObject(object):
     _shadow_fields = []
     _remap = {}
     _infoblox_type = None
+    _is_created = False
 
     def __init__(self, **kwargs):
         mapped_args = self._remap_fields(kwargs)
@@ -212,11 +213,11 @@ class InfobloxObject(BaseObject):
     _shadow_fields = []
     _infoblox_type = None
     _remap = {}
-
     _return_fields = []
     _custom_field_processing = {}
     _global_field_processing = {'extattrs': EA.from_dict}
     _ip_version = None
+    _is_created = False
 
     def __new__(cls, connector, **kwargs):
         return super(InfobloxObject,
@@ -303,8 +304,10 @@ class InfobloxObject(BaseObject):
                          {'obj_type': local_obj.infoblox_type,
                           'ib_obj': local_obj})
                 if not update_if_exists:
+                    local_obj._is_created = False
                     return local_obj
         reply = None
+        _is_created = False
         if not local_obj.ref:
             reply = connector.create_object(local_obj.infoblox_type,
                                             local_obj.to_dict(),
@@ -312,13 +315,18 @@ class InfobloxObject(BaseObject):
             LOG.info("Infoblox %(obj_type)s was created: %(ib_obj)s",
                      {'obj_type': local_obj.infoblox_type,
                       'ib_obj': local_obj})
+            _is_created = True
         elif update_if_exists:
             update_fields = local_obj.to_dict(search_fields='exclude')
             reply = connector.update_object(local_obj.ref,
                                             update_fields,
                                             local_obj.return_fields)
             LOG.info('Infoblox object was updated: %s', local_obj.ref)
-        return cls._object_from_reply(local_obj, connector, reply)
+
+        obj = cls._object_from_reply(local_obj, connector, reply)
+        if obj:
+            obj._is_created = _is_created
+        return obj
 
     @classmethod
     def _search(cls, connector, return_fields=None,
@@ -406,6 +414,10 @@ class InfobloxObject(BaseObject):
     def ip_version(self):
         return self._ip_version
 
+    @property
+    def is_created(self):
+        return self._is_created
+
     @classmethod
     def get_class_from_args(cls, kwargs):
         # skip processing if cls already versioned class
@@ -440,6 +452,7 @@ class Network(InfobloxObject):
     _return_fields = ['network_view', 'network', 'options', 'members',
                       'extattrs']
     _remap = {'cidr': 'network'}
+    _is_created = False
 
     @classmethod
     def get_v4_class(cls):
@@ -471,11 +484,13 @@ class Network(InfobloxObject):
 class NetworkV4(Network):
     _infoblox_type = 'network'
     _ip_version = 4
+    _is_created = False
 
 
 class NetworkV6(Network):
     _infoblox_type = 'ipv6network'
     _ip_version = 6
+    _is_created = False
 
 
 class HostRecord(InfobloxObject):
@@ -497,6 +512,7 @@ class HostRecord(InfobloxObject):
 
     """
     _infoblox_type = 'record:host'
+    _is_created = False
 
     @classmethod
     def get_v4_class(cls):
@@ -550,6 +566,7 @@ class HostRecordV4(HostRecord):
     _remap = {'ip': 'ipv4addrs',
               'ips': 'ipv4addrs'}
     _ip_version = 4
+    _is_created = False
 
     @property
     def ipv4addrs(self):
@@ -586,6 +603,7 @@ class HostRecordV6(HostRecord):
               'ips': 'ipv6addrs'}
 
     _ip_version = 6
+    _is_created = False
 
     @property
     def ipv6addrs(self):
@@ -616,6 +634,7 @@ class IPv6HostAddress(InfobloxObject):
     _shadow_fields = ['_ref']
     _return_fields = ['host']
     _ip_version = 6
+    _is_created = False
 
 
 class SubObjects(BaseObject):
@@ -723,6 +742,7 @@ class IPRange(InfobloxObject):
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
     _return_fields = ['start_addr', 'end_addr', 'network_view', 'extattrs']
+    _is_created = False
 
     @classmethod
     def get_v4_class(cls):
@@ -736,11 +756,13 @@ class IPRange(InfobloxObject):
 class IPRangeV4(IPRange):
     _infoblox_type = 'range'
     _ip_version = 4
+    _is_created = False
 
 
 class IPRangeV6(IPRange):
     _infoblox_type = 'ipv6range'
     _ip_version = 6
+    _is_created = False
 
 
 class FixedAddress(InfobloxObject):
@@ -772,6 +794,7 @@ class FixedAddressV4(FixedAddress):
     _return_fields = ['ipv4addr', 'mac', 'network_view', 'extattrs']
     _remap = {'ipv4addr': 'ip'}
     _ip_version = 4
+    _is_created = False
 
     @staticmethod
     def _build_options(members):
@@ -793,6 +816,7 @@ class FixedAddressV6(FixedAddress):
     _shadow_fields = ['_ref', 'mac', 'ip']
     _remap = {'ipv6addr': 'ip'}
     _ip_version = 6
+    _is_created = False
 
     @property
     def mac(self):
@@ -832,6 +856,7 @@ class ARecord(ARecordBase):
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
+    _is_created = False
 
 
 class AAAARecord(ARecordBase):
@@ -842,10 +867,12 @@ class AAAARecord(ARecordBase):
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
+    _is_created = False
 
 
 class PtrRecord(InfobloxObject):
     _infoblox_type = 'record:ptr'
+    _is_created = False
 
     @classmethod
     def get_v4_class(cls):
@@ -863,6 +890,7 @@ class PtrRecordV4(PtrRecord):
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
+    _is_created = False
 
 
 class PtrRecordV6(PtrRecord):
@@ -872,6 +900,7 @@ class PtrRecordV6(PtrRecord):
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
+    _is_created = False
 
 
 class SRVRecord(InfobloxObject):
@@ -888,6 +917,7 @@ class SRVRecord(InfobloxObject):
     _all_searchable_fields = _search_for_update_fields
     _return_fields = ['name', 'port', 'priority', 'weight', 'target', 'view']
     _shadow_fields = ['_ref']
+    _is_created = False
 
 
 class NetworkView(InfobloxObject):
@@ -898,6 +928,7 @@ class NetworkView(InfobloxObject):
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'is_default']
     _ip_version = 'any'
+    _is_created = False
 
 
 class DNSView(InfobloxObject):
@@ -908,6 +939,7 @@ class DNSView(InfobloxObject):
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'is_default']
     _ip_version = 'any'
+    _is_created = False
 
 
 class DNSZone(InfobloxObject):
@@ -920,6 +952,7 @@ class DNSZone(InfobloxObject):
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ns_group']
     _ip_version = 'any'
+    _is_created = False
 
     @staticmethod
     def _build_member(members):
@@ -944,6 +977,7 @@ class Member(InfobloxObject):
     _shadow_fields = ['_ref', 'ip', 'node_info']
     _ip_version = 'any'
     _remap = {'name': 'host_name'}
+    _is_created = False
 
 
 class EADefinition(InfobloxObject):
@@ -958,6 +992,7 @@ class EADefinition(InfobloxObject):
     _return_fields = ['comment', 'default_value', 'flags', 'list_values',
                       'max', 'min', 'name', 'namespace', 'type',
                       'allowed_object_types']
+    _is_created = False
 
 
 class IPAddress(InfobloxObject):
@@ -967,6 +1002,7 @@ class IPAddress(InfobloxObject):
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
     _return_fields = ['objects']
+    _is_created = False
 
     @classmethod
     def get_v4_class(cls):
@@ -980,11 +1016,13 @@ class IPAddress(InfobloxObject):
 class IPv4Address(IPAddress):
     _infoblox_type = 'ipv4address'
     _ip_version = 4
+    _is_created = False
 
 
 class IPv6Address(IPAddress):
     _infoblox_type = 'ipv6address'
     _ip_version = 6
+    _is_created = False
 
 
 class IPAllocation(object):
@@ -1016,6 +1054,7 @@ class Tenant(InfobloxObject):
     _search_for_update_fields = ['id']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
+    _is_created = False
 
 
 class CNAMERecord(InfobloxObject):
@@ -1029,3 +1068,4 @@ class CNAMERecord(InfobloxObject):
                                                           'zone']
     _return_fields = ['canonical', 'name', 'view', 'extattrs']
     _shadow_fields = ['_ref']
+    _is_created = False
