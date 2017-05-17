@@ -28,9 +28,9 @@ class InfobloxObjectManager(object):
         self.connector = connector
 
     def create_network_view(self, network_view, extattrs):
-        return obj.NetworkView.create_check_exists(self.connector,
-                                                   name=network_view,
-                                                   extattrs=extattrs)
+        return obj.NetworkView.create(self.connector,
+                                      name=network_view,
+                                      extattrs=extattrs)
 
     def delete_network_view(self, network_view):
         # never delete default network view
@@ -42,9 +42,9 @@ class InfobloxObjectManager(object):
             nview.delete()
 
     def create_dns_view(self, network_view, dns_view):
-        return obj.DNSView.create_check_exists(self.connector,
-                                               name=dns_view,
-                                               network_view=network_view)
+        return obj.DNSView.create(self.connector,
+                                  name=dns_view,
+                                  network_view=network_view)
 
     def delete_dns_view(self, dns_view):
         dns_view = obj.DNSView.search(self.connector,
@@ -297,16 +297,15 @@ class InfobloxObjectManager(object):
                         grid_primary=None, grid_secondaries=None,
                         zone_format=None, ns_group=None, prefix=None,
                         extattrs=None):
-        return (
-            obj.DNSZone.create_check_exists(self.connector,
-                                            fqdn=dns_zone,
-                                            view=dns_view,
-                                            extattrs=extattrs,
-                                            zone_format=zone_format,
-                                            ns_group=ns_group,
-                                            prefix=prefix,
-                                            grid_primary=grid_primary,
-                                            grid_secondaries=grid_secondaries))
+        return obj.DNSZone.create(self.connector,
+                                  fqdn=dns_zone,
+                                  view=dns_view,
+                                  extattrs=extattrs,
+                                  zone_format=zone_format,
+                                  ns_group=ns_group,
+                                  prefix=prefix,
+                                  grid_primary=grid_primary,
+                                  grid_secondaries=grid_secondaries)
 
     def delete_dns_zone(self, dns_view, dns_zone_fqdn):
         dns_zone = obj.DNSZone.search(self.connector,

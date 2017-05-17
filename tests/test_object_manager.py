@@ -715,7 +715,7 @@ class ObjectManagerTestCase(unittest.TestCase):
                    }
         connector.create_object.assert_called_once_with('zone_auth', payload,
                                                         mock.ANY)
-        self.assertIsInstance(zone[0], objects.DNSZone)
+        self.assertIsInstance(zone, objects.DNSZone)
 
     def test_create_dns_zone_creates_zone_auth_object(self):
         dns_view_name = 'dns-view-name'
