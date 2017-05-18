@@ -3,6 +3,11 @@
 History
 -------
 
+0.4.14 (2017-05-18)
+___________________
+
+* Add function to check object is created or reused
+
 0.4.13 (2017-03-01)
 ___________________
 * Add TTL field to HostRecordV*
