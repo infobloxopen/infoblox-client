@@ -14,7 +14,6 @@
 #    under the License.
 
 import netaddr
-import random
 import six
 
 from oslo_log import log as logging
@@ -33,7 +32,7 @@ def is_valid_ip(ip):
 
 
 def get_macstr_from_mac(mac):
-    return ''.join(c for c in mac if  c not in ':' )
+    return ''.join(c for c in mac if c not in ':')
 
 
 def generate_duid(mac):
