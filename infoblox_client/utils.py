@@ -43,7 +43,7 @@ def generate_duid(mac):
     """
     valid = mac and isinstance(mac, six.string_types)
     if not valid:
-        ValueError("Invalid argument was passed")
+        raise ValueError("Invalid argument was passed")
     mac_str = get_macstr_from_mac(mac)[-3:]
     duid = ['0x00']
     for id in mac_str:
@@ -51,7 +51,7 @@ def generate_duid(mac):
     final_duid = ':'.join(map(lambda x: "%s" % x[2:], duid)) + ':' + mac
     valid = final_duid and isinstance(final_duid, six.string_types)
     if not valid:
-        ValueError("Invalid argument was passed")
+        raise ValueError("Invalid argument was passed")
     return final_duid
 
 
