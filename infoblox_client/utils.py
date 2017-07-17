@@ -31,27 +31,17 @@ def is_valid_ip(ip):
     return True
 
 
-def get_macstr_from_mac(mac):
-    return ''.join(c for c in mac if c not in ':')
-
-
 def generate_duid(mac):
     """DUID is consisted of 10 hex numbers.
 
-    0x00 + 3 hex from last 3 character of mac_str + mac with 6 hex
+    0x00 + mac with last 3 hex + mac with 6 hex
     """
     valid = mac and isinstance(mac, six.string_types)
     if not valid:
         raise ValueError("Invalid argument was passed")
-    mac_str = get_macstr_from_mac(mac)[-3:]
-    duid = ['0x00']
-    for id in mac_str:
-        duid.append(hex(ord(id)))
-    final_duid = ':'.join(map(lambda x: "%s" % x[2:], duid)) + ':' + mac
-    valid = final_duid and isinstance(final_duid, six.string_types)
-    if not valid:
-        raise ValueError("Invalid argument was passed")
-    return final_duid
+    duid = ['00']
+    duid.extend(mac.split(':')[-3:])
+    return ':'.join(map(lambda x: "%s" % x, duid)) + ':' + mac
 
 
 def determine_ip_version(ip_in):
