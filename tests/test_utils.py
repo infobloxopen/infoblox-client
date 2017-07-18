@@ -94,3 +94,8 @@ class TestUtils(unittest.TestCase):
         matching = [True for e in duids
                     if e.find(mac) == duid_mac_start_point]
         self.assertEqual(duid_count, len(matching))
+
+    def test_generate_duid_with_invalid_mac(self):
+        mac = 123
+        with self.assertRaises(ValueError):
+            utils.generate_duid(mac)
