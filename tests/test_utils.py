@@ -74,3 +74,28 @@ class TestUtils(unittest.TestCase):
         unchanged_values = ('/path/to/file', 'YES!', '/tmp/certificate')
         for v in unchanged_values:
             self.assertEqual(v, utils.try_value_to_bool(v, strict_mode=False))
+
+    def test_generate_duid(self):
+        # DUID mac address starts from position 12
+        duid_mac_start_point = 12
+
+        duid_count = 10
+        mac = 'fa:16:3e:bd:ce:14'
+        duids = [utils.generate_duid(mac) for _ in range(duid_count)]
+
+        matching = [True for e in duids
+                    if e.find(mac) == duid_mac_start_point]
+        self.assertEqual(duid_count, len(matching))
+
+        duid_count = 50
+        mac = 'fa:16:3e:1d:79:d7'
+        duids = [utils.generate_duid(mac) for _ in range(duid_count)]
+
+        matching = [True for e in duids
+                    if e.find(mac) == duid_mac_start_point]
+        self.assertEqual(duid_count, len(matching))
+
+    def test_generate_duid_with_invalid_mac(self):
+        mac = 123
+        with self.assertRaises(ValueError):
+            utils.generate_duid(mac)
