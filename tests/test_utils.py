@@ -79,21 +79,12 @@ class TestUtils(unittest.TestCase):
         # DUID mac address starts from position 12
         duid_mac_start_point = 12
 
-        duid_count = 10
         mac = 'fa:16:3e:bd:ce:14'
-        duids = [utils.generate_duid(mac) for _ in range(duid_count)]
-
-        matching = [True for e in duids
-                    if e.find(mac) == duid_mac_start_point]
-        self.assertEqual(duid_count, len(matching))
-
-        duid_count = 50
-        mac = 'fa:16:3e:1d:79:d7'
-        duids = [utils.generate_duid(mac) for _ in range(duid_count)]
-
-        matching = [True for e in duids
-                    if e.find(mac) == duid_mac_start_point]
-        self.assertEqual(duid_count, len(matching))
+        duid = utils.generate_duid(mac)
+        # 10 octets for duid
+        self.assertEqual(10, len(duid.split(':')))
+        self.assertEqual(True, (duid.find(mac) == duid_mac_start_point))
+        self.assertEqual(False, (duid[3:11] == "00:00:00"))
 
     def test_generate_duid_with_invalid_mac(self):
         mac = 123

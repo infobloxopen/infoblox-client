@@ -3,11 +3,6 @@
 History
 -------
 
-0.4.15 (2017-07-18)
-___________________
-
-* Changed logic of generate duid using only mac address
-
 0.4.14 (2017-05-18)
 ___________________
 

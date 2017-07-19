@@ -39,9 +39,7 @@ def generate_duid(mac):
     valid = mac and isinstance(mac, six.string_types)
     if not valid:
         raise ValueError("Invalid argument was passed")
-    duid = ['00']
-    duid.extend(mac.split(':')[-3:])
-    return ':'.join(map(lambda x: "%s" % x, duid)) + ':' + mac
+    return "00:" + mac[9:] + ":" + mac
 
 
 def determine_ip_version(ip_in):
