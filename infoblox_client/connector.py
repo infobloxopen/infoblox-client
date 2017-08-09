@@ -374,18 +374,21 @@ class Connector(object):
         return self._parse_reply(r)
 
     @reraise_neutron_exception
-    def delete_object(self, ref):
+    def delete_object(self, ref, delete_arguments=None):
         """Remove an Infoblox object
 
         Args:
-            ref      (str): Object reference
+            ref               (str): Object reference
+            delete_arguments (dict): Extra delete arguments
         Returns:
             The object reference of the removed object
         Raises:
             InfobloxException
         """
         opts = self._get_request_options()
-        url = self._construct_url(ref)
+        if not isinstance(delete_arguments, dict):
+            delete_arguments = {}
+        url = self._construct_url(ref, query_params=delete_arguments)
         self._log_request('delete', url, opts)
         r = self.session.delete(url, **opts)
 
