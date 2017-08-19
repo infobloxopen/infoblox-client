@@ -448,12 +448,12 @@ class InfobloxObject(BaseObject):
 
 class Network(InfobloxObject):
     _fields = ['network_view', 'network', 'template',
-               'options', 'members', 'extattrs']
+               'options', 'members', 'extattrs', 'comment']
     _search_for_update_fields = ['network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
     _return_fields = ['network_view', 'network', 'options', 'members',
-                      'extattrs']
+                      'extattrs', 'comment']
     _remap = {'cidr': 'network'}
 
     @classmethod
