@@ -45,6 +45,7 @@ class TestInfobloxConnector(unittest.TestCase):
         opts.http_request_timeout = 10
         opts.max_retries = 3
         opts.max_results = None
+        opts.paging = False
         return opts
 
     def test_create_object(self):
@@ -243,7 +244,7 @@ class TestInfobloxConnector(unittest.TestCase):
 
         self.assertEqual(None, result)
         self.connector._construct_url.assert_called_with('network', {},
-                                                         None, True)
+                                                         None, force_proxy=True)
         self.connector._get_object.called_with('network',
                                                self.connector._construct_url)
 
@@ -255,7 +256,7 @@ class TestInfobloxConnector(unittest.TestCase):
         result = self.connector.get_object('network')
 
         self.assertEqual(None, result)
-        construct_calls = [mock.call('network', {}, None, False),
+        construct_calls = [mock.call('network', {}, None, force_proxy=False),
                            mock.call('network', {}, None, force_proxy=True)]
         self.connector._construct_url.assert_has_calls(construct_calls)
 
