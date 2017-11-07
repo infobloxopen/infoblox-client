@@ -290,6 +290,15 @@ class TestInfobloxConnector(unittest.TestCase):
                                                    None, False)
         self.assertEqual(None, result)
 
+    def test__handle_get_object_with_max_results_nigative(self):
+        query_params = {"_paging": 1,
+                        "_return_as_object": 1,
+                        "_max_results": -100}
+        self.connector._get_object = mock.MagicMock(return_value=None)
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
+        self.assertEqual(None, result)
+
     def test__handle_get_object_with_pagination_with_record(self):
         query_params = {"_paging": 1,
                         "_return_as_object": 1,
