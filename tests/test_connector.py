@@ -323,6 +323,22 @@ class TestInfobloxConnector(unittest.TestCase):
                                                    None, False)
         self.assertEqual(["data"], result)
 
+    def test_call_func(self):
+        objtype = 'network'
+        payload = {'ip': '0.0.0.0'}
+
+        with patch.object(requests.Session, 'post',
+                          return_value=mock.Mock()) as patched_call_func:
+            patched_call_func.return_value.status_code = 201
+            patched_call_func.return_value.content = '{}'
+            self.connector.call_func(objtype, "_ref", payload)
+            patched_call_func.assert_called_once_with(
+                'https://infoblox.example.org/wapi/v1.1/_ref?_function=network',
+                data=jsonutils.dumps(payload),
+                headers=self.connector.DEFAULT_HEADER,
+                timeout=self.default_opts.http_request_timeout,
+            )
+
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
