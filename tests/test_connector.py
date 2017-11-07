@@ -270,32 +270,48 @@ class TestInfobloxConnector(unittest.TestCase):
         url = 'http://some-url/'
         self.assertEqual(None, self.connector._get_object('network', url))
 
+    def test_get_object_with_pagination_with_no_result(self):
+         self.connector._get_object = mock.MagicMock(return_value=None)
+         result = self.connector.get_object('network', paging=True)
+         self.assertEqual(None, result)
+
+    def test_get_object_with_pagination_with_result(self):
+         self.connector._get_object = mock.MagicMock(
+                                          return_value={"result": ["data"]})
+         result = self.connector.get_object('network', paging=True)
+         self.assertEqual(["data"], result)
+
     def test__handle_get_object_with_pagination_with_no_record(self):
-        query_params = {"_paging": 1, "_return_as_object": 1, "_max_results": 100}
+        query_params = {"_paging": 1,
+                        "_return_as_object": 1,
+                        "_max_results": 100}
         self.connector._get_object = mock.MagicMock(return_value=None)
-        result = self.connector._handle_get_object("network", query_params, None,
-                                         False)
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
         self.assertEqual(None, result)
 
     def test__handle_get_object_with_pagination_with_record(self):
-        query_params = {"_paging": 1, "_return_as_object": 1, "_max_results": 100}
-        self.connector._get_object = mock.MagicMock(return_value={"result": ["data"]})
-        result = self.connector._handle_get_object("network", query_params, None,
-                                         False)
+        query_params = {"_paging": 1,
+                        "_return_as_object": 1,
+                        "_max_results": 100}
+        self.connector._get_object = mock.MagicMock(
+                                         return_value={"result": ["data"]})
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
         self.assertEqual(["data"], result)
 
     def test__handle_get_object_without_pagination(self):
         query_params = {"_max_results": 100}
         self.connector._get_object = mock.MagicMock(return_value=None)
-        result = self.connector._handle_get_object("network", query_params, None,
-                                                   False)
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
         self.assertEqual(None, result)
 
     def test__handle_get_object_without_pagination_with_record(self):
         query_params = {"_max_results": 100}
         self.connector._get_object = mock.MagicMock(return_value=["data"])
-        result = self.connector._handle_get_object("network", query_params, None,
-                                                   False)
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
         self.assertEqual(["data"], result)
 
 
