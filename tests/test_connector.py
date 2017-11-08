@@ -309,6 +309,26 @@ class TestInfobloxConnector(unittest.TestCase):
                                                    None, False)
         self.assertEqual(["data"], result)
 
+    def _get_object(self, url, **opts):
+        resp = requests.Response
+        resp.status_code = 200
+        if "_page_id" in url:
+            resp.content = jsonutils.dumps({"result": [6,7,8,9,10]})
+        else:
+            resp.content = jsonutils.dumps(
+                               {"result": [1,2,3,4,5], "next_page_id": 1})
+        return resp
+
+    def test__handle_get_object_with_record_more_than_max_results_paging(self):
+        query_params = {"_paging": 1,
+                        "_return_as_object": 1,
+                        "_max_results": 5}
+        with patch.object(requests.Session, 'get') as patched_get:
+            patched_get.side_effect = self._get_object
+            result = self.connector._handle_get_object("network", query_params,
+                                                       None, False)
+        self.assertEqual([1,2,3,4,5,6,7,8,9,10], result)
+
     def test__handle_get_object_without_pagination(self):
         query_params = {"_max_results": 100}
         self.connector._get_object = mock.MagicMock(return_value=None)
