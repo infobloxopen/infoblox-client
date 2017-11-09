@@ -45,6 +45,7 @@ class TestInfobloxConnector(unittest.TestCase):
         opts.http_request_timeout = 10
         opts.max_retries = 3
         opts.max_results = None
+        opts.paging = False
         return opts
 
     def test_create_object(self):
@@ -243,7 +244,7 @@ class TestInfobloxConnector(unittest.TestCase):
 
         self.assertEqual(None, result)
         self.connector._construct_url.assert_called_with('network', {},
-                                                         None, True)
+                                                         None, force_proxy=True)
         self.connector._get_object.called_with('network',
                                                self.connector._construct_url)
 
@@ -255,7 +256,7 @@ class TestInfobloxConnector(unittest.TestCase):
         result = self.connector.get_object('network')
 
         self.assertEqual(None, result)
-        construct_calls = [mock.call('network', {}, None, False),
+        construct_calls = [mock.call('network', {}, None, force_proxy=False),
                            mock.call('network', {}, None, force_proxy=True)]
         self.connector._construct_url.assert_has_calls(construct_calls)
 
@@ -268,6 +269,95 @@ class TestInfobloxConnector(unittest.TestCase):
 
         url = 'http://some-url/'
         self.assertEqual(None, self.connector._get_object('network', url))
+
+    def test_get_object_with_pagination_with_no_result(self):
+         self.connector._get_object = mock.MagicMock(return_value=None)
+         result = self.connector.get_object('network', paging=True)
+         self.assertEqual(None, result)
+
+    def test_get_object_with_pagination_with_result(self):
+         self.connector._get_object = mock.MagicMock(
+                                          return_value={"result": ["data"]})
+         result = self.connector.get_object('network', paging=True)
+         self.assertEqual(["data"], result)
+
+    def test__handle_get_object_with_pagination_with_no_record(self):
+        query_params = {"_paging": 1,
+                        "_return_as_object": 1,
+                        "_max_results": 100}
+        self.connector._get_object = mock.MagicMock(return_value=None)
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
+        self.assertEqual(None, result)
+
+    def test__handle_get_object_with_max_results_nigative(self):
+        query_params = {"_paging": 1,
+                        "_return_as_object": 1,
+                        "_max_results": -100}
+        self.connector._get_object = mock.MagicMock(return_value=None)
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
+        self.assertEqual(None, result)
+
+    def test__handle_get_object_with_pagination_with_record(self):
+        query_params = {"_paging": 1,
+                        "_return_as_object": 1,
+                        "_max_results": 100}
+        self.connector._get_object = mock.MagicMock(
+                                         return_value={"result": ["data"]})
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
+        self.assertEqual(["data"], result)
+
+    def _get_object(self, url, **opts):
+        resp = requests.Response
+        resp.status_code = 200
+        if "_page_id" in url:
+            resp.content = jsonutils.dumps({"result": [6,7,8,9,10]})
+        else:
+            resp.content = jsonutils.dumps(
+                               {"result": [1,2,3,4,5], "next_page_id": 1})
+        return resp
+
+    def test__handle_get_object_with_record_more_than_max_results_paging(self):
+        query_params = {"_paging": 1,
+                        "_return_as_object": 1,
+                        "_max_results": 5}
+        with patch.object(requests.Session, 'get') as patched_get:
+            patched_get.side_effect = self._get_object
+            result = self.connector._handle_get_object("network", query_params,
+                                                       None, False)
+        self.assertEqual([1,2,3,4,5,6,7,8,9,10], result)
+
+    def test__handle_get_object_without_pagination(self):
+        query_params = {"_max_results": 100}
+        self.connector._get_object = mock.MagicMock(return_value=None)
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
+        self.assertEqual(None, result)
+
+    def test__handle_get_object_without_pagination_with_record(self):
+        query_params = {"_max_results": 100}
+        self.connector._get_object = mock.MagicMock(return_value=["data"])
+        result = self.connector._handle_get_object("network", query_params,
+                                                   None, False)
+        self.assertEqual(["data"], result)
+
+    def test_call_func(self):
+        objtype = 'network'
+        payload = {'ip': '0.0.0.0'}
+
+        with patch.object(requests.Session, 'post',
+                          return_value=mock.Mock()) as patched_call_func:
+            patched_call_func.return_value.status_code = 201
+            patched_call_func.return_value.content = '{}'
+            self.connector.call_func(objtype, "_ref", payload)
+            patched_call_func.assert_called_once_with(
+                'https://infoblox.example.org/wapi/v1.1/_ref?_function=network',
+                data=jsonutils.dumps(payload),
+                headers=self.connector.DEFAULT_HEADER,
+                timeout=self.default_opts.http_request_timeout,
+            )
 
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
