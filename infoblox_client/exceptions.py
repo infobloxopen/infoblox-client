@@ -110,3 +110,8 @@ class InfobloxBadWAPICredential(InfobloxException):
 
 class InfobloxTimeoutError(InfobloxException):
     message = ("Connection to NIOS timed out")
+
+
+class InfobloxGridTemporaryUnavailable(InfobloxException):
+    message = ("Cannot perform operation %(operation)s with ref %(ref)s: "
+               "%(content)s [code %(code)s]")
