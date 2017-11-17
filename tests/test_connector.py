@@ -197,6 +197,17 @@ class TestInfobloxConnector(unittest.TestCase):
                 timeout=self.default_opts.http_request_timeout,
             )
 
+    def test_update_object_with_http_error_503(self):
+        ref = 'network'
+        payload = {'ip': '0.0.0.0'}
+
+        with patch.object(requests.Session, 'put',
+                          return_value=mock.Mock()) as patched_update:
+            patched_update.return_value.status_code = 503
+            patched_update.return_value.content = 'Temporary Unavailable'
+            self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
+                              self.connector.update_object, ref, payload)
+
     def test_delete_object(self):
         ref = 'network'
         with patch.object(requests.Session, 'delete',
@@ -209,6 +220,15 @@ class TestInfobloxConnector(unittest.TestCase):
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
+
+    def test_delete_object_with_http_error_503(self):
+        ref = 'network'
+        with patch.object(requests.Session, 'delete',
+                          return_value=mock.Mock()) as patched_delete:
+            patched_delete.return_value.status_code = 503
+            patched_delete.return_value.content = 'Temporary Unavailable'
+            self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
+                              self.connector.delete_object, ref)
 
     def test_construct_url_absolute_path_fails(self):
         pathes = ('/starts_with_slash', '', None)
@@ -358,6 +378,17 @@ class TestInfobloxConnector(unittest.TestCase):
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
+
+    def test_call_func_with_http_error_503(self):
+        objtype = 'network'
+        payload = {'ip': '0.0.0.0'}
+
+        with patch.object(requests.Session, 'post',
+                          return_value=mock.Mock()) as patched_call_func:
+            patched_call_func.return_value.status_code = 503
+            patched_call_func.return_value.content = 'Temporary Unavailable'
+            self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
+                              self.connector.call_func, objtype, "_ref", payload)
 
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
