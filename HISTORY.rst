@@ -3,6 +3,11 @@
 History
 -------
 
+0.4.18 (2017-11-20)
+___________________
+
+* Fix bug related to temporary unavailable status code
+
 0.4.17 (2017-11-09)
 ___________________
 
