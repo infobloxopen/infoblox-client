@@ -364,6 +364,15 @@ class Connector(object):
 
         return self._parse_reply(r)
 
+    def _check_service_availability(self, operation, resp, ref):
+        if resp.status_code == requests.codes.SERVICE_UNAVAILABLE:
+            raise ib_ex.InfobloxGridTemporaryUnavailable(
+                response=resp.content,
+                operation=operation,
+                ref=ref,
+                content=resp.content,
+                code=resp.status_code)
+
     @reraise_neutron_exception
     def call_func(self, func_name, ref, payload, return_fields=None):
         query_params = self._build_query_params(return_fields=return_fields)
@@ -378,6 +387,8 @@ class Connector(object):
 
         if r.status_code not in (requests.codes.CREATED,
                                  requests.codes.ok):
+            self._check_service_availability('call_func', r, ref)
+
             raise ib_ex.InfobloxFuncException(
                 response=jsonutils.loads(r.content),
                 ref=ref,
@@ -409,6 +420,8 @@ class Connector(object):
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.ok:
+            self._check_service_availability('update', r, ref)
+
             raise ib_ex.InfobloxCannotUpdateObject(
                 response=jsonutils.loads(r.content),
                 ref=ref,
@@ -439,6 +452,8 @@ class Connector(object):
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.ok:
+            self._check_service_availability('delete', r, ref)
+
             raise ib_ex.InfobloxCannotDeleteObject(
                 response=jsonutils.loads(r.content),
                 ref=ref,
