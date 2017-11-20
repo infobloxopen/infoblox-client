@@ -421,14 +421,14 @@ class TestInfobloxConnector(unittest.TestCase):
             self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
                               self.connector.call_func, objtype, "_ref", payload)
 
-    def test__check_service_availablity(self):
+    def test__check_service_availability(self):
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
         resp = requests.Response
         resp.status_code = 503
         resp.content = 'Temporary Unavailable'
         self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
-                          self.connector._check_service_availablity, "delete",
+                          self.connector._check_service_availability, "delete",
                           resp, '_ref')
 
 
