@@ -421,6 +421,16 @@ class TestInfobloxConnector(unittest.TestCase):
             self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
                               self.connector.call_func, objtype, "_ref", payload)
 
+    def test__check_service_availablity(self):
+        objtype = 'network'
+        payload = {'ip': '0.0.0.0'}
+        resp = requests.Response
+        resp.status_code = 503
+        resp.content = 'Temporary Unavailable'
+        self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
+                          self.connector._check_service_availablity, "delete",
+                          resp, '_ref')
+
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
