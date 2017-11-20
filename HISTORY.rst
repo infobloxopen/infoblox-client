@@ -3,7 +3,7 @@
 History
 -------
 
-0.4.16 (2017-11-09)
+0.4.17 (2017-11-09)
 ___________________
 
 * Added pagination support for wapi calls
