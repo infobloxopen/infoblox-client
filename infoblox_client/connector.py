@@ -319,7 +319,8 @@ class Connector(object):
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.ok:
-            LOG.warning("Failed on object search with url %s: %s", url, r.content)
+            LOG.warning("Failed on object search with url %s: %s",
+                        url, r.content)
             return None
         return self._parse_reply(r)
 
