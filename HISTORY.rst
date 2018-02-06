@@ -3,6 +3,11 @@
 History
 -------
 
+0.4.19 (2018-02-06)
+___________________
+
+* Changed logging of failure on object search from Error to Warning
+
 0.4.18 (2017-11-20)
 ___________________
 
