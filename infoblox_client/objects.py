@@ -779,8 +779,8 @@ class FixedAddress(InfobloxObject):
 
 class FixedAddressV4(FixedAddress):
     _infoblox_type = 'fixedaddress'
-    _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'name', 'network',
-               'options', 'comment']
+    _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'name',
+               'network', 'options', 'comment']
     _search_for_update_fields = ['ipv4addr', 'mac', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ip']
