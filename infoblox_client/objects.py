@@ -784,7 +784,8 @@ class FixedAddressV4(FixedAddress):
     _search_for_update_fields = ['ipv4addr', 'mac', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ip']
-    _return_fields = ['ipv4addr', 'mac', 'name', 'network_view', 'extattrs']
+    _return_fields = ['ipv4addr', 'mac', 'name', 'network', 'network_view',
+                      'extattrs']
     _remap = {'ipv4addr': 'ip'}
     _ip_version = 4
 
@@ -804,7 +805,8 @@ class FixedAddressV6(FixedAddress):
                'network', 'template', 'comment']
     _search_for_update_fields = ['ipv6addr', 'duid', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
-    _return_fields = ['ipv6addr', 'duid', 'name', 'network_view', 'extattrs']
+    _return_fields = ['ipv6addr', 'duid', 'name', 'network', 'network_view',
+                      'extattrs']
     _shadow_fields = ['_ref', 'mac', 'ip']
     _remap = {'ipv6addr': 'ip'}
     _ip_version = 6
