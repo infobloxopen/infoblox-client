@@ -62,7 +62,8 @@ class Connector(object):
                        'max_retries': 3,
                        'wapi_version': '1.4',
                        'max_results': None,
-                       'log_api_calls_as_info': False}
+                       'log_api_calls_as_info': False,
+                       'paging': False}
 
     def __init__(self, options):
         self._parse_options(options)
@@ -83,7 +84,7 @@ class Connector(object):
                       'ssl_verify', 'http_request_timeout', 'max_retries',
                       'http_pool_connections', 'http_pool_maxsize',
                       'silent_ssl_warnings', 'log_api_calls_as_info',
-                      'max_results')
+                      'max_results', 'paging')
         for attr in attributes:
             if isinstance(options, dict) and attr in options:
                 setattr(self, attr, options[attr])
@@ -138,7 +139,13 @@ class Connector(object):
         if extattrs:
             attrs_queries = []
             for key, value in extattrs.items():
-                attrs_queries.append('*' + key + '=' + value['value'])
+                param = "*%s" % key
+                value = value['value']
+                if isinstance(value, list):
+                    for item in value:
+                        attrs_queries.append(self._urlencode({param: item}))
+                else:
+                    attrs_queries.append(self._urlencode({param: value}))
             query += '&'.join(attrs_queries)
         if query_params:
             if len(query) > 1:
@@ -163,7 +170,7 @@ class Connector(object):
 
     @staticmethod
     def _build_query_params(payload=None, return_fields=None,
-                            max_results=None):
+                            max_results=None, paging=False):
         if payload:
             query_params = payload
         else:
@@ -171,8 +178,14 @@ class Connector(object):
 
         if return_fields:
             query_params['_return_fields'] = ','.join(return_fields)
+
         if max_results:
             query_params['_max_results'] = max_results
+
+        if paging:
+            query_params['_paging'] = 1
+            query_params['_return_as_object'] = 1
+
         return query_params
 
     def _get_request_options(self, data=None):
@@ -203,7 +216,8 @@ class Connector(object):
 
     @reraise_neutron_exception
     def get_object(self, obj_type, payload=None, return_fields=None,
-                   extattrs=None, force_proxy=False, max_results=None):
+                   extattrs=None, force_proxy=False, max_results=None,
+                   paging=False):
         """Retrieve a list of Infoblox objects of type 'obj_type'
 
         Some get requests like 'ipv4address' should be always
@@ -218,7 +232,7 @@ class Connector(object):
                             'range', etc.
             payload (dict): Payload with data to send
             return_fields (list): List of fields to be returned
-            extattrs      (list): List of Extensible Attributes
+            extattrs      (dict): List of Extensible Attributes
             force_proxy   (bool): Set _proxy_search flag
                                   to process requests on GM
             max_results   (int): Maximum number of objects to be returned.
@@ -226,6 +240,10 @@ class Connector(object):
                 when the number of returned objects would exceed the setting.
                 The default is -1000. If this is set to a positive number,
                 the results will be truncated when necessary.
+            paging    (bool): Enables paging to wapi calls if paging = True,
+                it uses _max_results to set paging size of the wapi calls.
+                If _max_results is negative it will take paging size as 1000.
+
         Returns:
             A list of the Infoblox objects requested
         Raises:
@@ -238,28 +256,60 @@ class Connector(object):
         if max_results is None and self.max_results:
             max_results = self.max_results
 
+        if paging is False and self.paging:
+            paging = self.paging
+
         query_params = self._build_query_params(payload=payload,
                                                 return_fields=return_fields,
-                                                max_results=max_results)
-
+                                                max_results=max_results,
+                                                paging=paging)
         # Clear proxy flag if wapi version is too old (non-cloud)
         proxy_flag = self.cloud_api_enabled and force_proxy
-
-        url = self._construct_url(obj_type, query_params,
-                                  extattrs, proxy_flag)
-        ib_object = self._get_object(obj_type, url)
+        ib_object = self._handle_get_object(obj_type, query_params, extattrs,
+                                            proxy_flag)
         if ib_object:
             return ib_object
 
         # Do second get call with force_proxy if not done yet
         if self.cloud_api_enabled and not force_proxy:
-            url = self._construct_url(obj_type, query_params, extattrs,
-                                      force_proxy=True)
-            ib_object = self._get_object(obj_type, url)
+            ib_object = self._handle_get_object(obj_type, query_params,
+                                                extattrs, proxy_flag=True)
             if ib_object:
                 return ib_object
 
         return None
+
+    def _handle_get_object(self, obj_type, query_params, extattrs,
+                           proxy_flag=False):
+        if '_paging' in query_params:
+
+            if not ('_max_results' in query_params):
+                query_params['_max_results'] = 1000
+
+            if query_params['_max_results'] < 0:
+                # Since pagination is enabled with _max_results < 0,
+                # set _max_results = 1000.
+                query_params['_max_results'] = 1000
+
+            result = []
+            while True:
+
+                url = self._construct_url(obj_type, query_params, extattrs,
+                                          force_proxy=proxy_flag)
+                resp = self._get_object(obj_type, url)
+                if not resp:
+                    return None
+                if not ('next_page_id' in resp):
+                    result.extend(resp['result'])
+                    query_params.pop('_page_id', None)
+                    return result
+                else:
+                    query_params['_page_id'] = resp['next_page_id']
+                    result.extend(resp['result'])
+        else:
+            url = self._construct_url(obj_type, query_params, extattrs,
+                                      force_proxy=proxy_flag)
+            return self._get_object(obj_type, url)
 
     def _get_object(self, obj_type, url):
         opts = self._get_request_options()
@@ -269,7 +319,8 @@ class Connector(object):
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.ok:
-            LOG.error("Error occurred on object search: %s", r.content)
+            LOG.warning("Failed on object search with url %s: %s",
+                        url, r.content)
             return None
         return self._parse_reply(r)
 
@@ -314,6 +365,15 @@ class Connector(object):
 
         return self._parse_reply(r)
 
+    def _check_service_availability(self, operation, resp, ref):
+        if resp.status_code == requests.codes.SERVICE_UNAVAILABLE:
+            raise ib_ex.InfobloxGridTemporaryUnavailable(
+                response=resp.content,
+                operation=operation,
+                ref=ref,
+                content=resp.content,
+                code=resp.status_code)
+
     @reraise_neutron_exception
     def call_func(self, func_name, ref, payload, return_fields=None):
         query_params = self._build_query_params(return_fields=return_fields)
@@ -328,6 +388,8 @@ class Connector(object):
 
         if r.status_code not in (requests.codes.CREATED,
                                  requests.codes.ok):
+            self._check_service_availability('call_func', r, ref)
+
             raise ib_ex.InfobloxFuncException(
                 response=jsonutils.loads(r.content),
                 ref=ref,
@@ -359,6 +421,8 @@ class Connector(object):
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.ok:
+            self._check_service_availability('update', r, ref)
+
             raise ib_ex.InfobloxCannotUpdateObject(
                 response=jsonutils.loads(r.content),
                 ref=ref,
@@ -368,24 +432,29 @@ class Connector(object):
         return self._parse_reply(r)
 
     @reraise_neutron_exception
-    def delete_object(self, ref):
+    def delete_object(self, ref, delete_arguments=None):
         """Remove an Infoblox object
 
         Args:
-            ref      (str): Object reference
+            ref               (str): Object reference
+            delete_arguments (dict): Extra delete arguments
         Returns:
             The object reference of the removed object
         Raises:
             InfobloxException
         """
         opts = self._get_request_options()
-        url = self._construct_url(ref)
+        if not isinstance(delete_arguments, dict):
+            delete_arguments = {}
+        url = self._construct_url(ref, query_params=delete_arguments)
         self._log_request('delete', url, opts)
         r = self.session.delete(url, **opts)
 
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.ok:
+            self._check_service_availability('delete', r, ref)
+
             raise ib_ex.InfobloxCannotDeleteObject(
                 response=jsonutils.loads(r.content),
                 ref=ref,

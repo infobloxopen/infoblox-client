@@ -23,11 +23,11 @@ with open('testing_requirements.txt') as requirements_file:
 
 setup(
     name='infoblox-client',
-    version='0.4.5',
+    version='0.4.19',
     description="Client for interacting with Infoblox NIOS over WAPI",
     long_description=readme + '\n\n' + history,
-    author="Pavel Bondar",
-    author_email='pbondar@infoblox.com',
+    author="John Belamaric",
+    author_email='jbelamaric@infoblox.com',
     url='https://github.com/infobloxopen/infoblox-client',
     packages=[
         'infoblox_client',

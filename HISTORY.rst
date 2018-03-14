@@ -3,6 +3,66 @@
 History
 -------
 
+0.4.19 (2018-02-06)
+___________________
+
+* Changed logging of failure on object search from Error to Warning
+
+0.4.18 (2017-11-20)
+___________________
+
+* Fix bug related to temporary unavailable status code
+
+0.4.17 (2017-11-09)
+___________________
+
+* Added pagination support for wapi calls
+
+0.4.15 (2017-07-18)
+___________________
+
+* Changed logic of generate duid using only mac address
+
+0.4.14 (2017-05-18)
+___________________
+
+* Add function to check object is created or reused
+
+0.4.13 (2017-03-01)
+___________________
+* Add TTL field to HostRecordV*
+* Add CNAME record support
+* Specify return fields for an SRV record
+
+0.4.12 (2016-12-08)
+___________________
+* Allow search all fields
+* Remove ptrdname from PTR record search attributes
+
+0.4.11 (2016-10-31)
+___________________
+* Add search HostRecords by MAC
+
+0.4.10 (2016-10-24)
+___________________
+* Updated history and author
+
+0.4.9 (2016-10-24)
+__________________
+* Add function to get fixed addresses by mac
+
+0.4.8 (2016-10-10)
+__________________
+* Add ptrdname search option to PtrRecord objects
+
+0.4.7 (2016-07-14)
+__________________
+* Add zones extensible attribute update support
+
+0.4.6 (2016-07-01)
+__________________
+* Add network_view support for host records
+
 0.4.5 (2016-06-13)
 __________________
 * Allow raising exception in create_ea_definition

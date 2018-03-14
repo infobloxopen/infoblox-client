@@ -14,7 +14,6 @@
 #    under the License.
 
 import netaddr
-import random
 import six
 
 from oslo_log import log as logging
@@ -35,16 +34,12 @@ def is_valid_ip(ip):
 def generate_duid(mac):
     """DUID is consisted of 10 hex numbers.
 
-    0x00 + 3 random hex + mac with 6 hex
+    0x00 + mac with last 3 hex + mac with 6 hex
     """
     valid = mac and isinstance(mac, six.string_types)
     if not valid:
-        ValueError("Invalid argument was passed")
-    duid = [0x00,
-            random.randint(0x00, 0x7f),
-            random.randint(0x00, 0xff),
-            random.randint(0x00, 0xff)]
-    return ':'.join(map(lambda x: "%02x" % x, duid)) + ':' + mac
+        raise ValueError("Invalid argument was passed")
+    return "00:" + mac[9:] + ":" + mac
 
 
 def determine_ip_version(ip_in):

@@ -33,17 +33,17 @@ Usage
 
 Configure logger prior to loading infoblox_client to get all debug messages in console:
 
-::
+.. code:: python
 
   import logging
   logging.basicConfig(level=logging.DEBUG)
 
-
-1. Low level API, using connector module.
+Low level API, using connector module
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Retrieve list of network views from NIOS:
 
-::
+.. code:: python
 
   from infoblox_client import connector
 
@@ -57,7 +57,7 @@ Retrieve list of network views from NIOS:
 
 For these request data is returned as list of dicts:
 
-::
+.. code:: python
 
   network_views:
   [{u'_ref': u'networkview/ZG5zLm5ldHdvcmtfdmlldyQw:default/true',
@@ -69,12 +69,12 @@ For these request data is returned as list of dicts:
     u'network': u'100.0.0.0/8',
     u'network_view': u'default'}]
 
-
-2. High level API, using objects.
+High level API, using objects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Example of creating Network View, Network, DNS View, DNSZone and HostRecord using NIOS objects:
 
-::
+.. code:: python
 
   from infoblox_client import connector
   from infoblox_client import objects
@@ -82,99 +82,145 @@ Example of creating Network View, Network, DNS View, DNSZone and HostRecord usin
   opts = {'host': '192.168.1.10', 'username': 'admin', 'password': 'admin'}
   conn = connector.Connector(opts)
 
+Create a network view, and network:
+
+.. code:: python
+
   nview = objects.NetworkView.create(conn, name='my_view')
   network = objects.Network.create(conn, network_view='my_view', cidr='192.168.1.0/24')
+
+Create a DNS view and zone:
+
+.. code:: python
 
   view = objects.DNSView.create(conn, network_view='my_view', name='my_dns_view')
   zone = objects.DNSZone.create(conn, view='my_dns_view', fqdn='my_zone.com')
 
+Create a host record:
+
+.. code:: python
+
   my_ip = objects.IP.create(ip='192.168.1.25', mac='aa:bb:cc:11:22:33')
   hr = objects.HostRecord.create(conn, view='my_dns_view', 
                                  name='my_host_record.my_zone.com', ip=my_ip)
-  # Create host record with Extensible Attributes (EA)
+
+Create host record with Extensible Attributes (EA):
+
+.. code:: python
+
   ea = objects.EA({'Tenant ID': tenantid, 'CMP Type': cmptype,
                    'Cloud API Owned': True})
   host = objects.HostRecord.create(conn, name='new_host', ip=my_ip, extattrs=ea)
 
+Set the TTL to 30 minutes:
+
+.. code:: python
+
+  hr = objects.HostRecord.create(conn, view='my_dns_view', 
+                                 name='my_host_record.my_zone.com', ip=my_ip,
+                                 ttl = 1800)
+
+Create a new host record, from the next available IP in a CIDR, with a MAC address, and DHCP enabled:
+
+.. code:: python
+
+    next = objects.IPAllocation.next_available_ip_from_cidr('default', '10.0.0.0/24')
+    my_ip = objects.IP.create(ip=next, mac='aa:bb:cc:11:22:33', configure_for_dhcp=True)
+    host = objects.HostRecord.create(conn, name='some.valid.fqdn', view='Internal', ip=my_ip)
+
 Reply from NIOS is parsed back into objects and contains next data:
 
-::
+.. code:: python
 
   In [22]: hr
   Out[22]: HostRecordV4: _ref=record:host/ZG5zLmhvc3QkLjQuY29tLm15X3pvbmUubXlfaG9zdF9yZWNvcmQ:my_host_record.my_zone.com/my_dns_view, name=my_host_record.my_zone.com, ipv4addrs=[<infoblox_client.objects.IPv4 object at 0x7f7d6b0fe9d0>], view=my_dns_view
+
+High level API, using InfobloxObjectManager
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a new fixed address, selecting it from the next available IP in a CIDR:
+
+.. code:: python
+
+  from infoblox_client.object_manager import InfobloxObjectManager
+
+  new_address = InfobloxObjectManager(conn).create_fixed_address_from_cidr(netview='default', mac='aa:bb:cc:11:22:33', cidr='10.0.0.0/24', extattrs=[])
+
+What you get back is a ``FixedAddressV4`` object.
 
 Objects Interface
 -----------------
 
 All top level objects support interface for CRUD operations. List of supported objects is defined in next section.
 
-- create(cls, connector, check_if_exists=True, update_if_exists=False, \**kwargs)
+- ``create(cls, connector, check_if_exists=True, update_if_exists=False, **kwargs)``
     Creates object on NIOS side.
-    Requires connector passed as the first argument, check_if_exists and update_if_exists are optional.
-    Object related fields are passed in as kwargs: field=value, field2=value2.
+    Requires connector passed as the first argument, ``check_if_exists`` and ``update_if_exists`` are optional.
+    Object related fields are passed in as kwargs: ``field=value``, ``field2=value2``.
     
-- search(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, \**kwargs)
+- ``search(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)``
     Search single object on NIOS side, returns first object that match search criteria.
     Requires connector passed as the first argument.
-    'return_fields' can be set to retrieve particular fields from NIOS,
-    for example return_fields=['view', 'name'].
-    If 'return_fields' is '[]' default return_fields are returned by NIOS side for current wapi_version.
-    'search_extattrs' used to filter out results by extensible attributes.
-    'force_proxy' forces search request to be processed on Grid Master (applies only in cloud environment)
+    ``return_fields`` can be set to retrieve particular fields from NIOS,
+    for example ``return_fields=['view', 'name']``.
+    If ``return_fields`` is ``[]`` default ``return_fields`` are returned by NIOS side for current ``wapi_version``.
+    ``search_extattrs`` is used to filter out results by extensible attributes.
+    ``force_proxy`` forces search request to be processed on Grid Master (applies only in cloud environment)
     
-- search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, \**kwargs)
-    Search all objects on NIOS side that match search cryteria. Returns list of objects.
-    All other options are equal to search().
+- ``search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)``
+    Search all objects on NIOS side that match search criteria. Returns a list of objects.
+    All other options are equal to ``search()``.
 
-- update(self)
-    Update object on NIOS side by pushing changes done in local object.
+- ``update(self)``
+    Update the object on NIOS side by pushing changes done in the local object.
     
-- delete(self)
-    Deletes object from NIOS side.
+- ``delete(self)``
+    Deletes the object from NIOS side.
 
 Supported NIOS objects
 ----------------------
 
-* NetworkView for 'networkview'
-* DNSView for 'view'
-* DNSZone for 'zone_auth'
-* Member for 'member'
-* Network (V4 and V6)
+* ``NetworkView`` for 'networkview'
+* ``DNSView`` for 'view'
+* ``DNSZone`` for 'zone_auth'
+* ``Member`` for 'member'
+* ``Network`` (V4 and V6)
 
-  * NetworkV4 for 'network'
-  * NetworkV6 for 'ipv6network'
+  * ``NetworkV4`` for 'network'
+  * ``NetworkV6`` for 'ipv6network'
   
-* IPRange (V4 and V6)
+* ``IPRange`` (V4 and V6)
   
-  * IPRangeV4 for 'range'
-  * IPRangeV6 for 'ipv6range'
+  * ``IPRangeV4`` for 'range'
+  * ``IPRangeV6`` for 'ipv6range'
   
-* HostRecord (V4 and V6)
+* ``HostRecord`` (V4 and V6)
 
-  * HostRecordV4 for 'record:host'
-  * HostRecordV6 for 'record:host'
+  * ``HostRecordV4`` for 'record:host'
+  * ``HostRecordV6`` for 'record:host'
   
-* FixedAddress (V4 and V6)
+* ``FixedAddress`` (V4 and V6)
 
-  * FixedAddressV4 for 'fixedaddress'
-  * FixedAddressV6 for 'ipv6fixedaddress'
+  * ``FixedAddressV4`` for 'fixedaddress'
+  * ``FixedAddressV6`` for 'ipv6fixedaddress'
   
-* IPAddress (V4 and V6)
+* ``IPAddress`` (V4 and V6)
   
-  * IPv4Address for 'ipv4address'
-  * IPv6Address for 'ipv6address'
+  * ``IPv4Address`` for 'ipv4address'
+  * ``IPv6Address`` for 'ipv6address'
   
-* ARecordBase
+* ``ARecordBase``
 
-  * ARecord for 'record:a'
-  * AAAARecord for 'record:aaaa'
+  * ``ARecord`` for 'record:a'
+  * ``AAAARecord`` for 'record:aaaa'
    
-* PtrRecord (V4 and V6)
+* ``PtrRecord`` (V4 and V6)
 
-  * PtrRecordV4 for 'record:ptr'
-  * PtrRecordV6 for 'record:ptr'
+  * ``PtrRecordV4`` for 'record:ptr'
+  * ``PtrRecordV6`` for 'record:ptr'
    
-* EADefinition for 'extensibleattributedef'
+* ``EADefinition`` for 'extensibleattributedef'
+* ``CNAMERecord`` for 'record:cname'
 
 
 Search by regular expression
@@ -187,7 +233,7 @@ out complete list of fields that can be searched this way. Examples:
 
 Find all networks that starts with '10.10.':
 
-::
+.. code:: python
 
   conn = connector.Connector(opts)
   nw = conn.get_object('network', {'network~': '10.10.'})
@@ -195,7 +241,7 @@ Find all networks that starts with '10.10.':
 
 Find all host records that starts with '10.10.':
 
-::
+.. code:: python
 
   conn = connector.Connector(opts)
   hr = conn.get_object('record:host', {'ipv4addr~': '10.10.'})

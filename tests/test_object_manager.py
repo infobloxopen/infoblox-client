@@ -350,6 +350,7 @@ class ObjectManagerTestCase(unittest.TestCase):
 
     def test_find_hostname(self):
         dns_view_name = 'dns-view-name'
+        network_view_name = 'network-view-name'
         fqdn = 'host.global.com'
         ip = '192.168.1.1'
 
@@ -357,36 +358,81 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.get_object.return_value = mock.MagicMock()
         ibom = om.InfobloxObjectManager(connector)
 
-        ibom.find_hostname(dns_view_name, fqdn, ip)
+        ibom.find_hostname(dns_view_name, fqdn, ip, network_view_name)
 
         connector.get_object.assert_called_once_with(
             'record:host',
-            {'view': dns_view_name, 'name': fqdn, 'ipv4addr': ip},
+            {'view': dns_view_name, 'name': fqdn, 'ipv4addr': ip,
+             'network_view': network_view_name},
             extattrs=None, force_proxy=mock.ANY, return_fields=mock.ANY,
             max_results=None)
+
+    def test_find_host_records_by_mac(self):
+        dns_view_name = 'dns-view-name'
+        network_view_name = 'network-view-name'
+        mac = '11:22:33:44:55:66'
+        host_name = 'test_host_name'
+
+        connector = mock.Mock()
+        connector.get_object.return_value = [{'host': host_name}]
+        ibom = om.InfobloxObjectManager(connector)
+
+        ibom.find_host_records_by_mac(dns_view_name, mac, network_view_name)
+
+        assert connector.get_object.call_args_list == [
+            mock.call('record:host',
+                      {'view': dns_view_name, 'mac': mac,
+                       'network_view': network_view_name},
+                      extattrs=None, force_proxy=mock.ANY,
+                      return_fields=mock.ANY, max_results=None),
+            mock.call('record:host_ipv6addr',
+                      {'network_view': 'network-view-name',
+                       'duid': '11:22:33:44:55:66'},
+                      extattrs=None, force_proxy=mock.ANY,
+                      return_fields=mock.ANY, max_results=None),
+            mock.call('record:host',
+                      {'name': 'test_host_name',
+                       'network_view': 'network-view-name',
+                       'view': 'dns-view-name'},
+                      extattrs=None, force_proxy=mock.ANY,
+                      return_fields=mock.ANY, max_results=None)]
+
+    def _check_bind_names_calls(self, args, expected_get, expected_update):
+        connector = mock.Mock()
+        connector.get_object.return_value = mock.MagicMock()
+
+        ibom = om.InfobloxObjectManager(connector)
+
+        ibom.bind_name_with_host_record(*args)
+        connector.get_object.assert_called_once_with(
+            'record:host', expected_get,
+            extattrs=None, max_results=None,
+            force_proxy=mock.ANY, return_fields=mock.ANY)
+        connector.update_object.assert_called_once_with(
+            mock.ANY, expected_update, mock.ANY)
 
     def test_bind_names_updates_host_record(self):
         dns_view_name = 'dns-view-name'
         fqdn = 'host.global.com'
         ip = '192.168.1.1'
         extattrs = None
+        self._check_bind_names_calls(
+            [dns_view_name, ip, fqdn, extattrs],
+            {'view': dns_view_name, 'ipv4addr': ip},
+            {'name': fqdn})
 
-        connector = mock.Mock()
-        connector.get_object.return_value = mock.MagicMock()
-
-        ibom = om.InfobloxObjectManager(connector)
-
-        ibom.bind_name_with_host_record(dns_view_name, ip, fqdn, extattrs)
-
-        matcher = PayloadMatcher({'view': dns_view_name,
-                                  PayloadMatcher.ANYKEY: ip})
-        connector.get_object.assert_called_once_with(
-            'record:host', matcher, extattrs=None, max_results=None,
-            force_proxy=mock.ANY, return_fields=mock.ANY)
-
-        matcher = PayloadMatcher({'name': fqdn})
-        connector.update_object.assert_called_once_with(mock.ANY, matcher,
-                                                        mock.ANY)
+    def test_bind_names_updates_host_record_network_view(self):
+        dns_view_name = 'dns-view-name'
+        network_view_name = 'network-view-name'
+        fqdn = 'host.global.com'
+        ip = '192.168.1.1'
+        extattrs = None
+        self._check_bind_names_calls(
+            [dns_view_name, ip, fqdn, extattrs, network_view_name],
+            {'view': dns_view_name,
+             'ipv4addr': ip,
+             'network_view': network_view_name},
+            {'name': fqdn})
 
     def test_bind_names_with_a_record(self):
         dns_view_name = 'dns-view-name'
@@ -587,6 +633,20 @@ class ObjectManagerTestCase(unittest.TestCase):
             return_fields=mock.ANY, force_proxy=mock.ANY)
         self.assertFalse(connector.delete_object.called)
 
+    @mock.patch('infoblox_client.objects.FixedAddress')
+    def test_get_fixed_addresses_by_mac(self, fixed_address_mock):
+        network_view = 'test_network_view'
+        mac = 'aa:bb:cc:dd:ee:ff'
+        test_result = 'test_result'
+        connector = mock.Mock()
+        ibom = om.InfobloxObjectManager(connector)
+        fixed_address_mock.search_all.return_value = test_result
+
+        res = ibom.get_fixed_addresses_by_mac(network_view, mac)
+        assert res == test_result
+        fixed_address_mock.search_all.assert_called_once_with(
+            connector, network_view=network_view, mac=mac)
+
     def test_member_is_assigned_as_list_on_network_create(self):
         net_view = 'net-view-name'
         cidr = '192.168.1.0/24'
@@ -683,6 +743,39 @@ class ObjectManagerTestCase(unittest.TestCase):
                                   'name': member.name})
         connector.create_object.assert_called_once_with('zone_auth', matcher,
                                                         mock.ANY)
+
+    def test_update_dns_zone_attrs(self):
+        dns_view_name = 'dns-view-name'
+        fqdn = 'host.global.com'
+        zone_ref = 'zone_ref'
+        old_attrs = {'old_key': {'value': 'old_value'}}
+        new_attrs = {'new_key': {'value': 'new_value'}}
+        zone = {
+            '_ref': zone_ref,
+            'view': dns_view_name,
+            'fqdn': fqdn,
+            'zone_format': 'FORWARD',
+            'ns_group': 'test_group',
+            'extattrs': old_attrs
+            }
+
+        connector = mock.Mock()
+        connector.get_object.return_value = [zone]
+
+        return_fields = [
+            'fqdn', 'view', 'extattrs', 'zone_format', 'ns_group', 'prefix',
+            'grid_primary', 'grid_secondaries']
+        ibom = om.InfobloxObjectManager(connector)
+        ibom.update_dns_zone_attrs(dns_view_name, fqdn, new_attrs)
+        connector.get_object.assert_called_once_with(
+            'zone_auth',
+            {'fqdn': 'host.global.com', 'view': 'dns-view-name'},
+            extattrs=None, force_proxy=False, max_results=None,
+            return_fields=return_fields)
+        connector.update_object.assert_called_once_with(
+            zone_ref,
+            {'extattrs': new_attrs},
+            return_fields)
 
     def _mock_for_get_connector(self, reply_map):
         def get_object(ref, *args, **kwargs):
