@@ -23,7 +23,7 @@ with open('testing_requirements.txt') as requirements_file:
 
 setup(
     name='infoblox-client',
-    version='0.4.19',
+    version='0.4.19-disable_ssl_verify',
     description="Client for interacting with Infoblox NIOS over WAPI",
     long_description=readme + '\n\n' + history,
     author="John Belamaric",

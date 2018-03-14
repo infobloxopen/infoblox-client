@@ -190,7 +190,8 @@ class Connector(object):
 
     def _get_request_options(self, data=None):
         opts = dict(timeout=self.http_request_timeout,
-                    headers=self.DEFAULT_HEADER)
+                    headers=self.DEFAULT_HEADER,
+                    verify=self.session.verify)
         if data:
             opts['data'] = jsonutils.dumps(data)
         return opts
