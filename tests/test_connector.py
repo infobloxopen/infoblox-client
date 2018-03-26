@@ -35,7 +35,7 @@ class TestInfobloxConnector(unittest.TestCase):
     def _prepare_options():
         opts = mock.Mock()
         opts.host = 'infoblox.example.org'
-        opts.wapi_version = '1.1'
+        opts.wapi_version = '2.1'
         opts.username = 'admin'
         opts.password = 'password'
         opts.ssl_verify = False
@@ -58,7 +58,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_create.return_value.content = '{}'
             self.connector.create_object(objtype, payload)
             patched_create.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/network',
+                'https://infoblox.example.org/wapi/v2.1/network',
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
@@ -74,7 +74,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_create.return_value.content = '{}'
             self.connector.create_object(objtype, payload)
             patched_create.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/network',
+                'https://infoblox.example.org/wapi/v2.1/network',
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
@@ -106,7 +106,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.return_value.content = '{}'
             self.connector.get_object(objtype, payload)
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/network?ip=0.0.0.0',
+                'https://infoblox.example.org/wapi/v2.1/network?ip=0.0.0.0',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
@@ -124,7 +124,7 @@ class TestInfobloxConnector(unittest.TestCase):
             self.connector.get_object(objtype, payload, extattrs=extattrs)
             patched_get.assert_called_once_with(
                 'https://infoblox.example.org/wapi/'
-                'v1.1/network?%2ASubnet+ID=fake_subnet_id&ip=0.0.0.0',
+                'v2.1/network?%2ASubnet+ID=fake_subnet_id&ip=0.0.0.0',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
@@ -138,7 +138,7 @@ class TestInfobloxConnector(unittest.TestCase):
             self.connector.get_object(objtype, {}, max_results=20)
             patched_get.assert_called_once_with(
                 'https://infoblox.example.org/wapi/'
-                'v1.1/network?_max_results=20',
+                'v2.1/network?_max_results=20',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
@@ -156,7 +156,7 @@ class TestInfobloxConnector(unittest.TestCase):
             conn.get_object(objtype, {})
             patched_get.assert_called_once_with(
                 'https://infoblox.example.org/wapi/'
-                'v1.1/network?_max_results=10',
+                'v2.1/network?_max_results=10',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
@@ -176,7 +176,7 @@ class TestInfobloxConnector(unittest.TestCase):
             conn.get_object(objtype, {}, max_results=-20)
             patched_get.assert_called_once_with(
                 'https://infoblox.example.org/wapi/'
-                'v1.1/network?_max_results=-20',
+                'v2.1/network?_max_results=-20',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
@@ -191,7 +191,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_update.return_value.content = '{}'
             self.connector.update_object(ref, payload)
             patched_update.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/network',
+                'https://infoblox.example.org/wapi/v2.1/network',
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
@@ -227,7 +227,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_delete.return_value.content = '{}'
             self.connector.delete_object(ref)
             patched_delete.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/network',
+                'https://infoblox.example.org/wapi/v2.1/network',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
             )
@@ -262,7 +262,7 @@ class TestInfobloxConnector(unittest.TestCase):
         url = self.connector._construct_url('network',
                                             query_params=query_params,
                                             extattrs=ext_attrs)
-        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?'
+        self.assertEqual('https://infoblox.example.org/wapi/v2.1/network?'
                          '%2ASubnet+ID=fake_subnet_id&some_option=some_value',
                          url)
 
@@ -271,7 +271,7 @@ class TestInfobloxConnector(unittest.TestCase):
         url = self.connector._construct_url('network',
                                             extattrs=ext_attrs,
                                             force_proxy=True)
-        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?'
+        self.assertEqual('https://infoblox.example.org/wapi/v2.1/network?'
                          '%2ASubnet+ID=fake_subnet_id&_proxy_search=GM',
                          url)
 
@@ -393,7 +393,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_call_func.return_value.content = '{}'
             self.connector.call_func(objtype, "_ref", payload)
             patched_call_func.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/_ref?_function=network',
+                'https://infoblox.example.org/wapi/v2.1/_ref?_function=network',
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
@@ -483,7 +483,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
 
     def test_allow_options_as_dict(self):
         opts = dict(host='infoblox.example.org',
-                    wapi_version='1.1',
+                    wapi_version='2.1',
                     username='admin',
                     password='password',
                     ssl_verify=False,
@@ -510,7 +510,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
 
     def test_incomplete_options_raises_exception(self):
         opts = dict(host='infoblox.example.org',
-                    wapi_version='1.1')
+                    wapi_version='2.1')
         self.assertRaises(exceptions.InfobloxConfigException,
                           connector.Connector, opts)
 
