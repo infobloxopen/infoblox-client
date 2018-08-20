@@ -19,6 +19,7 @@ import requests
 from requests import exceptions as req_exc
 import six
 import urllib
+import urllib3
 try:
     import urlparse
 except ImportError:
@@ -119,7 +120,7 @@ class Connector(object):
                                                       strict_mode=False)
 
         if self.silent_ssl_warnings:
-            requests.packages.urllib3.disable_warnings()
+            urllib3.disable_warnings()
 
     def _construct_url(self, relative_path, query_params=None,
                        extattrs=None, force_proxy=False):
