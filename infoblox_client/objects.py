@@ -561,7 +561,7 @@ class HostRecordV4(HostRecord):
     _all_searchable_fields = _search_for_update_fields
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv4addr']
-    _return_fields = ['ipv4addrs', 'extattrs']
+    _return_fields = ['ipv4addrs', 'extattrs', 'comment']
     _remap = {'ip': 'ipv4addrs',
               'ips': 'ipv4addrs'}
     _ip_version = 4
@@ -596,7 +596,7 @@ class HostRecordV6(HostRecord):
     _all_searchable_fields = _search_for_update_fields
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv6addr']
-    _return_fields = ['ipv6addrs', 'extattrs']
+    _return_fields = ['ipv6addrs', 'extattrs', 'comment']
     _remap = {'ip': 'ipv6addrs',
               'ips': 'ipv6addrs'}
 
@@ -784,7 +784,7 @@ class FixedAddressV4(FixedAddress):
     _search_for_update_fields = ['ipv4addr', 'mac', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ip']
-    _return_fields = ['ipv4addr', 'mac', 'network_view', 'extattrs']
+    _return_fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'comment']
     _remap = {'ipv4addr': 'ip'}
     _ip_version = 4
 
@@ -804,7 +804,7 @@ class FixedAddressV6(FixedAddress):
                'comment']
     _search_for_update_fields = ['ipv6addr', 'duid', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
-    _return_fields = ['ipv6addr', 'duid', 'network_view', 'extattrs']
+    _return_fields = ['ipv6addr', 'duid', 'network_view', 'extattrs', 'comment']
     _shadow_fields = ['_ref', 'mac', 'ip']
     _remap = {'ipv6addr': 'ip'}
     _ip_version = 6
@@ -901,7 +901,7 @@ class SRVRecord(InfobloxObject):
                                  'name', 'port', 'priority', 'reclaimable',
                                  'target', 'view', 'weight', 'zone']
     _all_searchable_fields = _search_for_update_fields
-    _return_fields = ['name', 'port', 'priority', 'weight', 'target', 'view']
+    _return_fields = ['name', 'port', 'priority', 'weight', 'target', 'view', 'comment']
     _shadow_fields = ['_ref']
 
 
@@ -972,7 +972,7 @@ class EADefinition(InfobloxObject):
     _shadow_fields = ['_ref']
     _return_fields = ['comment', 'default_value', 'flags', 'list_values',
                       'max', 'min', 'name', 'namespace', 'type',
-                      'allowed_object_types']
+                      'allowed_object_types', 'comment']
 
 
 class IPAddress(InfobloxObject):
@@ -1042,5 +1042,5 @@ class CNAMERecord(InfobloxObject):
     _updateable_search_fields = ['name']
     _all_searchable_fields = _search_for_update_fields + ['reclaimable',
                                                           'zone']
-    _return_fields = ['canonical', 'name', 'view', 'extattrs']
+    _return_fields = ['canonical', 'name', 'view', 'extattrs', 'comment']
     _shadow_fields = ['_ref']
