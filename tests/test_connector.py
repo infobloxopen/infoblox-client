@@ -62,6 +62,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_create_object_with_extattrs(self):
@@ -78,6 +79,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_create_object_raises_member_assigned(self):
@@ -109,6 +111,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 'https://infoblox.example.org/wapi/v1.1/network?ip=0.0.0.0',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_get_objects_with_extattrs(self):
@@ -127,6 +130,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 'v1.1/network?%2ASubnet+ID=fake_subnet_id&ip=0.0.0.0',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_get_objects_with_max_results(self):
@@ -141,6 +145,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 'v1.1/network?_max_results=20',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_get_objects_with_max_results_as_connector_opt(self):
@@ -159,6 +164,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 'v1.1/network?_max_results=10',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_max_results_priority(self):
@@ -179,6 +185,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 'v1.1/network?_max_results=-20',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_update_object(self):
@@ -195,6 +202,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_update_object_with_http_error(self):
@@ -230,6 +238,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 'https://infoblox.example.org/wapi/v1.1/network',
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_delete_object_with_http_error(self):
@@ -397,6 +406,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
             )
 
     def test_call_func_with_http_error(self):
