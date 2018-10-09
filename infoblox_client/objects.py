@@ -844,7 +844,7 @@ class ARecord(ARecordBase):
     _fields = ['ipv4addr', 'name', 'view', 'extattrs']
     _search_for_update_fields = ['ipv4addr', 'view']
     _all_searchable_fields = _search_for_update_fields + ['name']
-    _return_fields = _fields
+    _return_fields = ['ipv4addr', 'name']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
@@ -855,6 +855,7 @@ class AAAARecord(ARecordBase):
     _fields = ['ipv6addr', 'name', 'view', 'extattrs']
     _search_for_update_fields = ['ipv6addr', 'view']
     _all_searchable_fields = _search_for_update_fields + ['name']
+    _return_fields = ['ipv6addr', 'name']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
