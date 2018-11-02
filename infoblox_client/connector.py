@@ -470,7 +470,7 @@ class Connector(object):
         valid = wapi_version and isinstance(wapi_version, six.string_types)
         if not valid:
             raise ValueError("Invalid argument was passed")
-        version_match = re.search('(\d+)\.(\d+)', wapi_version)
+        version_match = re.search(r'(\d+)\.(\d+)', wapi_version)
         if version_match:
             if int(version_match.group(1)) >= \
                     CLOUD_WAPI_MAJOR_VERSION:
