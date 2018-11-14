@@ -983,7 +983,8 @@ class EADefinition(InfobloxObject):
 
 
 class IPAddress(InfobloxObject):
-    _fields = ['network_view', 'ip_address', 'objects', 'network', 'status']
+    _fields = ['network_view', 'ip_address', 'objects', 'network', 'status',
+               'mac_address', 'types', 'usage', 'names']
     _search_for_update_fields = ['network_view', 'ip_address',
                                  'network', 'status']
     _all_searchable_fields = _search_for_update_fields
