@@ -14,7 +14,6 @@
 #    under the License.
 
 import six
-import string
 
 from infoblox_client import exceptions as ib_ex
 
@@ -99,7 +98,7 @@ class WapiVersionUtil(object):
         if (not parts or len(parts) > 3 or len(parts) < 2):
             raise ValueError("Invalid argument was passed")
         for p in parts:
-            if not len(p) or p not in string.digits:
+            if not len(p) or not p.isdigit():
                 raise ValueError("Invalid argument was passed")
         parts = [int(x) for x in parts]
         if len(parts) == 2:
