@@ -133,6 +133,29 @@ class TestInfobloxConnector(unittest.TestCase):
                 verify=self.default_opts.ssl_verify,
             )
 
+    def test_get_object_with_default_and_extattrs(self):
+        objtype = 'network'
+        extattrs = {'Subnet ID': {'value': 'fake_subnet_id'}}
+        return_fields = ['default', 'extattrs']
+
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            patched_get.return_value.status_code = 200
+            patched_get.return_value.content = '{}'
+            self.connector.get_object(
+                objtype,
+                extattrs=extattrs,
+                return_fields=return_fields
+            )
+            patched_get.assert_called_once_with(
+                'https://infoblox.example.org/wapi/v1.1/'
+                'network?%2ASubnet+ID=fake_subnet_id'
+                '&_return_fields%2B=extattrs',
+                headers=self.connector.DEFAULT_HEADER,
+                timeout=self.default_opts.http_request_timeout,
+                verify=self.default_opts.ssl_verify,
+            )
+
     def test_get_objects_with_max_results(self):
         objtype = 'network'
         with patch.object(requests.Session, 'get',
