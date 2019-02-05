@@ -555,13 +555,13 @@ class HostRecordV4(HostRecord):
     """HostRecord for IPv4"""
     _fields = ['ipv4addrs', 'view', 'extattrs', 'name', 'zone',
                'configure_for_dns', 'network_view', 'mac', 'ttl',
-               'comment']
+               'comment', 'aliases']
     _search_for_update_fields = ['view', 'ipv4addr', 'name',
                                  'zone', 'network_view', 'mac']
     _all_searchable_fields = _search_for_update_fields
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv4addr']
-    _return_fields = ['ipv4addrs', 'extattrs']
+    _return_fields = ['ipv4addrs', 'extattrs', 'aliases']
     _remap = {'ip': 'ipv4addrs',
               'ips': 'ipv4addrs'}
     _ip_version = 4
@@ -590,13 +590,14 @@ class HostRecordV4(HostRecord):
 class HostRecordV6(HostRecord):
     """HostRecord for IPv6"""
     _fields = ['ipv6addrs', 'view', 'extattrs',  'name', 'zone',
-               'configure_for_dns', 'network_view', 'ttl', 'comment']
+               'configure_for_dns', 'network_view', 'ttl', 'comment',
+               'aliases']
     _search_for_update_fields = ['ipv6addr', 'view', 'name',
                                  'zone', 'network_view']
     _all_searchable_fields = _search_for_update_fields
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv6addr']
-    _return_fields = ['ipv6addrs', 'extattrs']
+    _return_fields = ['ipv6addrs', 'extattrs', 'aliases']
     _remap = {'ip': 'ipv6addrs',
               'ips': 'ipv6addrs'}
 

@@ -135,7 +135,7 @@ class TestObjects(unittest.TestCase):
                 {'mac': 'fa:16:3e:29:87:70',
                  'ipv4addr': '22.0.0.2'}],
              'view': 'some-dns-view'},
-            ['ipv4addrs', 'extattrs'])
+            ['ipv4addrs', 'extattrs', 'aliases'])
 
     def test_create_host_record_with_ip(self):
         mock_record = DEFAULT_HOST_RECORD

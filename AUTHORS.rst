@@ -15,5 +15,6 @@ Contributors
 * Yue Ko <yko@infoblox.com>
 * Robert Grant <rhgrant10@gmail.com>
 * Yakau Bubnou <yakau_bubnou@epam.com>
+* Hiroyasu OHYAMA <user.localhost2000@gmail.com>
 
 More are always welcome!
