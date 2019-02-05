@@ -15,5 +15,6 @@ Contributors
 * Yue Ko <yko@infoblox.com>
 * Robert Grant <rhgrant10@gmail.com>
 * Yakau Bubnou <yakau_bubnou@epam.com>
+* Jonas Krüger Svensson <jonas-ks@hotmail.com>
 
 More are always welcome!
