@@ -299,6 +299,8 @@ defined as ``place_to_check`` in the code below.
     connection = default_infoblox_connection()
 
     search_network = search_extensible_attribute(connection, "network", "CustomerCode", "Infoblox")
+    # Print the output:
+    print(search_network)
     {
       "type": "network",
       "objects": [
@@ -317,6 +319,8 @@ defined as ``place_to_check`` in the code below.
     }
 
     search_host = search_extensible_attribute(connection, "record:host", "CustomerCode", "Infoblox")
+    # Print the output:
+    print(search_host)
     {
       "type": "record:host",
       "objects": [
