@@ -253,7 +253,7 @@ More examples
 Utilizing extensible attributes and searching on them can easily be done with the ``get_object`` function.
 The ``default`` field in ``return_fields`` acts like the ``+`` does in WAPI.
 
-> ``_return_fields+`` Specified list of fields (comma separated) will be returned in addition
+ > ``_return_fields+`` Specified list of fields (comma separated) will be returned in addition
 to the basic fields of the object (documented for each object).
 
 This enables you to always get the default values in return, in addition to what you specify whether
