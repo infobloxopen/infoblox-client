@@ -67,8 +67,6 @@ class Connector(object):
                        'paging': False}
 
     def __init__(self, options):
-        self._parse_options(options)
-        self._configure_session()
         # urllib has different interface for py27 and py34
         try:
             self._urlencode = urllib.urlencode
@@ -78,6 +76,8 @@ class Connector(object):
             self._urlencode = urlparse.urlencode
             self._quote = urlparse.quote
             self._urljoin = urlparse.urljoin
+        self._parse_options(options)
+        self._configure_session()
 
     def _parse_options(self, options):
         """Copy needed options to self"""
@@ -121,6 +121,12 @@ class Connector(object):
 
         if self.silent_ssl_warnings:
             urllib3.disable_warnings()
+
+        # this is just to establish the initial ibapauth cookie
+        self.get_object('grid')
+        if(len(self.session.cookies) > 0):
+            # from now on, use cookies instead of username/password
+            self.session.auth = None
 
     def _construct_url(self, relative_path, query_params=None,
                        extattrs=None, force_proxy=False):
