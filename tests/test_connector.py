@@ -65,6 +65,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
             )
+            # test if cookies have been set
             self.assertEqual(None, self.connector.session.auth)
 
     def test_create_object_with_extattrs(self):
