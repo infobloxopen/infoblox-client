@@ -79,7 +79,6 @@ class Connector(object):
             self._quote = urlparse.quote
             self._urljoin = urlparse.urljoin
 
-
     def _parse_options(self, options):
         """Copy needed options to self"""
         attributes = ('host', 'wapi_version', 'username', 'password',
