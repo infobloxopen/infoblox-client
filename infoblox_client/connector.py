@@ -67,6 +67,8 @@ class Connector(object):
                        'paging': False}
 
     def __init__(self, options):
+        self._parse_options(options)
+        self._configure_session()
         # urllib has different interface for py27 and py34
         try:
             self._urlencode = urllib.urlencode
@@ -76,8 +78,7 @@ class Connector(object):
             self._urlencode = urlparse.urlencode
             self._quote = urlparse.quote
             self._urljoin = urlparse.urljoin
-        self._parse_options(options)
-        self._configure_session()
+
 
     def _parse_options(self, options):
         """Copy needed options to self"""
@@ -121,12 +122,6 @@ class Connector(object):
 
         if self.silent_ssl_warnings:
             urllib3.disable_warnings()
-
-        # this is just to establish the initial ibapauth cookie
-        self.get_object('grid')
-        if(len(self.session.cookies) > 0):
-            # from now on, use cookies instead of username/password
-            self.session.auth = None
 
     def _construct_url(self, relative_path, query_params=None,
                        extattrs=None, force_proxy=False):
@@ -326,6 +321,10 @@ class Connector(object):
     def _get_object(self, obj_type, url):
         opts = self._get_request_options()
         self._log_request('get', url, opts)
+        if(self.session.cookies):
+            # the first 'get' or 'post' action will generate a cookie
+            # after that, we don't need to re-authenticate
+            self.session.auth = None
         r = self.session.get(url, **opts)
 
         self._validate_authorized(r)
@@ -357,6 +356,10 @@ class Connector(object):
         url = self._construct_url(obj_type, query_params)
         opts = self._get_request_options(data=payload)
         self._log_request('post', url, opts)
+        if(self.session.cookies):
+            # the first 'get' or 'post' action will generate a cookie
+            # after that, we don't need to re-authenticate
+            self.session.auth = None
         r = self.session.post(url, **opts)
 
         self._validate_authorized(r)
