@@ -178,7 +178,11 @@ class Connector(object):
             query_params = dict()
 
         if return_fields:
-            query_params['_return_fields'] = ','.join(return_fields)
+            if 'default' in return_fields:
+                return_fields.remove('default')
+                query_params['_return_fields+'] = ','.join(return_fields)
+            else:
+                query_params['_return_fields'] = ','.join(return_fields)
 
         if max_results:
             query_params['_max_results'] = max_results

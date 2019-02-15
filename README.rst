@@ -246,6 +246,105 @@ Find all host records that starts with '10.10.':
   conn = connector.Connector(opts)
   hr = conn.get_object('record:host', {'ipv4addr~': '10.10.'})
 
+
+More examples
+-------------
+
+Utilizing extensible attributes and searching on them can easily be done with the ``get_object`` function.
+The ``default`` field in ``return_fields`` acts like the ``+`` does in WAPI.
+
+ > ``_return_fields+`` Specified list of fields (comma separated) will be returned in addition
+ to the basic fields of the object (documented for each object).
+
+This enables you to always get the default values in return, in addition to what you specify whether
+you search for a ``network`` or a ``networkcontainer``,
+defined as ``place_to_check`` in the code below.
+
+
+.. code:: python
+
+    from infoblox_client.connector import Connector
+
+
+    def default_infoblox_connection():
+        opts = {'host': '192.168.1.10', 'username': 'admin', 'password': 'admin'}
+        conn = Connector(opts)
+        return conn
+
+    def search_extensible_attribute(connection, place_to_check: str, extensible_attribute: str, value: str):
+        """
+        Find extensible attributes.
+        :param connection: Infoblox connection
+        :param place_to_check: Can be `network`, `networkcontainer` or `record:host` and so on.
+        :param extensible_attribute: Which extensible attribute to search for. Can be `CustomerCode`, `Location`
+        and so on.
+        :param value: The value you want to search for.
+        :return: result
+        """
+        extensible_args = [
+            place_to_check,
+            {
+                f"*{extensible_attribute}:~": value,
+            }
+        ]
+        kwargs = {
+            'return_fields': [
+                'default',
+                'extattrs',
+            ]
+        }
+        result = {"type": f"{place_to_check}", "objects": connection.get_object(*extensible_args, **kwargs)}
+        return result
+
+    connection = default_infoblox_connection()
+
+    search_network = search_extensible_attribute(connection, "network", "CustomerCode", "Infoblox")
+    # Print the output:
+    print(search_network)
+    {
+      "type": "network",
+      "objects": [
+        {
+          "_ref": "network/ZG5zLmhvc3QkLjQuY29tLm15X3pvbmUubXlfaG9zdF9yZWNvcmQ:192.168.1.1/28/default",
+          "comment": "Infoblox Network",
+          "extattrs": {
+            "CustomerCode": {
+              "value": "Infoblox"
+            }
+          },
+          "network": "192.168.1.0/28",
+          "network_view": "default"
+        }
+      ]
+    }
+
+    search_host = search_extensible_attribute(connection, "record:host", "CustomerCode", "Infoblox")
+    # Print the output:
+    print(search_host)
+    {
+      "type": "record:host",
+      "objects": [
+        {
+          "_ref": "record:host/ZG5zLm5ldHdvcmtfdmlldyQw:InfobloxHost",
+          "extattrs": {
+            "CustomerCode": {
+              "value": "Infoblox"
+            }
+          },
+          "ipv4addrs": [
+            {
+              "_ref": "record:host_ipv4addr/ZG5zLm5ldHdvcmtfdmlldyQwdvcmtfdmlldyQw:192.168.1.1/InfobloxHost",
+              "configure_for_dhcp": false,
+              "host": "InfobloxHost",
+              "ipv4addr": "192.168.1.1"
+            }
+          ],
+          "name": "InfobloxHost",
+          "view": " "
+        }
+      ]
+    }
+
 Features
 --------
 

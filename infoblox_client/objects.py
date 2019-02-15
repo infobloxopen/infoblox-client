@@ -842,7 +842,7 @@ class ARecordBase(InfobloxObject):
 
 class ARecord(ARecordBase):
     _infoblox_type = 'record:a'
-    _fields = ['ipv4addr', 'name', 'view', 'extattrs']
+    _fields = ['ipv4addr', 'name', 'view', 'comment', 'extattrs']
     _search_for_update_fields = ['ipv4addr', 'view']
     _all_searchable_fields = _search_for_update_fields + ['name']
     _return_fields = ['ipv4addr', 'name']
@@ -853,7 +853,7 @@ class ARecord(ARecordBase):
 
 class AAAARecord(ARecordBase):
     _infoblox_type = 'record:aaaa'
-    _fields = ['ipv6addr', 'name', 'view', 'extattrs']
+    _fields = ['ipv6addr', 'name', 'view', 'comment', 'extattrs']
     _search_for_update_fields = ['ipv6addr', 'view']
     _all_searchable_fields = _search_for_update_fields + ['name']
     _return_fields = ['ipv6addr', 'name']
