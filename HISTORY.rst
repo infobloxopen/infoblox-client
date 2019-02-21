@@ -3,6 +3,12 @@
 History
 -------
 
+0.4.22 (2019-02-21)
+___________________
+
+* Supported returning default fileds plus user required fields reflecting WAPI
+* Supporting 'aliases' parameter of HOST record for DNS
+
 0.4.21 (2019-01-18)
 ___________________
 
