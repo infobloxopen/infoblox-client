@@ -18,12 +18,12 @@ import six
 
 try:
     from oslo_log import log as logging
-except ImportError:
+except ImportError:  # pragma: no cover
     import logging
 
 try:
     from oslo_serialization import jsonutils
-except ImportError:
+except ImportError:  # pragma: no cover
     import json as jsonutils
 
 

@@ -32,7 +32,7 @@ except ImportError:
 
 try:
     from oslo_serialization import jsonutils
-except ImportError:
+except ImportError:  # pragma: no cover
     import json as jsonutils
 
 from infoblox_client import exceptions as ib_ex
