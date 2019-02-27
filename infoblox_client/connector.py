@@ -25,8 +25,15 @@ try:
 except ImportError:
     import urllib.parse as urlparse
 
-from oslo_log import log as logging
-from oslo_serialization import jsonutils
+try:
+    from oslo_log import log as logging
+except:
+    import logging
+
+try:
+    from oslo_serialization import jsonutils
+except:
+    import json as jsonutils
 
 from infoblox_client import exceptions as ib_ex
 from infoblox_client import utils

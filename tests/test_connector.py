@@ -18,7 +18,10 @@ import requests
 from mock import patch
 from requests import exceptions as req_exc
 
-from oslo_serialization import jsonutils
+try:
+    from oslo_serialization import jsonutils
+except:
+    import json as jsonutils
 
 from infoblox_client import connector
 from infoblox_client import exceptions
