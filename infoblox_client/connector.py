@@ -27,7 +27,7 @@ except ImportError:
 
 try:
     from oslo_log import log as logging
-except ImportError:
+except ImportError:  # pragma: no cover
     import logging
 
 try:
