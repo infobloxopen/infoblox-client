@@ -18,12 +18,12 @@ import six
 
 try:
     from oslo_log import log as logging
-except:
+except ImportError:
     import logging
 
 try:
     from oslo_serialization import jsonutils
-except:
+except ImportError:
     import json as jsonutils
 
 

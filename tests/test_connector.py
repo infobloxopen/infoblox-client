@@ -20,7 +20,7 @@ from requests import exceptions as req_exc
 
 try:
     from oslo_serialization import jsonutils
-except:
+except ImportError:
     import json as jsonutils
 
 from infoblox_client import connector

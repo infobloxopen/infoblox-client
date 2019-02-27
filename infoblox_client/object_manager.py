@@ -15,7 +15,7 @@
 
 try:
     from oslo_log import log as logging
-except:
+except ImportError:
     import logging
 
 from infoblox_client import exceptions as ib_ex
