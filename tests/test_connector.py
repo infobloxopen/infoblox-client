@@ -54,6 +54,7 @@ class TestInfobloxConnector(unittest.TestCase):
 
         with patch.object(requests.Session, 'post',
                           return_value=mock.Mock()) as patched_create:
+            self.connector.session.cookies = ['cookies']
             patched_create.return_value.status_code = 201
             patched_create.return_value.content = '{}'
             self.connector.create_object(objtype, payload)
@@ -64,6 +65,8 @@ class TestInfobloxConnector(unittest.TestCase):
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
             )
+            # test if cookies have been set
+            self.assertEqual(None, self.connector.session.auth)
 
     def test_create_object_with_extattrs(self):
         objtype = 'network'
@@ -488,6 +491,15 @@ class TestInfobloxConnector(unittest.TestCase):
                           self.connector._check_service_availability, "delete",
                           resp, '_ref')
 
+    def test_get_object_with_cookies(self):
+        objtype = 'network'
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            self.connector.session.cookies = ['cookies']
+            patched_get.return_value.status_code = 200
+            patched_get.return_value.content = '{}'
+            self.connector.get_object(objtype, {})
+            self.assertEqual(None, self.connector.session.auth)
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
