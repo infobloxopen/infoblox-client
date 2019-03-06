@@ -13,7 +13,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from oslo_log import log as logging
+try:
+    from oslo_log import log as logging
+except ImportError:  # pragma: no cover
+    import logging
 
 from infoblox_client import exceptions as ib_ex
 from infoblox_client import objects as obj
