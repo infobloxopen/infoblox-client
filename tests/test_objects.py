@@ -1,14 +1,14 @@
 # Copyright 2014 OpenStack LLC.
 # All Rights Reserved.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    Licensed under the Apache License, Version 2.0 (the 'License'); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
 #
 #         http://www.apache.org/licenses/LICENSE-2.0
 #
 #    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
@@ -87,10 +87,10 @@ class TestObjects(unittest.TestCase):
             max_results=None)
 
     def test_search_network_with_results(self):
-        found = {"_ref": "network/ZG5zLm5ldHdvcmskMTAuMzkuMTEuMC8yNC8w"
-                         ":10.39.11.0/24/default",
-                 "network_view": 'some-view',
-                 "network": '192.68.1.0/20'}
+        found = {'_ref': 'network/ZG5zLm5ldHdvcmskMTAuMzkuMTEuMC8yNC8w'
+                         ':10.39.11.0/24/default',
+                 'network_view': 'some-view',
+                 'network': '192.68.1.0/20'}
         connector = self._mock_connector(get_object=[found])
 
         network = objects.Network.search(connector,
@@ -432,3 +432,132 @@ class TestObjects(unittest.TestCase):
         data = {'host_name': 'cp.com',
                 'unknown_field': 'some_data'}
         self.assertEqual(data, objects.Member._remap_fields(data))
+
+    def test_vlan(self):
+        id = '101'
+        fake_vlan = {
+            '_ref': 'vlan/ZG5zLnZsYW4kLmNvbS5pbmZvYmxveC5kbnMudmxhbl92aWV3JHRlc3QuMTAwLjEwMDAuMTEw:test/abcd/110',
+            'id': id,
+            'name': 'abcd',
+            'parent': {
+                '_ref': 'vlanview/ZG5zLnZsYW5fdmlldyR0ZXN0LjEwMC4xMDAw:test/100/1000'
+            }
+        }
+        conn = self._mock_connector(get_object=[fake_vlan])
+        vlan = objects.Vlan.search(conn, id=id)
+        conn.get_object.assert_called_once_with(
+            'vlan', {'id': id},
+            return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
+            max_results=None
+        )
+        self.assertEqual(fake_vlan['id'],vlan.id)
+        self.assertEqual(fake_vlan['name'], vlan.name)
+        self.assertEqual(fake_vlan['parent'], vlan.parent)
+
+    def test_vlanrange(self):
+        name = 'wapitest'
+        fake_vlanrange = {
+            '_ref': 'vlanrange/ZG5zLnZsYW5fcmFuZ2UkZGVmYXVsdC4xLjQwOTQud2FwaXRlc3QuNDcuNTA:default/wapitest/47/50',
+            'end_vlan_id': 50,
+            'name': name,
+            'start_vlan_id': 47,
+            'vlan_view': {
+                '_ref': 'vlanview/ZG5zLnZsYW5fdmlldyRkZWZhdWx0LjEuNDA5NA:default/1/4094'
+            }
+        }
+        conn = self._mock_connector(get_object=[fake_vlanrange])
+        vlanrange = objects.Vlanrange.search(conn, name=name)
+        conn.get_object.assert_called_once_with(
+            'vlanrange', {'name': name},
+            return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
+            max_results=None
+        )
+        self.assertEqual(fake_vlanrange['name'],vlanrange.name)
+        self.assertEqual(fake_vlanrange['start_vlan_id'], vlanrange.start_vlan_id)
+        self.assertEqual(fake_vlanrange['end_vlan_id'], vlanrange.end_vlan_id)
+
+    def test_vlanview(self):
+        name = 'default'
+        fake_vlanview = {
+            '_ref': 'vlanview/ZG5zLnZsYW5fdmlldyRkZWZhdWx0LjEuNDA5NA:default/1/4094',
+            'end_vlan_id': 4094,
+            'name': name,
+            'start_vlan_id': 1
+             }
+        conn = self._mock_connector(get_object=[fake_vlanview])
+        vlanview = objects.Vlanview.search(conn, name=name)
+        conn.get_object.assert_called_once_with(
+            'vlanview', {'name': name},
+            return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
+            max_results=None
+        )
+        self.assertEqual(fake_vlanview['name'],vlanview.name)
+        self.assertEqual(fake_vlanview['start_vlan_id'], vlanview.start_vlan_id)
+        self.assertEqual(fake_vlanview['end_vlan_id'], vlanview.end_vlan_id)
+
+    def test_dnszonedelegated(self):
+        fqdn = '1.sau.com'
+        fake_zoned = {
+            '_ref': 'zone_delegated/ZG5zLnpvbmUkLl9kZWZhdWx0LmNvbS5zYXUuMQ:1.sau.com/default',
+            'delegate_to': [
+                {
+                    'address': '1.1.1.1',
+                    'name': '1'
+                }
+            ],
+            'fqdn': fqdn,
+            'view': 'default'
+            }
+        conn = self._mock_connector(get_object=[fake_zoned])
+        zoned = objects.DNSZoneDelegated.search(conn, fqdn=fqdn)
+        conn.get_object.assert_called_once_with(
+            'zone_delegated', {'fqdn': fqdn},
+            return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
+            max_results=None
+        )
+        self.assertEqual(fake_zoned['fqdn'],zoned.fqdn)
+        self.assertEqual(fake_zoned['delegate_to'], zoned.delegate_to)
+        self.assertEqual(fake_zoned['view'], zoned.view)
+
+    def test_dnszoneforward(self):
+        fqdn = 'fwdtest.com'
+        fake_zone = {
+            '_ref': 'zone_forward/ZG5zLnpvbmUkLl9kZWZhdWx0LmNvbS5md2R0ZXN0:fwdtest.com/default',
+            'forward_to': [
+                {
+                    'address': '1.1.1.1',
+                    'name': 'ns1.fwdtest.com'
+                }
+            ],
+            'fqdn': fqdn,
+            'view': 'default'
+        }
+        conn = self._mock_connector(get_object=[fake_zone])
+        zone = objects.DNSZoneForward.search(conn, fqdn=fqdn)
+        conn.get_object.assert_called_once_with(
+            'zone_forward', {'fqdn': fqdn},
+            return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
+            max_results=None
+        )
+        self.assertEqual(fake_zone['fqdn'],zone.fqdn)
+        self.assertEqual(fake_zone['forward_to'], zone.forward_to)
+        self.assertEqual(fake_zone['view'], zone.view)
+
+    def test_networkcontainer(self):
+        network = '10.0.0.0/8'
+        fake_nw = {
+            '_ref': 'networkcontainer/ZG5zLm5ldHdvcmtfY29udGFpbmVyJDEwLjAuMC4wLzgvMA:10.0.0.0/8/Company%201',
+            'comment': 'Corporate LANs',
+            'network': network,
+            'network_view': 'Company 1'
+        }
+        conn = self._mock_connector(get_object=[fake_nw])
+        nw = objects.NetworkContainer.search(conn, network=network)
+        conn.get_object.assert_called_once_with(
+            'networkcontainer', {'network': network},
+            return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
+            max_results=None
+        )
+        self.assertEqual(fake_nw['network'], nw.network)
+        self.assertEqual(fake_nw['comment'], nw.comment)
+        self.assertEqual(fake_nw['network_view'], nw.network_view)

@@ -2,11 +2,16 @@
 
 History
 -------
+0.4.23 (2019-08-8)
+___________________
+* Support for NIOS 8.4 vlan, vlanrange, vlanview objects
+* Support for forward and delegated zones
+* Support for Network containers (IPv4 and IPv6)
 
 0.4.22 (2019-02-21)
 ___________________
 
-* Supported returning default fileds plus user required fields reflecting WAPI
+* Supported returning default fields plus user required fields reflecting WAPI
 * Supporting 'aliases' parameter of HOST record for DNS
 
 0.4.21 (2019-01-18)

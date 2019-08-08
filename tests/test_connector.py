@@ -185,7 +185,6 @@ class TestInfobloxConnector(unittest.TestCase):
                 verify=self.default_opts.ssl_verify,
             )
 
-
     def test_get_objects_with_max_results(self):
         objtype = 'network'
         with patch.object(requests.Session, 'get',
@@ -373,15 +372,15 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(None, self.connector._get_object('network', url))
 
     def test_get_object_with_pagination_with_no_result(self):
-         self.connector._get_object = mock.MagicMock(return_value=None)
-         result = self.connector.get_object('network', paging=True)
-         self.assertEqual(None, result)
+        self.connector._get_object = mock.MagicMock(return_value=None)
+        result = self.connector.get_object('network', paging=True)
+        self.assertEqual(None, result)
 
     def test_get_object_with_pagination_with_result(self):
-         self.connector._get_object = mock.MagicMock(
-                                          return_value={"result": ["data"]})
-         result = self.connector.get_object('network', paging=True)
-         self.assertEqual(["data"], result)
+        self.connector._get_object = mock.MagicMock(
+            return_value={"result": ["data"]})
+        result = self.connector.get_object('network', paging=True)
+        self.assertEqual(["data"], result)
 
     def test__handle_get_object_with_pagination_with_no_record(self):
         query_params = {"_paging": 1,
@@ -406,7 +405,7 @@ class TestInfobloxConnector(unittest.TestCase):
                         "_return_as_object": 1,
                         "_max_results": 100}
         self.connector._get_object = mock.MagicMock(
-                                         return_value={"result": ["data"]})
+            return_value={"result": ["data"]})
         result = self.connector._handle_get_object("network", query_params,
                                                    None, False)
         self.assertEqual(["data"], result)
@@ -415,10 +414,10 @@ class TestInfobloxConnector(unittest.TestCase):
         resp = requests.Response
         resp.status_code = 200
         if "_page_id" in url:
-            resp.content = jsonutils.dumps({"result": [6,7,8,9,10]})
+            resp.content = jsonutils.dumps({"result": [6, 7, 8, 9, 10]})
         else:
             resp.content = jsonutils.dumps(
-                               {"result": [1,2,3,4,5], "next_page_id": 1})
+                {"result": [1, 2, 3, 4, 5], "next_page_id": 1})
         return resp
 
     def test__handle_get_object_with_record_more_than_max_results_paging(self):
@@ -429,7 +428,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.side_effect = self._get_object
             result = self.connector._handle_get_object("network", query_params,
                                                        None, False)
-        self.assertEqual([1,2,3,4,5,6,7,8,9,10], result)
+        self.assertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], result)
 
     def test__handle_get_object_without_pagination(self):
         query_params = {"_max_results": 100}
@@ -503,6 +502,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.return_value.content = '{}'
             self.connector.get_object(objtype, {})
             self.assertEqual(None, self.connector.session.auth)
+
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):

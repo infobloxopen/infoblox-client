@@ -183,7 +183,14 @@ Supported NIOS objects
 * ``NetworkView`` for 'networkview'
 * ``DNSView`` for 'view'
 * ``DNSZone`` for 'zone_auth'
+* ``DNSZoneForwar`` for 'zone_forward'
+* ``DNSZoneDelegated`` for 'zone_delegated'
 * ``Member`` for 'member'
+* ``Networkcontainer`` (V4 and V6)
+
+  * ``NetworkContainerV4`` for 'networkcontainer'
+  * ``NetworkContainerV6`` for 'ipv6networkcontainer'
+
 * ``Network`` (V4 and V6)
 
   * ``NetworkV4`` for 'network'
@@ -222,6 +229,9 @@ Supported NIOS objects
 * ``EADefinition`` for 'extensibleattributedef'
 * ``CNAMERecord`` for 'record:cname'
 
+* ``Vlan`` for vlan
+* ``Vlanrange`` for vlanrange
+* ``Vlanview`` for vlanview
 
 Search by regular expression
 ----------------------------
