@@ -199,8 +199,6 @@ Supported NIOS objects
 * ``NetworkView`` for 'networkview'
 * ``DNSView`` for 'view'
 * ``DNSZone`` for 'zone_auth'
-* ``DNSZoneForward`` for 'zone_forward'
-* ``DNSZoneDelegated`` for 'zone_delegated'
 * ``Member`` for 'member'
 * ``Networkcontainer`` (V4 and V6)
 
