@@ -8,7 +8,7 @@
 #         http://www.apache.org/licenses/LICENSE-2.0
 #
 #    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
@@ -450,7 +450,7 @@ class TestObjects(unittest.TestCase):
             return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
             max_results=None
         )
-        self.assertEqual(fake_vlan['id'],vlan.id)
+        self.assertEqual(fake_vlan['id'], vlan.id)
         self.assertEqual(fake_vlan['name'], vlan.name)
         self.assertEqual(fake_vlan['parent'], vlan.parent)
 
@@ -466,15 +466,16 @@ class TestObjects(unittest.TestCase):
             }
         }
         conn = self._mock_connector(get_object=[fake_vlanrange])
-        vlanrange = objects.Vlanrange.search(conn, name=name)
+        vlanrange = objects.VlanRange.search(conn, name=name)
         conn.get_object.assert_called_once_with(
             'vlanrange', {'name': name},
             return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
             max_results=None
         )
-        self.assertEqual(fake_vlanrange['name'],vlanrange.name)
+        self.assertEqual(fake_vlanrange['name'], vlanrange.name)
         self.assertEqual(fake_vlanrange['start_vlan_id'], vlanrange.start_vlan_id)
         self.assertEqual(fake_vlanrange['end_vlan_id'], vlanrange.end_vlan_id)
+        self.assertEqual(fake_vlanrange['vlan_view'], vlanrange.vlan_view)
 
     def test_vlanview(self):
         name = 'default'
@@ -485,13 +486,13 @@ class TestObjects(unittest.TestCase):
             'start_vlan_id': 1
              }
         conn = self._mock_connector(get_object=[fake_vlanview])
-        vlanview = objects.Vlanview.search(conn, name=name)
+        vlanview = objects.VlanView.search(conn, name=name)
         conn.get_object.assert_called_once_with(
             'vlanview', {'name': name},
             return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
             max_results=None
         )
-        self.assertEqual(fake_vlanview['name'],vlanview.name)
+        self.assertEqual(fake_vlanview['name'], vlanview.name)
         self.assertEqual(fake_vlanview['start_vlan_id'], vlanview.start_vlan_id)
         self.assertEqual(fake_vlanview['end_vlan_id'], vlanview.end_vlan_id)
 
@@ -515,7 +516,7 @@ class TestObjects(unittest.TestCase):
             return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
             max_results=None
         )
-        self.assertEqual(fake_zoned['fqdn'],zoned.fqdn)
+        self.assertEqual(fake_zoned['fqdn'], zoned.fqdn)
         self.assertEqual(fake_zoned['delegate_to'], zoned.delegate_to)
         self.assertEqual(fake_zoned['view'], zoned.view)
 
@@ -539,7 +540,7 @@ class TestObjects(unittest.TestCase):
             return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
             max_results=None
         )
-        self.assertEqual(fake_zone['fqdn'],zone.fqdn)
+        self.assertEqual(fake_zone['fqdn'], zone.fqdn)
         self.assertEqual(fake_zone['forward_to'], zone.forward_to)
         self.assertEqual(fake_zone['view'], zone.view)
 
