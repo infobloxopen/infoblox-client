@@ -436,11 +436,13 @@ class TestObjects(unittest.TestCase):
     def test_vlan(self):
         id = '101'
         fake_vlan = {
-            '_ref': 'vlan/ZG5zLnZsYW4kLmNvbS5pbmZvYmxveC5kbnMudmxhbl92aWV3JHRlc3QuMTAwLjEwMDAuMTEw:test/abcd/110',
+            '_ref': 'vlan/ZG5zLnZsYW4kLmNvbS5pbmZvYmxveC5kbn'
+                    'Mudmxhbl92aWV3JHRlc3QuMTAwLjEwMDAuMTEw:test/abcd/110',
             'id': id,
             'name': 'abcd',
             'parent': {
-                '_ref': 'vlanview/ZG5zLnZsYW5fdmlldyR0ZXN0LjEwMC4xMDAw:test/100/1000'
+                '_ref': 'vlanview/ZG5zLnZsYW5f'
+                        'dmlldyR0ZXN0LjEwMC4xMDAw:test/100/1000'
             }
         }
         conn = self._mock_connector(get_object=[fake_vlan])
@@ -457,12 +459,14 @@ class TestObjects(unittest.TestCase):
     def test_vlanrange(self):
         name = 'wapitest'
         fake_vlanrange = {
-            '_ref': 'vlanrange/ZG5zLnZsYW5fcmFuZ2UkZGVmYXVsdC4xLjQwOTQud2FwaXRlc3QuNDcuNTA:default/wapitest/47/50',
+            '_ref': 'vlanrange/ZG5zLnZsYW5fcmFuZ2UkZGVmYXVsdC4xL'
+                    'jQwOTQud2FwaXRlc3QuNDcuNTA:default/wapitest/47/50',
             'end_vlan_id': 50,
             'name': name,
             'start_vlan_id': 47,
             'vlan_view': {
-                '_ref': 'vlanview/ZG5zLnZsYW5fdmlldyRkZWZhdWx0LjEuNDA5NA:default/1/4094'
+                '_ref': 'vlanview/ZG5zLnZsYW5fdmlldyRkZWZhdWx0'
+                        'LjEuNDA5NA:default/1/4094'
             }
         }
         conn = self._mock_connector(get_object=[fake_vlanrange])
@@ -473,14 +477,18 @@ class TestObjects(unittest.TestCase):
             max_results=None
         )
         self.assertEqual(fake_vlanrange['name'], vlanrange.name)
-        self.assertEqual(fake_vlanrange['start_vlan_id'], vlanrange.start_vlan_id)
-        self.assertEqual(fake_vlanrange['end_vlan_id'], vlanrange.end_vlan_id)
-        self.assertEqual(fake_vlanrange['vlan_view'], vlanrange.vlan_view)
+        self.assertEqual(fake_vlanrange['start_vlan_id'],
+                         vlanrange.start_vlan_id)
+        self.assertEqual(fake_vlanrange['end_vlan_id'],
+                         vlanrange.end_vlan_id)
+        self.assertEqual(fake_vlanrange['vlan_view'],
+                         vlanrange.vlan_view)
 
     def test_vlanview(self):
         name = 'default'
         fake_vlanview = {
-            '_ref': 'vlanview/ZG5zLnZsYW5fdmlldyRkZWZhdWx0LjEuNDA5NA:default/1/4094',
+            '_ref': 'vlanview/ZG5zLnZsYW5fdmlldyRkZWZhdW'
+                    'x0LjEuNDA5NA:default/1/4094',
             'end_vlan_id': 4094,
             'name': name,
             'start_vlan_id': 1
@@ -493,13 +501,15 @@ class TestObjects(unittest.TestCase):
             max_results=None
         )
         self.assertEqual(fake_vlanview['name'], vlanview.name)
-        self.assertEqual(fake_vlanview['start_vlan_id'], vlanview.start_vlan_id)
+        self.assertEqual(fake_vlanview['start_vlan_id'],
+                         vlanview.start_vlan_id)
         self.assertEqual(fake_vlanview['end_vlan_id'], vlanview.end_vlan_id)
 
     def test_dnszonedelegated(self):
         fqdn = '1.sau.com'
         fake_zoned = {
-            '_ref': 'zone_delegated/ZG5zLnpvbmUkLl9kZWZhdWx0LmNvbS5zYXUuMQ:1.sau.com/default',
+            '_ref': 'zone_delegated/ZG5zLnpvbmUkLl9kZWZhd'
+                    'Wx0LmNvbS5zYXUuMQ:1.sau.com/default',
             'delegate_to': [
                 {
                     'address': '1.1.1.1',
@@ -523,7 +533,8 @@ class TestObjects(unittest.TestCase):
     def test_dnszoneforward(self):
         fqdn = 'fwdtest.com'
         fake_zone = {
-            '_ref': 'zone_forward/ZG5zLnpvbmUkLl9kZWZhdWx0LmNvbS5md2R0ZXN0:fwdtest.com/default',
+            '_ref': 'zone_forward/ZG5zLnpvbmUkLl9kZWZhdWx0LmNvb'
+                    'S5md2R0ZXN0:fwdtest.com/default',
             'forward_to': [
                 {
                     'address': '1.1.1.1',
@@ -547,7 +558,8 @@ class TestObjects(unittest.TestCase):
     def test_networkcontainer(self):
         network = '10.0.0.0/8'
         fake_nw = {
-            '_ref': 'networkcontainer/ZG5zLm5ldHdvcmtfY29udGFpbmVyJDEwLjAuMC4wLzgvMA:10.0.0.0/8/Company%201',
+            '_ref': 'networkcontainer/ZG5zLm5ldHdvcmtfY29udG'
+                    'FpbmVyJDEwLjAuMC4wLzgvMA:10.0.0.0/8/Company%201',
             'comment': 'Corporate LANs',
             'network': network,
             'network_view': 'Company 1'

@@ -499,7 +499,6 @@ class NetworkV6(Network):
 
 class HostRecord(InfobloxObject):
     """Base class for HostRecords
-
     HostRecord uses ipvXaddr for search and ipvXaddrs for object creation.
     ipvXaddr and ipvXaddrs are quite different:
     ipvXaddr is single ip as a string
@@ -786,9 +785,12 @@ class FixedAddressV4(FixedAddress):
     _infoblox_type = 'fixedaddress'
     _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'network',
                'options', 'comment']
-    _search_for_update_fields = ['ipv4addr', 'mac', 'network_view', 'network']
-    _all_searchable_fields = ['ipv4addr', 'mac', 'network_view', 'network', 'comment',
-                              'device_description', 'device_location', ' device_type', 'device_vendor']
+    _search_for_update_fields = ['ipv4addr', 'mac',
+                                 'network_view', 'network']
+    _all_searchable_fields = ['ipv4addr', 'mac', 'network_view',
+                              'network', 'comment', 'device_description',
+                              'device_location', ' device_type',
+                              'device_vendor']
     _shadow_fields = ['_ref', 'ip']
     _return_fields = ['ipv4addr', 'mac', 'network_view', 'extattrs']
     _remap = {'ipv4addr': 'ip'}
@@ -1072,21 +1074,25 @@ class VlanRange(InfobloxObject):
     _infoblox_type = 'vlanrange'
     _fields = ['end_vlan_id', 'name', 'start_vlan_id', 'vlan_view']
     _search_for_update_fields = ['name', 'vlan_view']
-    _all_searchable_fields = ['end_vlan_id', 'name', 'start_vlan_id', 'vlan_view', 'comment']
+    _all_searchable_fields = ['end_vlan_id', 'name', 'start_vlan_id',
+                              'vlan_view', 'comment']
     _updateable_search_fields = _all_searchable_fields
-    _return_fields = ['name', 'vlan_view', 'end_vlan_id', 'start_vlan_id', 'extattrs']
+    _return_fields = ['name', 'vlan_view', 'end_vlan_id',
+                      'start_vlan_id', 'extattrs']
     _shadow_fields = ['_ref']
 
 
 class VlanView(InfobloxObject):
     _infoblox_type = 'vlanview'
-    _fields = ['end_vlan_id', 'name', 'start_vlan_id', 'pre_create_vlan', 'vlan_name_prefix']
+    _fields = ['end_vlan_id', 'name', 'start_vlan_id', 'pre_create_vlan',
+               'vlan_name_prefix']
     _search_for_update_fields = ['name', 'end_vlan_id', 'start_vlan_id']
     _all_searchable_fields = ['end_vlan_id', 'name', 'start_vlan_id',
                               'comment', 'allow_range_overlapping']
     _updateable_search_fields = ['end_vlan_id', 'name', 'start_vlan_id',
                                  'comment', 'allow_range_overlapping']
-    _return_fields = ['name', 'end_vlan_id', 'start_vlan_id', 'extattrs', 'vlan_name_prefix']
+    _return_fields = ['name', 'end_vlan_id', 'start_vlan_id',
+                      'extattrs', 'vlan_name_prefix']
     _shadow_fields = ['_ref']
 
 
@@ -1104,12 +1110,15 @@ class VlanAllocation(object):
     @classmethod
     def next_available_ip_from_vlanrange(cls, vlanview, vlanrange):
         return cls(vlanrange, 'func:nextavailablevlanid:'
-                         '{vlanrange:s},{vlan_view_name:s}'.format(**locals()))
+                              '{vlanrange:s},'
+                              '{vlan_view_name:s}'.format(**locals()))
 
     @classmethod
-    def next_available_ip_from_vlanview(cls, vlanview, start_vlan_id, end_vlan_id):
-        return cls(start_vlan_id, 'func:nextavailablevlanid:{start_vlan_id}-{end_vlan_id},'
-                             '{vlan_view_name}'.format(**locals()))
+    def next_available_ip_from_vlanview(cls, vlanview,
+                                        start_vlan_id, end_vlan_id):
+        return cls(start_vlan_id, 'func:nextavailablevlanid:'
+                                  '{start_vlan_id}-{end_vlan_id},'
+                                  '{vlan_view_name}'.format(**locals()))
 
 
 class DNSZoneDelegated(InfobloxObject):
@@ -1127,7 +1136,8 @@ class DNSZoneForward(InfobloxObject):
     _infoblox_type = 'zone_forward'
     _fields = ['fqdn', 'view', 'forward_to', 'zone_format', 'address']
     _return_fields = ['fqdn', 'view', 'extattrs', 'ns_group',
-                      'forward_to', 'address', 'forwarding_servers', 'forwarders_only']
+                      'forward_to', 'address',
+                      'forwarding_servers', 'forwarders_only']
     _search_for_update_fields = ['fqdn', 'view']
     _all_searchable_fields = _search_for_update_fields + ['parent', 'comment']
     _shadow_fields = ['_ref', 'ns_group', 'external_ns_group']
