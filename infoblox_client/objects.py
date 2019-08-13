@@ -735,7 +735,8 @@ class DhcpOption(SubObjects):
 
 class IPRange(InfobloxObject):
     _fields = ['start_addr', 'end_addr', 'network_view',
-               'network', 'extattrs', 'disable']
+               'network', 'extattrs', 'disable', 'template', 'comment',
+               'server_association_type', 'failover_association']
     _remap = {'cidr': 'network'}
     _search_for_update_fields = ['network_view', 'start_addr',
                                  'end_addr', 'network']
