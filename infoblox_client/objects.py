@@ -984,7 +984,7 @@ class EADefinition(InfobloxObject):
 
 class IPAddress(InfobloxObject):
     _fields = ['network_view', 'ip_address', 'objects', 'network', 'status',
-               'is_conflict', 'mac_address', 'types', 'usage', 'names']
+               'is_conflict', 'types', 'usage', 'names']
     _search_for_update_fields = ['network_view', 'ip_address',
                                  'network', 'status']
     _all_searchable_fields = _search_for_update_fields
@@ -1003,6 +1003,7 @@ class IPAddress(InfobloxObject):
 class IPv4Address(IPAddress):
     _infoblox_type = 'ipv4address'
     _ip_version = 4
+    _fields = IPAddress._fields + ['mac_address']
 
 
 class IPv6Address(IPAddress):
