@@ -452,7 +452,7 @@ class InfobloxObject(BaseObject):
 class Network(InfobloxObject):
     _fields = ['network_view', 'network', 'template',
                'options', 'members', 'extattrs', 'comment',
-               'enable_discovery', 'discovery_member']
+               'zone_associations']
     _search_for_update_fields = ['network_view', 'network']
     _all_searchable_fields = _search_for_update_fields + ['unmanaged']
     _shadow_fields = ['_ref']
