@@ -786,7 +786,7 @@ class FixedAddress(InfobloxObject):
 class FixedAddressV4(FixedAddress):
     _infoblox_type = 'fixedaddress'
     _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'network',
-               'options', 'comment']
+               'options', 'comment', 'name']
     _search_for_update_fields = ['ipv4addr', 'mac', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ip']
@@ -807,7 +807,7 @@ class FixedAddressV6(FixedAddress):
     """FixedAddress for IPv6"""
     _infoblox_type = 'ipv6fixedaddress'
     _fields = ['ipv6addr', 'duid', 'network_view', 'extattrs', 'network',
-               'comment']
+               'comment', 'name']
     _search_for_update_fields = ['ipv6addr', 'duid', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _return_fields = ['ipv6addr', 'duid', 'network_view', 'extattrs']
@@ -847,7 +847,8 @@ class ARecordBase(InfobloxObject):
 
 class ARecord(ARecordBase):
     _infoblox_type = 'record:a'
-    _fields = ['ipv4addr', 'name', 'view', 'comment', 'extattrs']
+    _fields = ['ipv4addr', 'name', 'view', 'comment', 'extattrs',
+               'ttl']
     _search_for_update_fields = ['ipv4addr', 'view']
     _all_searchable_fields = _search_for_update_fields + ['name']
     _return_fields = ['ipv4addr', 'name']
@@ -858,7 +859,8 @@ class ARecord(ARecordBase):
 
 class AAAARecord(ARecordBase):
     _infoblox_type = 'record:aaaa'
-    _fields = ['ipv6addr', 'name', 'view', 'comment', 'extattrs']
+    _fields = ['ipv6addr', 'name', 'view', 'comment', 'extattrs',
+               'ttl']
     _search_for_update_fields = ['ipv6addr', 'view']
     _all_searchable_fields = _search_for_update_fields + ['name']
     _return_fields = ['ipv6addr', 'name']
@@ -880,7 +882,7 @@ class PtrRecord(InfobloxObject):
 
 
 class PtrRecordV4(PtrRecord):
-    _fields = ['view', 'ipv4addr', 'ptrdname', 'extattrs']
+    _fields = ['view', 'ipv4addr', 'ptrdname', 'extattrs', 'ttl']
     _search_for_update_fields = ['view', 'ipv4addr']
     _all_searchable_fields = _search_for_update_fields + ['ptrdname']
     _shadow_fields = ['_ref']
@@ -889,7 +891,7 @@ class PtrRecordV4(PtrRecord):
 
 
 class PtrRecordV6(PtrRecord):
-    _fields = ['view', 'ipv6addr', 'ptrdname', 'extattrs']
+    _fields = ['view', 'ipv6addr', 'ptrdname', 'extattrs', 'ttl']
     _search_for_update_fields = ['view', 'ipv6addr']
     _all_searchable_fields = _search_for_update_fields + ['ptrdname']
     _shadow_fields = ['_ref']
