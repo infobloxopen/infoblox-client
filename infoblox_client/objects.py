@@ -1009,6 +1009,7 @@ class IPv4Address(IPAddress):
 class IPv6Address(IPAddress):
     _infoblox_type = 'ipv6address'
     _ip_version = 6
+    _fields = IPAddress._fields + ['duid', 'lease_state']
 
 
 class IPAllocation(object):
