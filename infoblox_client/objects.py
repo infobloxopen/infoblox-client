@@ -851,6 +851,7 @@ class ARecord(ARecordBase):
                'ttl']
     _search_for_update_fields = ['ipv4addr', 'view']
     _all_searchable_fields = _search_for_update_fields + ['name']
+    _updateable_search_fields = ['ipv4addr']
     _return_fields = ['ipv4addr', 'name']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}

@@ -401,7 +401,7 @@ class TestObjects(unittest.TestCase):
             return_fields=[])
         connector.update_object.assert_called_once_with(
             a_record[0]['_ref'],
-            {'name': 'some-new_name'},
+            {'name': 'some-new_name','ipv4addr': '192.168.1.52'},
             mock.ANY)
 
     def test_ip_version(self):
