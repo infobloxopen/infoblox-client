@@ -3,6 +3,13 @@
 History
 -------
 
+0.4.23 (2019-09-10)
+___________________
+
+* Added some extra fields for network class
+* Fixed update option for A Record
+* Adding fields for fixed address
+
 0.4.22 (2019-02-21)
 ___________________
 
