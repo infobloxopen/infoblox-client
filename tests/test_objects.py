@@ -404,6 +404,25 @@ class TestObjects(unittest.TestCase):
             {'name': 'some-new_name','ipv4addr': '192.168.1.52'},
             mock.ANY)
 
+    def test_update_fields_on_create_v6(self):
+        aaaa_record = [{'_ref': 'record:aaaa/Awsdrefsasdwqoijvoriibtrni',
+                     'ip': '2001:610:240:22::c100:68b',
+                     'name': 'other_name'}]
+        connector = self._mock_connector(get_object=aaaa_record)
+        objects.ARecordBase.create(connector,
+                                   ip='2001:610:240:22::c100:68b',
+                                   name='some-new_name',
+                                   view='view',
+                                   update_if_exists=True)
+        connector.get_object.assert_called_once_with(
+            'record:aaaa',
+            {'view': 'view', 'ipv6addr': '2001:610:240:22::c100:68b'},
+            return_fields=[])
+        connector.update_object.assert_called_once_with(
+            aaaa_record[0]['_ref'],
+            {'name': 'some-new_name'},
+            mock.ANY)
+
     def test_ip_version(self):
         conn = mock.Mock()
         net_v4 = objects.Network(conn, network='192.168.1.0/24')

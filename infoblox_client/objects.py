@@ -857,6 +857,16 @@ class ARecord(ARecordBase):
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
 
+    @property
+    def ipv4addr(self):
+        # Convert IPAllocation objects to string
+        if hasattr(self, '_ipv4addr'):
+            return str(self._ipv4addr)
+
+    @ipv4addr.setter
+    def ipv4addr(self, ipv4addr):
+        self._ipv4addr = ipv4addr
+
 
 class AAAARecord(ARecordBase):
     _infoblox_type = 'record:aaaa'
@@ -868,6 +878,16 @@ class AAAARecord(ARecordBase):
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
+
+    @property
+    def ipv6addr(self):
+        # Convert IPAllocation objects to string
+        if hasattr(self, '_ipv6addr'):
+            return str(self._ipv6addr)
+
+    @ipv6addr.setter
+    def ipv6addr(self, ipv6addr):
+        self._ipv6addr = ipv6addr
 
 
 class PtrRecord(InfobloxObject):
@@ -987,7 +1007,8 @@ class EADefinition(InfobloxObject):
 
 
 class IPAddress(InfobloxObject):
-    _fields = ['network_view', 'ip_address', 'objects', 'network', 'status']
+    _fields = ['network_view', 'ip_address', 'objects', 'network', 'status',
+               'is_conflict', 'types', 'usage', 'names']
     _search_for_update_fields = ['network_view', 'ip_address',
                                  'network', 'status']
     _all_searchable_fields = _search_for_update_fields
@@ -1006,11 +1027,13 @@ class IPAddress(InfobloxObject):
 class IPv4Address(IPAddress):
     _infoblox_type = 'ipv4address'
     _ip_version = 4
+    _fields = IPAddress._fields + ['mac_address']
 
 
 class IPv6Address(IPAddress):
     _infoblox_type = 'ipv6address'
     _ip_version = 6
+    _fields = IPAddress._fields + ['duid', 'lease_state']
 
 
 class IPAllocation(object):
