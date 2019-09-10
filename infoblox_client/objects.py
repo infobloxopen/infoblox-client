@@ -1095,7 +1095,7 @@ class Vlan(InfobloxObject):
 
 class Vlanrange(InfobloxObject):
     _infoblox_type = 'vlanrange'
-    _fields = ['end_vlan_id', 'name', 'start_vlan_id', 'vlan_view']
+    _fields = ['end_vlan_id', 'name', 'start_vlan_id', 'vlan_view', 'extattrs']
     _search_for_update_fields = ['name', 'vlan_view']
     _all_searchable_fields = ['end_vlan_id', 'name', 'start_vlan_id',
                               'vlan_view', 'comment']
@@ -1107,7 +1107,7 @@ class Vlanrange(InfobloxObject):
 class Vlanview(InfobloxObject):
     _infoblox_type = 'vlanview'
     _fields = ['end_vlan_id', 'name', 'start_vlan_id', 'pre_create_vlan',
-               'vlan_name_prefix']
+               'vlan_name_prefix', 'extattrs']
     _search_for_update_fields = ['name', 'end_vlan_id', 'start_vlan_id']
     _all_searchable_fields = ['end_vlan_id', 'name', 'start_vlan_id',
                               'comment', 'allow_range_overlapping']
@@ -1116,31 +1116,6 @@ class Vlanview(InfobloxObject):
     _return_fields = ['name', 'end_vlan_id', 'start_vlan_id',
                       'extattrs', 'vlan_name_prefix']
     _shadow_fields = ['_ref']
-
-
-class VlanAllocation(object):
-
-    def __init__(self, vlanrange, next_available_vlan_id):
-        self.next_available_vlan_id = next_available_vlan_id
-
-    def __repr__(self):
-        return "VlanAllocation: {0}".format(self.next_available_vlan_id)
-
-    def __str__(self):
-        return str(self.next_available_vlan_id)
-
-    @classmethod
-    def next_available_ip_from_vlanrange(cls, vlanview, vlanrange):
-        return cls(vlanrange, 'func:nextavailablevlanid:'
-                              '{vlanrange:s},'
-                              '{vlan_view_name:s}'.format(**locals()))
-
-    @classmethod
-    def next_available_ip_from_vlanview(cls, vlanview,
-                                        start_vlan_id, end_vlan_id):
-        return cls(start_vlan_id, 'func:nextavailablevlanid:'
-                                  '{start_vlan_id}-{end_vlan_id},'
-                                  '{vlan_view_name}'.format(**locals()))
 
 
 class DNSZoneDelegated(InfobloxObject):
@@ -1172,7 +1147,7 @@ class NetworkContainer(InfobloxObject):
     _search_for_update_fields = ['network_view', 'network']
     _all_searchable_fields = _search_for_update_fields + ['unmanaged']
     _shadow_fields = ['_ref']
-    _return_fields = ['network_view', 'network', 'options', 'members',
+    _return_fields = ['network_view', 'network', 'options',
                       'extattrs', 'comment']
     _remap = {'cidr': 'network'}
 
