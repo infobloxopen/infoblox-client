@@ -26,6 +26,7 @@ setup(
     version='0.5.0',
     description="Client for interacting with Infoblox NIOS over WAPI",
     long_description=readme + '\n\n' + history,
+    long_description_content_type='text/markdown',
     author="John Belamaric",
     author_email='jbelamaric@infoblox.com',
     url='https://github.com/infobloxopen/infoblox-client',
