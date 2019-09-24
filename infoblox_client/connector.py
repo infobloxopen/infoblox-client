@@ -25,8 +25,15 @@ try:
 except ImportError:
     import urllib.parse as urlparse
 
-from oslo_log import log as logging
-from oslo_serialization import jsonutils
+try:
+    from oslo_log import log as logging
+except ImportError:  # pragma: no cover
+    import logging
+
+try:
+    from oslo_serialization import jsonutils
+except ImportError:  # pragma: no cover
+    import json as jsonutils
 
 from infoblox_client import exceptions as ib_ex
 from infoblox_client import utils
@@ -320,6 +327,10 @@ class Connector(object):
     def _get_object(self, obj_type, url):
         opts = self._get_request_options()
         self._log_request('get', url, opts)
+        if(self.session.cookies):
+            # the first 'get' or 'post' action will generate a cookie
+            # after that, we don't need to re-authenticate
+            self.session.auth = None
         r = self.session.get(url, **opts)
 
         self._validate_authorized(r)
@@ -351,6 +362,10 @@ class Connector(object):
         url = self._construct_url(obj_type, query_params)
         opts = self._get_request_options(data=payload)
         self._log_request('post', url, opts)
+        if(self.session.cookies):
+            # the first 'get' or 'post' action will generate a cookie
+            # after that, we don't need to re-authenticate
+            self.session.auth = None
         r = self.session.post(url, **opts)
 
         self._validate_authorized(r)

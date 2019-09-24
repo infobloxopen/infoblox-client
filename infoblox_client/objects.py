@@ -15,7 +15,10 @@
 
 import six
 
-from oslo_log import log as logging
+try:
+    from oslo_log import log as logging
+except ImportError:  # pragma: no cover
+    import logging
 
 from infoblox_client import exceptions as ib_ex
 from infoblox_client import utils as ib_utils
@@ -448,7 +451,8 @@ class InfobloxObject(BaseObject):
 
 class Network(InfobloxObject):
     _fields = ['network_view', 'network', 'template',
-               'options', 'members', 'extattrs', 'comment']
+               'options', 'members', 'extattrs', 'comment',
+               'zone_associations']
     _search_for_update_fields = ['network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref']
@@ -555,13 +559,13 @@ class HostRecordV4(HostRecord):
     """HostRecord for IPv4"""
     _fields = ['ipv4addrs', 'view', 'extattrs', 'name', 'zone',
                'configure_for_dns', 'network_view', 'mac', 'ttl',
-               'comment']
+               'comment', 'aliases']
     _search_for_update_fields = ['view', 'ipv4addr', 'name',
                                  'zone', 'network_view', 'mac']
     _all_searchable_fields = _search_for_update_fields
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv4addr']
-    _return_fields = ['ipv4addrs', 'extattrs']
+    _return_fields = ['ipv4addrs', 'extattrs', 'aliases']
     _remap = {'ip': 'ipv4addrs',
               'ips': 'ipv4addrs'}
     _ip_version = 4
@@ -590,13 +594,14 @@ class HostRecordV4(HostRecord):
 class HostRecordV6(HostRecord):
     """HostRecord for IPv6"""
     _fields = ['ipv6addrs', 'view', 'extattrs',  'name', 'zone',
-               'configure_for_dns', 'network_view', 'ttl', 'comment']
+               'configure_for_dns', 'network_view', 'ttl', 'comment',
+               'aliases']
     _search_for_update_fields = ['ipv6addr', 'view', 'name',
                                  'zone', 'network_view']
     _all_searchable_fields = _search_for_update_fields
     _updateable_search_fields = ['name']
     _shadow_fields = ['_ref', 'ipv6addr']
-    _return_fields = ['ipv6addrs', 'extattrs']
+    _return_fields = ['ipv6addrs', 'extattrs', 'aliases']
     _remap = {'ip': 'ipv6addrs',
               'ips': 'ipv6addrs'}
 
@@ -731,7 +736,8 @@ class DhcpOption(SubObjects):
 
 class IPRange(InfobloxObject):
     _fields = ['start_addr', 'end_addr', 'network_view',
-               'network', 'extattrs', 'disable']
+               'network', 'extattrs', 'disable', 'template', 'comment',
+               'server_association_type', 'failover_association']
     _remap = {'cidr': 'network'}
     _search_for_update_fields = ['network_view', 'start_addr',
                                  'end_addr', 'network']
@@ -780,7 +786,7 @@ class FixedAddress(InfobloxObject):
 class FixedAddressV4(FixedAddress):
     _infoblox_type = 'fixedaddress'
     _fields = ['ipv4addr', 'mac', 'network_view', 'extattrs', 'network',
-               'options', 'comment']
+               'options', 'comment', 'name']
     _search_for_update_fields = ['ipv4addr', 'mac', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _shadow_fields = ['_ref', 'ip']
@@ -801,7 +807,7 @@ class FixedAddressV6(FixedAddress):
     """FixedAddress for IPv6"""
     _infoblox_type = 'ipv6fixedaddress'
     _fields = ['ipv6addr', 'duid', 'network_view', 'extattrs', 'network',
-               'comment']
+               'comment', 'name']
     _search_for_update_fields = ['ipv6addr', 'duid', 'network_view', 'network']
     _all_searchable_fields = _search_for_update_fields
     _return_fields = ['ipv6addr', 'duid', 'network_view', 'extattrs']
@@ -841,24 +847,47 @@ class ARecordBase(InfobloxObject):
 
 class ARecord(ARecordBase):
     _infoblox_type = 'record:a'
-    _fields = ['ipv4addr', 'name', 'view', 'extattrs']
+    _fields = ['ipv4addr', 'name', 'view', 'comment', 'extattrs',
+               'ttl']
     _search_for_update_fields = ['ipv4addr', 'view']
     _all_searchable_fields = _search_for_update_fields + ['name']
+    _updateable_search_fields = ['ipv4addr']
     _return_fields = ['ipv4addr', 'name']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
 
+    @property
+    def ipv4addr(self):
+        # Convert IPAllocation objects to string
+        if hasattr(self, '_ipv4addr'):
+            return str(self._ipv4addr)
+
+    @ipv4addr.setter
+    def ipv4addr(self, ipv4addr):
+        self._ipv4addr = ipv4addr
+
 
 class AAAARecord(ARecordBase):
     _infoblox_type = 'record:aaaa'
-    _fields = ['ipv6addr', 'name', 'view', 'extattrs']
+    _fields = ['ipv6addr', 'name', 'view', 'comment', 'extattrs',
+               'ttl']
     _search_for_update_fields = ['ipv6addr', 'view']
     _all_searchable_fields = _search_for_update_fields + ['name']
     _return_fields = ['ipv6addr', 'name']
     _shadow_fields = ['_ref']
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
+
+    @property
+    def ipv6addr(self):
+        # Convert IPAllocation objects to string
+        if hasattr(self, '_ipv6addr'):
+            return str(self._ipv6addr)
+
+    @ipv6addr.setter
+    def ipv6addr(self, ipv6addr):
+        self._ipv6addr = ipv6addr
 
 
 class PtrRecord(InfobloxObject):
@@ -874,7 +903,7 @@ class PtrRecord(InfobloxObject):
 
 
 class PtrRecordV4(PtrRecord):
-    _fields = ['view', 'ipv4addr', 'ptrdname', 'extattrs']
+    _fields = ['view', 'ipv4addr', 'ptrdname', 'extattrs', 'ttl']
     _search_for_update_fields = ['view', 'ipv4addr']
     _all_searchable_fields = _search_for_update_fields + ['ptrdname']
     _shadow_fields = ['_ref']
@@ -883,7 +912,7 @@ class PtrRecordV4(PtrRecord):
 
 
 class PtrRecordV6(PtrRecord):
-    _fields = ['view', 'ipv6addr', 'ptrdname', 'extattrs']
+    _fields = ['view', 'ipv6addr', 'ptrdname', 'extattrs', 'ttl']
     _search_for_update_fields = ['view', 'ipv6addr']
     _all_searchable_fields = _search_for_update_fields + ['ptrdname']
     _shadow_fields = ['_ref']
@@ -978,7 +1007,8 @@ class EADefinition(InfobloxObject):
 
 
 class IPAddress(InfobloxObject):
-    _fields = ['network_view', 'ip_address', 'objects', 'network', 'status']
+    _fields = ['network_view', 'ip_address', 'objects', 'network', 'status',
+               'is_conflict', 'types', 'usage', 'names']
     _search_for_update_fields = ['network_view', 'ip_address',
                                  'network', 'status']
     _all_searchable_fields = _search_for_update_fields
@@ -997,11 +1027,13 @@ class IPAddress(InfobloxObject):
 class IPv4Address(IPAddress):
     _infoblox_type = 'ipv4address'
     _ip_version = 4
+    _fields = IPAddress._fields + ['mac_address']
 
 
 class IPv6Address(IPAddress):
     _infoblox_type = 'ipv6address'
     _ip_version = 6
+    _fields = IPAddress._fields + ['duid', 'lease_state']
 
 
 class IPAllocation(object):

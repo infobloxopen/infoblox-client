@@ -135,7 +135,7 @@ class TestObjects(unittest.TestCase):
                 {'mac': 'fa:16:3e:29:87:70',
                  'ipv4addr': '22.0.0.2'}],
              'view': 'some-dns-view'},
-            ['ipv4addrs', 'extattrs'])
+            ['ipv4addrs', 'extattrs', 'aliases'])
 
     def test_create_host_record_with_ip(self):
         mock_record = DEFAULT_HOST_RECORD
@@ -401,6 +401,25 @@ class TestObjects(unittest.TestCase):
             return_fields=[])
         connector.update_object.assert_called_once_with(
             a_record[0]['_ref'],
+            {'name': 'some-new_name','ipv4addr': '192.168.1.52'},
+            mock.ANY)
+
+    def test_update_fields_on_create_v6(self):
+        aaaa_record = [{'_ref': 'record:aaaa/Awsdrefsasdwqoijvoriibtrni',
+                     'ip': '2001:610:240:22::c100:68b',
+                     'name': 'other_name'}]
+        connector = self._mock_connector(get_object=aaaa_record)
+        objects.ARecordBase.create(connector,
+                                   ip='2001:610:240:22::c100:68b',
+                                   name='some-new_name',
+                                   view='view',
+                                   update_if_exists=True)
+        connector.get_object.assert_called_once_with(
+            'record:aaaa',
+            {'view': 'view', 'ipv6addr': '2001:610:240:22::c100:68b'},
+            return_fields=[])
+        connector.update_object.assert_called_once_with(
+            aaaa_record[0]['_ref'],
             {'name': 'some-new_name'},
             mock.ANY)
 

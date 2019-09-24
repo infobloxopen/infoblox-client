@@ -16,8 +16,15 @@
 import netaddr
 import six
 
-from oslo_log import log as logging
-from oslo_serialization import jsonutils
+try:
+    from oslo_log import log as logging
+except ImportError:  # pragma: no cover
+    import logging
+
+try:
+    from oslo_serialization import jsonutils
+except ImportError:  # pragma: no cover
+    import json as jsonutils
 
 
 LOG = logging.getLogger(__name__)
