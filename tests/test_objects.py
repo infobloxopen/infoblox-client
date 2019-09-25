@@ -255,7 +255,7 @@ class TestObjects(unittest.TestCase):
         connector.create_object.assert_called_once_with(
             'ipv6fixedaddress',
             {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',
-             'duid': mock.ANY,  'ms_server': {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.1.0'}}, mock.ANY)
+             'duid': mock.ANY, 'ms_server': {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.1.0'}}, mock.ANY)
 
     @mock.patch('infoblox_client.utils.generate_duid')
     def test_fixed_address_v6(self, generate):
