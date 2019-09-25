@@ -139,6 +139,7 @@ Reply from NIOS is parsed back into objects and contains next data:
 Create a new fixed address, with a MS server DHCP reservation:
 
 .. code:: python
+
   obj, created = objects.FixedAddress.create_check_exists(connector=conn,
                                                           ip='192.168.100.100',
                                                           mac='aa:bb:cc:11:22:33',
@@ -147,6 +148,7 @@ Create a new fixed address, with a MS server DHCP reservation:
                                                           network_view='default',
                                                           ms_server={'_struct': 'msdhcpserver',
                                                                      'ipv4addr': '192.168.0.0'})
+
 
 
 High level API, using InfobloxObjectManager
