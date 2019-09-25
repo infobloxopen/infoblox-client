@@ -218,7 +218,8 @@ class TestObjects(unittest.TestCase):
         fixed_addr = objects.FixedAddress.create(connector,
                                                  ip='192.168.1.15',
                                                  network_view='some-view',
-                                                 mac='aa:ac:cd:11:22:33')
+                                                 mac='aa:ac:cd:11:22:33',
+                                                 ms_server={'_struct': 'msdhcpserver', 'ipv4addr': '192.168.1.0'})
         connector.get_object.assert_called_once_with(
             'fixedaddress',
             {'network_view': 'some-view', 'ipv4addr': '192.168.1.15',
@@ -228,7 +229,7 @@ class TestObjects(unittest.TestCase):
         connector.create_object.assert_called_once_with(
             'fixedaddress',
             {'network_view': 'some-view', 'ipv4addr': '192.168.1.15',
-             'mac': 'aa:ac:cd:11:22:33'}, mock.ANY)
+             'mac': 'aa:ac:cd:11:22:33', 'ms_server': {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.1.0'}}, mock.ANY)
 
     def test_create_fixed_address_v6(self):
         mock_fixed_address = {
@@ -241,7 +242,8 @@ class TestObjects(unittest.TestCase):
         fixed_addr = objects.FixedAddress.create(connector,
                                                  ip='fffe:1234:1234::1',
                                                  network_view='some-view',
-                                                 mac='aa:ac:cd:11:22:33')
+                                                 mac='aa:ac:cd:11:22:33',
+                                                 ms_server={'_struct': 'msdhcpserver', 'ipv4addr': '192.168.1.0'})
         self.assertIsInstance(fixed_addr, objects.FixedAddressV6)
         self.assertEqual(mock_fixed_address['duid'], fixed_addr.duid)
 
@@ -253,7 +255,7 @@ class TestObjects(unittest.TestCase):
         connector.create_object.assert_called_once_with(
             'ipv6fixedaddress',
             {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',
-             'duid': mock.ANY}, mock.ANY)
+             'duid': mock.ANY, 'ms_server': {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.1.0'}}, mock.ANY)
 
     @mock.patch('infoblox_client.utils.generate_duid')
     def test_fixed_address_v6(self, generate):
