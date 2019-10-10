@@ -1078,3 +1078,21 @@ class CNAMERecord(InfobloxObject):
                                                           'zone']
     _return_fields = ['canonical', 'name', 'view', 'extattrs']
     _shadow_fields = ['_ref']
+
+class MXRecord(InfobloxObject):
+    _infoblox_type = 'record:mx'
+    _fields = ['name','mail_exchanger','preference','view',
+               'aws_rte53_record_info','cloud_info','comment',
+               'creation_time','creator','ddns_principal',
+               'ddns_protected','disable','dns_mail_exchanger',
+               'dns_name','extattrs','forbid_reclamation','last_queried',
+               'reclaimable','shared_record_group','ttl','use_ttl','zone']
+    _search_for_update_fields = ['name','mail_exchanger']
+    _all_searchable_fields = _search_for_update_fields + ['comment',
+                                                          'creator',
+                                                          'ddns_principal',
+                                                          'preference',
+                                                          'view','zone']
+    _updateable_search_fields = ['name','mail_exchanger','preference']
+    _return_fields = ['name','mail_exchanger','preference']
+    _shadow_fields = ['_ref']
