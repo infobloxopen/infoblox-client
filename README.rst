@@ -242,6 +242,7 @@ Supported NIOS objects
 
 * ``EADefinition`` for 'extensibleattributedef'
 * ``CNAMERecord`` for 'record:cname'
+*``TXTRecord`` for 'record:txt'
 
 * ``Vlan`` for vlan
 * ``Vlanrange`` for vlanrange

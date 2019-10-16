@@ -595,3 +595,21 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(fake_nw['network'], nw.network)
         self.assertEqual(fake_nw['comment'], nw.comment)
         self.assertEqual(fake_nw['network_view'], nw.network_view)
+
+    def test_txtrecord(self):
+        name = 'somerecord.infoblox.com'
+        fake_txt = [{
+            '_ref': 'record:txt/ZG5zLm5ldHdvcmtfY29udG'
+                    'FpbmVyJDEwLjAuMC4wLzgvMA:exampletxt.infoblox.com/default',
+            'comment': 'Example txt ment',
+            'text': 'somerecordvalue',
+                }]
+        connector = self._mock_connector(get_object=fake_txt)
+        objects.TXTrecord.create(connector,
+                                    name='somerecord.infoblox.com',
+                                    comment='Example txt comment',
+                                    text='somerecordvalue',
+                                    update_if_exists = True)
+        connector.get_object.assert_called_once_with(
+            'record:txt',
+            {'name':'somerecord.infoblox.com'},return_fields=[])

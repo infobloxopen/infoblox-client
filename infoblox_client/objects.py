@@ -1186,3 +1186,16 @@ class NetworkContainerV4(NetworkContainer):
 class NetworkContainerV6(NetworkContainer):
     _infoblox_type = 'ipv6networkcontainer'
     _ip_version = 6
+
+class TXTrecord(InfobloxObject):
+    _infoblox_type = 'record:txt'
+    _fields = ['name',  'text', 'view', 'extattrs', 'comment',
+               'creator', 'ddns_principal', 'ddns_protected', 'disable',
+               'forbid_reclamation', 'ttl', 'use_ttl']
+    _search_for_update_fields = ['name', 'view']
+    _updateable_search_fields = ['name']
+    _all_searchable_fields = _search_for_update_fields + ['reclaimable',
+                                                          'zone']
+    _return_fields = ['text', 'name', 'view', 'extattrs']
+    _shadow_fields = ['_ref']
+    _ip_version = ['any']
