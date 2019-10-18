@@ -39,6 +39,14 @@ DEFAULT_HOST_RECORD = {
         'Tenant ID': {'value': '00fd80791dee4112bb538c872b206d4c'}}
 }
 
+DEFAULT_MX_RECORD = {
+    '_ref': 'record:mx/ZG5zLmJpbmRfbXgkLjQuY29tLm15X3pvbmUuZGVtby5teC5kZW1vLm15X3pvbmUuY29tLjE'
+            'mx.demo.my_zone.com/my_dns_view',
+    'view': 'my_dns_view',
+    'name': 'mx.demo.my_zone.com',
+    'preference': '1',
+    'mail_exchanger': 'demo.my_zone.com'
+}
 
 class TestObjects(unittest.TestCase):
 
@@ -115,6 +123,50 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(None, ip.configure_for_dhcp)
         self.assertEqual(None, ip.host)
 
+    def test_Create_MX_Record(self):
+        mock_record = DEFAULT_MX_RECORD
+        mx_record_copy = copy.deepcopy(mock_record)
+        connector = self._mock_connector(create_object=mx_record_copy)
+        mx = objects.MXRecord.create(connector, name='mx.demo.my_zone.com',
+                                     mail_exchanger='demo.my_zone.com',
+                                     view='my_dns_view', preference=1)
+        self.assertIsInstance(mx, objects.MXRecord)
+        connector.create_object.assert_called_once_with(
+            'record:mx',
+            {'name': 'mx.demo.my_zone.com',
+             'mail_exchanger': 'demo.my_zone.com',
+             'view': 'my_dns_view',
+             'preference': 1}, ['name', 'mail_exchanger', 'preference'])
+
+    def test_update_MX_Record(self):
+        mx_record_copy = [
+                {'_ref': 'record:mx/ZG5zLmJpbmRfbXgkLjQuY29tLm15X3pvbmUuZGVtby5teC5kZW1vLm15X3pvbmUuY29tLjE',
+                 'name': 'mx.demo.my_zone.com',
+                 'preference': 1,
+                 'mail_exchanger': 'demo.my_zone.com'}]
+        connector = self._mock_connector(get_object=mx_record_copy)
+        mx = objects.MXRecord.create(connector, name='mx1.demo.my_zone.com',
+                                     mail_exchanger='demo2.my_zone.com',
+                                     preference=1,
+                                     update_if_exists=True)
+        connector.update_object.assert_called_once_with(mx_record_copy[0]['_ref'],
+                {'name': 'mx1.demo.my_zone.com', 'mail_exchanger': 'demo2.my_zone.com', 'preference': 1},
+                ['name', 'mail_exchanger', 'preference'])
+
+    def test_search_and_delete_MX_Record(self):
+        mx_record_copy = copy.deepcopy(DEFAULT_MX_RECORD)
+        connector = self._mock_connector(get_object=[mx_record_copy])
+
+        mx_record = objects.MXRecord.search(connector,
+                                            view = 'some_view',
+                                            name = 'some_name')
+        connector.get_object.assert_called_once_with(
+            'record:mx',{'view': 'some_view', 'name': 'some_name'},
+            extattrs=None, force_proxy=False, max_results=None,
+            return_fields=['name', 'mail_exchanger', 'preference'])
+        mx_record.delete()
+        connector.delete_object.assert_called_once_with(DEFAULT_MX_RECORD['_ref'])
+
     def test_create_host_record_with_ttl(self):
         mock_record = DEFAULT_HOST_RECORD
         host_record_copy = copy.deepcopy(mock_record)
@@ -136,7 +188,7 @@ class TestObjects(unittest.TestCase):
                  'ipv4addr': '22.0.0.2'}],
              'view': 'some-dns-view'},
             ['ipv4addrs', 'extattrs', 'aliases'])
-
+                    
     def test_create_host_record_with_ip(self):
         mock_record = DEFAULT_HOST_RECORD
         host_record_copy = copy.deepcopy(mock_record)
