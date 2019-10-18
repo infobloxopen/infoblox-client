@@ -1087,7 +1087,7 @@ class MXRecord(InfobloxObject):
                'creation_time', 'creator', 'ddns_principal',
                'ddns_protected', 'disable', 'dns_mail_exchanger',
                'dns_name', 'extattrs', 'forbid_reclamation', 'last_queried',
-               'reclaimable', 'shared_record_group', 'ttl','use_ttl', 'zone']
+               'reclaimable', 'shared_record_group', 'ttl', 'use_ttl', 'zone']
     _search_for_update_fields = ['name', 'mail_exchanger']
     _all_searchable_fields = _search_for_update_fields + ['comment',
                                                           'creator',
