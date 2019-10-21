@@ -237,6 +237,7 @@ Supported NIOS objects
 
 * ``EADefinition`` for 'extensibleattributedef'
 * ``CNAMERecord`` for 'record:cname'
+* ``MXRecord`` for 'record:mx'
 
 
 Search by regular expression
