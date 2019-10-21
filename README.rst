@@ -240,7 +240,6 @@ Supported NIOS objects
 * ``MXRecord`` for 'record:mx'
 
 
-
 Search by regular expression
 ----------------------------
 
