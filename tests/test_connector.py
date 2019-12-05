@@ -638,3 +638,13 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
 
         parsed_reply = connector.Connector._parse_reply(request)
         self.assertEqual(expected_reply, parsed_reply)
+
+    def test__extract_ip(self):
+        ip_addr = connector.Connector._extract_ip('record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default')
+        self.assertEqual(ip_addr, '30.0.0.2')
+        domain = connector.Connector._extract_ip('record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5jb20udmFpc2guY2hlY2suYWEuY29t:check.dom.com/default')
+        self.assertEqual(domain, '')
+        empty_string = connector.Connector._extract_ip('')
+        self.assertEqual(empty_string, None)
+        no_input = connector.Connector._extract_ip(None)
+        self.assertEqual(no_input, None)
