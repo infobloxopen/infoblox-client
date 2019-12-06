@@ -26,6 +26,7 @@ class BaseExc(Exception):
     def __init__(self, **kwargs):
         super(BaseExc, self).__init__(self.message % kwargs)
         self.msg = self.message % kwargs
+        self.kwargs = kwargs
 
 
 class InfobloxException(BaseExc):
