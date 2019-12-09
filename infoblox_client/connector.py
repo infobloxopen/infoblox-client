@@ -15,11 +15,14 @@
 
 import functools
 import re
-import requests
-from requests import exceptions as req_exc
-import six
 import urllib
+
+import requests
+import six
 import urllib3
+from requests import exceptions as req_exc
+
+
 try:
     import urlparse
 except ImportError:
@@ -38,6 +41,7 @@ except ImportError:  # pragma: no cover
 from infoblox_client import exceptions as ib_ex
 from infoblox_client import utils
 
+
 LOG = logging.getLogger(__name__)
 CLOUD_WAPI_MAJOR_VERSION = 2
 
@@ -51,6 +55,8 @@ def reraise_neutron_exception(func):
             raise ib_ex.InfobloxTimeoutError(e)
         except req_exc.RequestException as e:
             raise ib_ex.InfobloxConnectionError(reason=e)
+
+
     return callee
 
 
@@ -73,6 +79,7 @@ class Connector(object):
                        'log_api_calls_as_info': False,
                        'paging': False}
 
+
     def __init__(self, options):
         self._parse_options(options)
         self._configure_session()
@@ -85,6 +92,7 @@ class Connector(object):
             self._urlencode = urlparse.urlencode
             self._quote = urlparse.quote
             self._urljoin = urlparse.urljoin
+
 
     def _parse_options(self, options):
         """Copy needed options to self"""
@@ -114,6 +122,7 @@ class Connector(object):
                                                   self.wapi_version)
         self.cloud_api_enabled = self.is_cloud_wapi(self.wapi_version)
 
+
     def _configure_session(self):
         self.session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(
@@ -128,6 +137,7 @@ class Connector(object):
 
         if self.silent_ssl_warnings:
             urllib3.disable_warnings()
+
 
     def _construct_url(self, relative_path, query_params=None,
                        extattrs=None, force_proxy=False):
@@ -164,6 +174,7 @@ class Connector(object):
                                  self._quote(relative_path))
         return base_url + query
 
+
     @staticmethod
     def _validate_obj_type_or_die(obj_type, obj_type_expected=True):
         if not obj_type:
@@ -171,10 +182,12 @@ class Connector(object):
         if obj_type_expected and '/' in obj_type:
             raise ValueError('NIOS object type cannot contain slash.')
 
+
     @staticmethod
     def _validate_authorized(response):
         if response.status_code == requests.codes.UNAUTHORIZED:
             raise ib_ex.InfobloxBadWAPICredential(response='')
+
 
     @staticmethod
     def _build_query_params(payload=None, return_fields=None,
@@ -200,6 +213,7 @@ class Connector(object):
 
         return query_params
 
+
     def _get_request_options(self, data=None):
         opts = dict(timeout=self.http_request_timeout,
                     headers=self.DEFAULT_HEADER,
@@ -207,6 +221,7 @@ class Connector(object):
         if data:
             opts['data'] = jsonutils.dumps(data)
         return opts
+
 
     @staticmethod
     def _parse_reply(request):
@@ -219,6 +234,7 @@ class Connector(object):
         except ValueError:
             raise ib_ex.InfobloxConnectionError(reason=request.content)
 
+
     def _log_request(self, type, url, opts):
         message = ("Sending %s request to %s with parameters %s",
                    type, url, opts)
@@ -226,6 +242,7 @@ class Connector(object):
             LOG.info(*message)
         else:
             LOG.debug(*message)
+
 
     @reraise_neutron_exception
     def get_object(self, obj_type, payload=None, return_fields=None,
@@ -292,6 +309,7 @@ class Connector(object):
 
         return None
 
+
     def _handle_get_object(self, obj_type, query_params, extattrs,
                            proxy_flag=False):
         if '_paging' in query_params:
@@ -324,10 +342,11 @@ class Connector(object):
                                       force_proxy=proxy_flag)
             return self._get_object(obj_type, url)
 
+
     def _get_object(self, obj_type, url):
         opts = self._get_request_options()
         self._log_request('get', url, opts)
-        if(self.session.cookies):
+        if self.session.cookies:
             # the first 'get' or 'post' action will generate a cookie
             # after that, we don't need to re-authenticate
             self.session.auth = None
@@ -340,6 +359,7 @@ class Connector(object):
                         url, r.content)
             return None
         return self._parse_reply(r)
+
 
     @reraise_neutron_exception
     def create_object(self, obj_type, payload, return_fields=None):
@@ -362,7 +382,7 @@ class Connector(object):
         url = self._construct_url(obj_type, query_params)
         opts = self._get_request_options(data=payload)
         self._log_request('post', url, opts)
-        if(self.session.cookies):
+        if self.session.cookies:
             # the first 'get' or 'post' action will generate a cookie
             # after that, we don't need to re-authenticate
             self.session.auth = None
@@ -386,6 +406,7 @@ class Connector(object):
 
         return self._parse_reply(r)
 
+
     def _check_service_availability(self, operation, resp, ref):
         if resp.status_code == requests.codes.SERVICE_UNAVAILABLE:
             raise ib_ex.InfobloxGridTemporaryUnavailable(
@@ -394,6 +415,7 @@ class Connector(object):
                 ref=ref,
                 content=resp.content,
                 code=resp.status_code)
+
 
     @reraise_neutron_exception
     def call_func(self, func_name, ref, payload, return_fields=None):
@@ -419,6 +441,7 @@ class Connector(object):
                 code=r.status_code)
 
         return self._parse_reply(r)
+
 
     @reraise_neutron_exception
     def update_object(self, ref, payload, return_fields=None):
@@ -452,6 +475,7 @@ class Connector(object):
 
         return self._parse_reply(r)
 
+
     @reraise_neutron_exception
     def delete_object(self, ref, delete_arguments=None):
         """Remove an Infoblox object
@@ -484,6 +508,7 @@ class Connector(object):
 
         return self._parse_reply(r)
 
+
     @staticmethod
     def is_cloud_wapi(wapi_version):
         valid = wapi_version and isinstance(wapi_version, six.string_types)
@@ -492,6 +517,6 @@ class Connector(object):
         version_match = re.search(r'(\d+)\.(\d+)', wapi_version)
         if version_match:
             if int(version_match.group(1)) >= \
-                    CLOUD_WAPI_MAJOR_VERSION:
+                CLOUD_WAPI_MAJOR_VERSION:
                 return True
         return False

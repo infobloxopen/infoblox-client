@@ -17,6 +17,7 @@ import six
 
 from infoblox_client import exceptions as ib_ex
 
+
 FEATURE_VERSIONS = {
     'create_ea_def': '2.2',
     'cloud_api': '2.0',
@@ -34,6 +35,8 @@ class Feature(object):
       - Known features and corresponding WAPI version requirement
     the Feature class represents available NIOS features as attributes.
     """
+
+
     def __init__(self, version, feature_versions=None):
         self._wapi_version = None
 
@@ -61,24 +64,31 @@ class WapiVersionUtil(object):
     Provide methods that manipulate and get information from
     WAPI version string.
     """
+
+
     def __init__(self, version):
         self._version_parts = self._get_wapi_version_parts(version)
+
 
     @property
     def version_parts(self):
         return self._version_parts
 
+
     @property
     def major_version(self):
         return self.version_parts[0]
+
 
     @property
     def minor_version(self):
         return self.version_parts[1]
 
+
     @property
     def patch_version(self):
         return self.version_parts[2]
+
 
     def is_version_supported(self, req_ver):
         req_parts = WapiVersionUtil(req_ver).version_parts
@@ -89,18 +99,19 @@ class WapiVersionUtil(object):
             elif b is None:
                 return True
             elif not a == b:
-                return (a > b)
+                return a > b
         return True
+
 
     @staticmethod
     def _get_wapi_version_parts(version):
         parts = version.split('.')
-        if (not parts or len(parts) > 3 or len(parts) < 2):
+        if not parts or len(parts) > 3 or len(parts) < 2:
             raise ValueError("Invalid argument was passed")
         for p in parts:
             if not len(p) or not p.isdigit():
                 raise ValueError("Invalid argument was passed")
         parts = [int(x) for x in parts]
         if len(parts) == 2:
-            parts.append(None)
+            parts.append(0)
         return parts
