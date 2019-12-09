@@ -505,3 +505,10 @@ class TestObjects(unittest.TestCase):
         data = {'host_name': 'cp.com',
                 'unknown_field': 'some_data'}
         self.assertEqual(data, objects.Member._remap_fields(data))
+
+    def test_search(self):
+        found = { '_ref': 'record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default'}
+        connector = self._mock_connector(get_object=[found])
+        search = objects.PtrRecord.search(connector, ptrdname="aa.com")
+        expected = 'PtrRecordV4: _ref="record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default"' 
+        self.assertEqual(str(search),expected)
