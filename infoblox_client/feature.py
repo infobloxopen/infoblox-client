@@ -36,7 +36,6 @@ class Feature(object):
     the Feature class represents available NIOS features as attributes.
     """
 
-
     def __init__(self, version, feature_versions=None):
         self._wapi_version = None
 
@@ -65,30 +64,24 @@ class WapiVersionUtil(object):
     WAPI version string.
     """
 
-
     def __init__(self, version):
         self._version_parts = self._get_wapi_version_parts(version)
-
 
     @property
     def version_parts(self):
         return self._version_parts
 
-
     @property
     def major_version(self):
         return self.version_parts[0]
-
 
     @property
     def minor_version(self):
         return self.version_parts[1]
 
-
     @property
     def patch_version(self):
         return self.version_parts[2]
-
 
     def is_version_supported(self, req_ver):
         req_parts = WapiVersionUtil(req_ver).version_parts
@@ -101,7 +94,6 @@ class WapiVersionUtil(object):
             elif not a == b:
                 return a > b
         return True
-
 
     @staticmethod
     def _get_wapi_version_parts(version):

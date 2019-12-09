@@ -45,7 +45,6 @@ class BaseObject(object):
     _remap = {}
     _infoblox_type = None
 
-
     def __init__(self, **kwargs):
         mapped_args = self._remap_fields(kwargs)
         for field in self._fields + self._shadow_fields:
@@ -56,7 +55,6 @@ class BaseObject(object):
                 if not hasattr(self, field):
                     setattr(self, field, None)
 
-
     def __getattr__(self, name):
         # Map aliases into real fields
         if name in self._remap:
@@ -65,13 +63,11 @@ class BaseObject(object):
             # Default behaviour
             raise AttributeError
 
-
     def __setattr__(self, name, value):
         if name in self._remap:
             return setattr(self, self._remap[name], value)
         else:
             super(BaseObject, self).__setattr__(name, value)
-
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -81,7 +77,6 @@ class BaseObject(object):
             return True
         return False
 
-
     def __repr__(self):
         data = {field: getattr(self, field)
                 for field in self._fields + self._shadow_fields
@@ -89,7 +84,6 @@ class BaseObject(object):
         data_str = ', '.join(
             "{0}=\"{1}\"".format(key, data[key]) for key in data)
         return "{0}: {1}".format(self.__class__.__name__, data_str)
-
 
     @classmethod
     def _remap_fields(cls, kwargs):
@@ -102,16 +96,13 @@ class BaseObject(object):
                 mapped[key] = kwargs[key]
         return mapped
 
-
     @classmethod
     def from_dict(cls, ip_dict):
         return cls(**ip_dict)
 
-
     def to_dict(self):
         return {field: getattr(self, field) for field in self._fields
                 if getattr(self, field, None) is not None}
-
 
     @property
     def ref(self):
@@ -127,7 +118,6 @@ class EA(object):
     and builds EA class from NIOS reply (from_dict).
     """
 
-
     def __init__(self, ea_dict=None):
         """Optionally accept EAs as a dict on init.
 
@@ -137,7 +127,6 @@ class EA(object):
             ea_dict = {}
         self._ea_dict = ea_dict
 
-
     def __repr__(self):
         eas = ()
         if self._ea_dict:
@@ -145,12 +134,10 @@ class EA(object):
                    for name in self._ea_dict)
         return "EAs:{0}".format(','.join(eas))
 
-
     @property
     def ea_dict(self):
         """Returns dict with EAs in {ea_name: ea_value} format."""
         return self._ea_dict.copy()
-
 
     @classmethod
     def from_dict(cls, eas_from_nios):
@@ -161,13 +148,11 @@ class EA(object):
                                              eas_from_nios[name]['value'])
                     for name in eas_from_nios})
 
-
     def to_dict(self):
         """Converts extensible attributes into the format suitable for NIOS."""
         return {name: {'value': self._process_value(str, value)}
                 for name, value in self._ea_dict.items()
                 if not (value is None or value == "" or value == [])}
-
 
     @staticmethod
     def _process_value(func, value):
@@ -182,11 +167,9 @@ class EA(object):
             return [func(item) for item in value]
         return func(value)
 
-
     def get(self, name, default=None):
         """Return value of requested EA."""
         return self._ea_dict.get(name, default)
-
 
     def set(self, name, value):
         """Set value of requested EA."""
@@ -240,16 +223,13 @@ class InfobloxObject(BaseObject):
     _global_field_processing = {'extattrs': EA.from_dict}
     _ip_version = None
 
-
     def __new__(cls, connector, **kwargs):
         return super(InfobloxObject,
                      cls).__new__(cls.get_class_from_args(kwargs))
 
-
     def __init__(self, connector, **kwargs):
         self.connector = connector
         super(InfobloxObject, self).__init__(**kwargs)
-
 
     def update_from_dict(self, ip_dict, only_ref=False):
         if only_ref:
@@ -260,7 +240,6 @@ class InfobloxObject(BaseObject):
         for field in self._fields + self._shadow_fields:
             if field in ip_dict:
                 setattr(self, field, mapped_args[field])
-
 
     @classmethod
     def from_dict(cls, connector, ip_dict):
@@ -278,11 +257,9 @@ class InfobloxObject(BaseObject):
                 ip_dict[field] = mapping[field](ip_dict[field])
         return cls(connector, **ip_dict)
 
-
     @staticmethod
     def value_to_dict(value):
         return value.to_dict() if hasattr(value, 'to_dict') else value
-
 
     def field_to_dict(self, field):
         """Read field value and converts to dict if possible"""
@@ -290,7 +267,6 @@ class InfobloxObject(BaseObject):
         if isinstance(value, (list, tuple)):
             return [self.value_to_dict(val) for val in value]
         return self.value_to_dict(value)
-
 
     def to_dict(self, search_fields=None):
         """Builds dict without None object fields"""
@@ -309,7 +285,6 @@ class InfobloxObject(BaseObject):
         return {field: self.field_to_dict(field) for field in fields
                 if getattr(self, field, None) is not None}
 
-
     @staticmethod
     def _object_from_reply(parse_class, connector, reply):
         if not reply:
@@ -321,7 +296,6 @@ class InfobloxObject(BaseObject):
         # with reference to object
         return_dict = {'_ref': reply}
         return parse_class.from_dict(connector, return_dict)
-
 
     @classmethod
     def create_check_exists(cls, connector, check_if_exists=True,
@@ -356,7 +330,6 @@ class InfobloxObject(BaseObject):
             LOG.info('Infoblox object was updated: %s', local_obj.ref)
         return cls._object_from_reply(local_obj, connector, reply), obj_created
 
-
     @classmethod
     def create(cls, connector, check_if_exists=True,
                update_if_exists=False, **kwargs):
@@ -366,7 +339,6 @@ class InfobloxObject(BaseObject):
                                     update_if_exists=update_if_exists,
                                     **kwargs))
         return ib_object
-
 
     @classmethod
     def _search(cls, connector, return_fields=None,
@@ -389,14 +361,12 @@ class InfobloxObject(BaseObject):
                                      max_results=max_results)
         return reply, ib_obj_for_search
 
-
     @classmethod
     def search(cls, connector, **kwargs):
         ib_obj, parse_class = cls._search(
             connector, **kwargs)
         if ib_obj:
             return parse_class.from_dict(connector, ib_obj[0])
-
 
     @classmethod
     def search_all(cls, connector, **kwargs):
@@ -406,7 +376,6 @@ class InfobloxObject(BaseObject):
             return [parsing_class.from_dict(connector, obj)
                     for obj in ib_objects]
         return []
-
 
     def fetch(self, only_ref=False):
         """Fetch object from NIOS by _ref or searchfields
@@ -431,7 +400,6 @@ class InfobloxObject(BaseObject):
             return True
         return False
 
-
     def update(self):
         update_fields = self.to_dict(search_fields='exclude')
         ib_obj = self.connector.update_object(self.ref,
@@ -440,28 +408,23 @@ class InfobloxObject(BaseObject):
         LOG.info('Infoblox object was updated: %s', self.ref)
         return self._object_from_reply(self, self.connector, ib_obj)
 
-
     def delete(self):
         try:
             self.connector.delete_object(self.ref)
         except ib_ex.InfobloxCannotDeleteObject as e:
             LOG.info("Failed to delete an object: %s", e)
 
-
     @property
     def infoblox_type(self):
         return self._infoblox_type
-
 
     @property
     def return_fields(self):
         return self._return_fields
 
-
     @property
     def ip_version(self):
         return self._ip_version
-
 
     @classmethod
     def get_class_from_args(cls, kwargs):
@@ -479,11 +442,9 @@ class InfobloxObject(BaseObject):
         # fallback to IPv4 object if find nothing
         return cls.get_v4_class()
 
-
     @classmethod
     def get_v4_class(cls):
         return cls
-
 
     @classmethod
     def get_v6_class(cls):
@@ -501,23 +462,19 @@ class Network(InfobloxObject):
                       'extattrs', 'comment']
     _remap = {'cidr': 'network'}
 
-
     @classmethod
     def get_v4_class(cls):
         return NetworkV4
 
-
     @classmethod
     def get_v6_class(cls):
         return NetworkV6
-
 
     @staticmethod
     def _build_member(members):
         if not members:
             return None
         return [AnyMember.from_dict(m) for m in members]
-
 
     # TODO(pbondar): Rework SubObject to correctly handle arrays
     # passed into from_dict, so all _build_options and _build_member
@@ -527,7 +484,6 @@ class Network(InfobloxObject):
         if not members:
             return None
         return [DhcpOption.from_dict(m) for m in members]
-
 
     _custom_field_processing = {'members': _build_member.__func__,
                                 'options': _build_options.__func__}
@@ -563,16 +519,13 @@ class HostRecord(InfobloxObject):
     """
     _infoblox_type = 'record:host'
 
-
     @classmethod
     def get_v4_class(cls):
         return HostRecordV4
 
-
     @classmethod
     def get_v6_class(cls):
         return HostRecordV6
-
 
     def _ip_setter(self, ipaddr_name, ipaddrs_name, ips):
         """Setter for ip fields
@@ -619,17 +572,14 @@ class HostRecordV4(HostRecord):
               'ips': 'ipv4addrs'}
     _ip_version = 4
 
-
     @property
     def ipv4addrs(self):
         return self._ipv4addrs
-
 
     @ipv4addrs.setter
     def ipv4addrs(self, ips):
         """Setter for ipv4addrs/ipv4addr"""
         self._ip_setter('ipv4addr', '_ipv4addrs', ips)
-
 
     @staticmethod
     def _build_ipv4(ips_v4):
@@ -639,7 +589,6 @@ class HostRecordV4(HostRecord):
         if not ib_utils.is_valid_ip(ip):
             raise ib_ex.InfobloxInvalidIp(ip=ip)
         return [IPv4.from_dict(ip_addr) for ip_addr in ips_v4]
-
 
     _custom_field_processing = {'ipv4addrs': _build_ipv4.__func__}
 
@@ -660,17 +609,14 @@ class HostRecordV6(HostRecord):
 
     _ip_version = 6
 
-
     @property
     def ipv6addrs(self):
         return self._ipv6addrs
-
 
     @ipv6addrs.setter
     def ipv6addrs(self, ips):
         """Setter for ipv6addrs/ipv6addr"""
         self._ip_setter('ipv6addr', '_ipv6addrs', ips)
-
 
     @staticmethod
     def _build_ipv6(ips_v6):
@@ -680,7 +626,6 @@ class HostRecordV6(HostRecord):
         if not ib_utils.is_valid_ip(ip):
             raise ib_ex.InfobloxInvalidIp(ip=ip)
         return [IPv6.from_dict(ip_addr) for ip_addr in ips_v6]
-
 
     _custom_field_processing = {'ipv6addrs': _build_ipv6.__func__}
 
@@ -697,12 +642,9 @@ class IPv6HostAddress(InfobloxObject):
 
 class SubObjects(BaseObject):
     """Base class for objects that do not require all InfobloxObject power"""
-
-
     @classmethod
     def from_dict(cls, ip_dict):
         return cls(**ip_dict)
-
 
     def to_dict(self):
         return {field: getattr(self, field) for field in self._fields
@@ -715,7 +657,6 @@ class IP(SubObjects):
     _remap = {}
     ip_version = None
 
-
     # better way for mac processing?
     @classmethod
     def create(cls, ip=None, mac=None, **kwargs):
@@ -727,7 +668,6 @@ class IP(SubObjects):
         else:
             return IPv4(ip=ip, mac=mac, **kwargs)
 
-
     def __eq__(self, other):
         if isinstance(other, six.string_types):
             return self.ip == other
@@ -735,25 +675,21 @@ class IP(SubObjects):
             return self.ip == other.ip
         return False
 
-
     @property
     def zone_auth(self):
         if self.host is not None:
             return self.host.partition('.')[2]
-
 
     @property
     def hostname(self):
         if self.host is not None:
             return self.host.partition('.')[0]
 
-
     @property
     def ip(self):
         # Convert IPAllocation objects to string
         if hasattr(self, '_ip'):
             return str(self._ip)
-
 
     @ip.setter
     def ip(self, ip):
@@ -776,12 +712,10 @@ class AnyMember(SubObjects):
     _fields = ['_struct', 'name', 'ipv4addr', 'ipv6addr']
     _shadow_fields = ['ip']
 
-
     @property
     def ip(self):
         if hasattr(self, '_ip'):
             return str(self._ip)
-
 
     @ip.setter
     def ip(self, ip):
@@ -790,7 +724,6 @@ class AnyMember(SubObjects):
         # to setting shadow 'ip' field itself.
         # So once dict is generated by to_dict only versioned ip field
         # to be shown.
-        self._ip = ip
         if ib_utils.determine_ip_version(ip) == 6:
             self.ipv6addr = ip
         else:
@@ -812,11 +745,9 @@ class IPRange(InfobloxObject):
     _shadow_fields = ['_ref']
     _return_fields = ['start_addr', 'end_addr', 'network_view', 'extattrs']
 
-
     @classmethod
     def get_v4_class(cls):
         return IPRangeV4
-
 
     @classmethod
     def get_v6_class(cls):
@@ -838,17 +769,14 @@ class FixedAddress(InfobloxObject):
     def get_v4_class(cls):
         return FixedAddressV4
 
-
     @classmethod
     def get_v6_class(cls):
         return FixedAddressV6
-
 
     @property
     def ip(self):
         if hasattr(self, '_ip') and self._ip:
             return str(self._ip)
-
 
     @ip.setter
     def ip(self, ip):
@@ -866,13 +794,11 @@ class FixedAddressV4(FixedAddress):
     _remap = {'ipv4addr': 'ip'}
     _ip_version = 4
 
-
     @staticmethod
     def _build_options(members):
         if not members:
             return None
         return [DhcpOption.from_dict(m) for m in members]
-
 
     _custom_field_processing = {'options': _build_options.__func__}
 
@@ -889,11 +815,9 @@ class FixedAddressV6(FixedAddress):
     _remap = {'ipv6addr': 'ip'}
     _ip_version = 6
 
-
     @property
     def mac(self):
         return self._mac
-
 
     @mac.setter
     def mac(self, mac):
@@ -916,7 +840,6 @@ class ARecordBase(InfobloxObject):
     def get_v4_class(cls):
         return ARecord
 
-
     @classmethod
     def get_v6_class(cls):
         return AAAARecord
@@ -934,13 +857,11 @@ class ARecord(ARecordBase):
     _remap = {'ip': 'ipv4addr'}
     _ip_version = 4
 
-
     @property
     def ipv4addr(self):
         # Convert IPAllocation objects to string
         if hasattr(self, '_ipv4addr'):
             return str(self._ipv4addr)
-
 
     @ipv4addr.setter
     def ipv4addr(self, ipv4addr):
@@ -958,13 +879,11 @@ class AAAARecord(ARecordBase):
     _remap = {'ip': 'ipv6addr'}
     _ip_version = 6
 
-
     @property
     def ipv6addr(self):
         # Convert IPAllocation objects to string
         if hasattr(self, '_ipv6addr'):
             return str(self._ipv6addr)
-
 
     @ipv6addr.setter
     def ipv6addr(self, ipv6addr):
@@ -974,11 +893,9 @@ class AAAARecord(ARecordBase):
 class PtrRecord(InfobloxObject):
     _infoblox_type = 'record:ptr'
 
-
     @classmethod
     def get_v4_class(cls):
         return PtrRecordV4
-
 
     @classmethod
     def get_v6_class(cls):
@@ -1050,13 +967,11 @@ class DNSZone(InfobloxObject):
     _shadow_fields = ['_ref', 'ns_group']
     _ip_version = 'any'
 
-
     @staticmethod
     def _build_member(members):
         if not members:
             return None
         return [AnyMember.from_dict(m) for m in members]
-
 
     _custom_field_processing = {
         'primary_dns_members': _build_member.__func__,
@@ -1100,11 +1015,9 @@ class IPAddress(InfobloxObject):
     _shadow_fields = ['_ref']
     _return_fields = ['objects']
 
-
     @classmethod
     def get_v4_class(cls):
         return IPv4Address
-
 
     @classmethod
     def get_v6_class(cls):
@@ -1129,20 +1042,16 @@ class IPAllocation(object):
         self.ip_version = ib_utils.determine_ip_version(address)
         self.next_available_ip = next_available_ip
 
-
     def __repr__(self):
         return "IPAllocation: {0}".format(self.next_available_ip)
 
-
     def __str__(self):
         return str(self.next_available_ip)
-
 
     @classmethod
     def next_available_ip_from_cidr(cls, net_view_name, cidr):
         return cls(cidr, 'func:nextavailableip:'
                          '{cidr:s},{net_view_name:s}'.format(**locals()))
-
 
     @classmethod
     def next_available_ip_from_range(cls, net_view_name, first_ip, last_ip):

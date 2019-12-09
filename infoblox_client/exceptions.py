@@ -23,7 +23,6 @@ class BaseExc(Exception):
     """
     message = "An unknown exception occurred."
 
-
     def __init__(self, **kwargs):
         super(BaseExc, self).__init__(self.message % kwargs)
         self.msg = self.message % kwargs
@@ -32,7 +31,6 @@ class BaseExc(Exception):
 
 class InfobloxException(BaseExc):
     """Generic Infoblox Exception."""
-
 
     def __init__(self, response, **kwargs):
         self.response = response
