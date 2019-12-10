@@ -506,9 +506,12 @@ class TestObjects(unittest.TestCase):
                 'unknown_field': 'some_data'}
         self.assertEqual(data, objects.Member._remap_fields(data))
 
-    def test_search(self):
-        found = { '_ref': 'record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default'}
+    def test_search(self): 
+        found =  {u'_ref': u'record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default', u'ptrdname': u'aa.com', 'ipv4addr': u'30.0.0.2', u'view': u'default'}
         connector = self._mock_connector(get_object=[found])
         search = objects.PtrRecord.search(connector, ptrdname="aa.com")
-        expected = 'PtrRecordV4: _ref="record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default"' 
+        expected = 'PtrRecordV4: _ref="record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default", ptrdname="aa.com", ipv4addr="30.0.0.2", view="default"'
         self.assertEqual(str(search),expected)
+
+
+
