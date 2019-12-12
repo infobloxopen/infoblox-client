@@ -24,7 +24,7 @@ class TestFeature(unittest.TestCase):
         wapi1 = feature.WapiVersionUtil('2.3')
         self.assertEqual(2, wapi1.major_version)
         self.assertEqual(3, wapi1.minor_version)
-        self.assertEqual(None, wapi1.patch_version)
+        self.assertEqual(0, wapi1.patch_version)
 
         wapi2 = feature.WapiVersionUtil('2.2.3')
         self.assertEqual(2, wapi2.major_version)
