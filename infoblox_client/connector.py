@@ -496,7 +496,6 @@ class Connector(object):
             raise ValueError("Invalid argument was passed")
         version_match = re.search(r'(\d+)\.(\d+)', wapi_version)
         if version_match:
-            if int(version_match.group(1)) >= \
-                    CLOUD_WAPI_MAJOR_VERSION:
+            if int(version_match.group(1)) >= CLOUD_WAPI_MAJOR_VERSION:
                 return True
         return False
