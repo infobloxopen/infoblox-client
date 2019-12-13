@@ -15,7 +15,6 @@
 
 import six
 
-
 try:
     from oslo_log import log as logging
 except ImportError:  # pragma: no cover

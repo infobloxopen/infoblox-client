@@ -16,12 +16,10 @@
 import functools
 import re
 import urllib
-
 import requests
 import six
 import urllib3
 from requests import exceptions as req_exc
-
 
 try:
     import urlparse
