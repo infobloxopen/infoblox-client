@@ -117,7 +117,8 @@ class Connector(object):
 
         self.wapi_url = "https://%s/wapi/v%s/" % (self.host,
                                                   self.wapi_version)
-        self.cloud_api_enabled = self.validate_wapi_major_version(self.wapi_version)
+        self.cloud_api_enabled = self.validate_wapi_major_version(
+            self.wapi_version)
 
     def _configure_session(self):
         self.session = requests.Session()
@@ -497,7 +498,8 @@ class Connector(object):
             wapi_version (str): WAPI semantic version
 
         Returns:
-            True if the major version is higher than a given threshold, False otherwise.
+            True if the major version is higher than a given threshold,
+            False otherwise.
 
         Raises:
             ValueError if an invalid version is passed
