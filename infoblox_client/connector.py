@@ -117,7 +117,7 @@ class Connector(object):
 
         self.wapi_url = "https://%s/wapi/v%s/" % (self.host,
                                                   self.wapi_version)
-        self.cloud_api_enabled = self.is_cloud_wapi(self.wapi_version)
+        self.cloud_api_enabled = self.validate_wapi_version(self.wapi_version)
 
     def _configure_session(self):
         self.session = requests.Session()
@@ -490,7 +490,18 @@ class Connector(object):
         return self._parse_reply(r)
 
     @staticmethod
-    def is_cloud_wapi(wapi_version):
+    def validate_wapi_version(wapi_version):
+        """Validate that a WAPI semantic version is valid.
+
+        Args:
+            wapi_version (str): WAPI semantic version
+
+        Returns:
+            True if the major version is higher than a given threshold, False otherwise.
+
+        Raises:
+            ValueError if an invalid version is passed
+        """
         valid = wapi_version and isinstance(wapi_version, six.string_types)
         if not valid:
             raise ValueError("Invalid argument was passed")
