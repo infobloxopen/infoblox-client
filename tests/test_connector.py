@@ -13,10 +13,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import unittest
+
 import mock
 import requests
 from mock import patch
 from requests import exceptions as req_exc
+
 
 try:
     from oslo_serialization import jsonutils
@@ -185,7 +187,6 @@ class TestInfobloxConnector(unittest.TestCase):
                 verify=self.default_opts.ssl_verify,
             )
 
-
     def test_get_objects_with_max_results(self):
         objtype = 'network'
         with patch.object(requests.Session, 'get',
@@ -345,8 +346,10 @@ class TestInfobloxConnector(unittest.TestCase):
         result = self.connector.get_object('network', force_proxy=True)
 
         self.assertEqual(None, result)
-        self.connector._construct_url.assert_called_with('network', {},
-                                                         None, force_proxy=True)
+        self.connector._construct_url.assert_called_with('network',
+                                                         {},
+                                                         None,
+                                                         force_proxy=True)
         self.connector._get_object.called_with('network',
                                                self.connector._construct_url)
 
@@ -373,15 +376,15 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(None, self.connector._get_object('network', url))
 
     def test_get_object_with_pagination_with_no_result(self):
-         self.connector._get_object = mock.MagicMock(return_value=None)
-         result = self.connector.get_object('network', paging=True)
-         self.assertEqual(None, result)
+        self.connector._get_object = mock.MagicMock(return_value=None)
+        result = self.connector.get_object('network', paging=True)
+        self.assertEqual(None, result)
 
     def test_get_object_with_pagination_with_result(self):
-         self.connector._get_object = mock.MagicMock(
-                                          return_value={"result": ["data"]})
-         result = self.connector.get_object('network', paging=True)
-         self.assertEqual(["data"], result)
+        self.connector._get_object = mock.MagicMock(
+            return_value={"result": ["data"]})
+        result = self.connector.get_object('network', paging=True)
+        self.assertEqual(["data"], result)
 
     def test__handle_get_object_with_pagination_with_no_record(self):
         query_params = {"_paging": 1,
@@ -392,7 +395,7 @@ class TestInfobloxConnector(unittest.TestCase):
                                                    None, False)
         self.assertEqual(None, result)
 
-    def test__handle_get_object_with_max_results_nigative(self):
+    def test__handle_get_object_with_max_results_negative(self):
         query_params = {"_paging": 1,
                         "_return_as_object": 1,
                         "_max_results": -100}
@@ -406,7 +409,7 @@ class TestInfobloxConnector(unittest.TestCase):
                         "_return_as_object": 1,
                         "_max_results": 100}
         self.connector._get_object = mock.MagicMock(
-                                         return_value={"result": ["data"]})
+            return_value={"result": ["data"]})
         result = self.connector._handle_get_object("network", query_params,
                                                    None, False)
         self.assertEqual(["data"], result)
@@ -415,10 +418,10 @@ class TestInfobloxConnector(unittest.TestCase):
         resp = requests.Response
         resp.status_code = 200
         if "_page_id" in url:
-            resp.content = jsonutils.dumps({"result": [6,7,8,9,10]})
+            resp.content = jsonutils.dumps({"result": [6, 7, 8, 9, 10]})
         else:
             resp.content = jsonutils.dumps(
-                               {"result": [1,2,3,4,5], "next_page_id": 1})
+                {"result": [1, 2, 3, 4, 5], "next_page_id": 1})
         return resp
 
     def test__handle_get_object_with_record_more_than_max_results_paging(self):
@@ -429,7 +432,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.side_effect = self._get_object
             result = self.connector._handle_get_object("network", query_params,
                                                        None, False)
-        self.assertEqual([1,2,3,4,5,6,7,8,9,10], result)
+        self.assertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], result)
 
     def test__handle_get_object_without_pagination(self):
         query_params = {"_max_results": 100}
@@ -471,7 +474,10 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_call_func.return_value.status_code = 400
             patched_call_func.return_value.content = '{}'
             self.assertRaises(exceptions.InfobloxFuncException,
-                              self.connector.call_func, objtype, "_ref", payload)
+                              self.connector.call_func,
+                              objtype,
+                              "_ref",
+                              payload)
 
     def test_call_func_with_http_error_503(self):
         objtype = 'network'
@@ -482,11 +488,12 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_call_func.return_value.status_code = 503
             patched_call_func.return_value.content = 'Temporary Unavailable'
             self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
-                              self.connector.call_func, objtype, "_ref", payload)
+                              self.connector.call_func,
+                              objtype,
+                              "_ref",
+                              payload)
 
     def test__check_service_availability(self):
-        objtype = 'network'
-        payload = {'ip': '0.0.0.0'}
         resp = requests.Response
         resp.status_code = 503
         resp.content = 'Temporary Unavailable'
@@ -503,6 +510,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.return_value.content = '{}'
             self.connector.get_object(objtype, {})
             self.assertEqual(None, self.connector.session.auth)
+
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
@@ -545,13 +553,15 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_non_cloud_api_detection(self):
         wapi_not_cloud = ('1.4.1', '1.9/', '1.99', 'asd', 'v1.4')
         for url in wapi_not_cloud:
-            self.assertFalse(connector.Connector.validate_wapi_major_version(url))
+            self.assertFalse(
+                connector.Connector.validate_wapi_major_version(url))
 
     def test_cloud_api_detection(self):
         wapi_cloud = ('2.1/', '/2.0/', '2.0.1',
                       '3.0/', '11.0.1/', 'v2.1', 'v2.0')
         for url in wapi_cloud:
-            self.assertTrue(connector.Connector.validate_wapi_major_version(url))
+            self.assertTrue(
+                connector.Connector.validate_wapi_major_version(url))
 
     def test_allow_options_as_dict(self):
         opts = dict(host='infoblox.example.org',
