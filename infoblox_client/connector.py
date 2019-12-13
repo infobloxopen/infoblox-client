@@ -39,7 +39,6 @@ except ImportError:  # pragma: no cover
 from infoblox_client import exceptions as ib_ex
 from infoblox_client import utils
 
-
 LOG = logging.getLogger(__name__)
 CLOUD_WAPI_MAJOR_VERSION = 2
 

@@ -23,7 +23,6 @@ except ImportError:  # pragma: no cover
 from infoblox_client import exceptions as ib_ex
 from infoblox_client import utils as ib_utils
 
-
 LOG = logging.getLogger(__name__)
 
 

@@ -17,7 +17,6 @@ import six
 
 from infoblox_client import exceptions as ib_ex
 
-
 FEATURE_VERSIONS = {
     'create_ea_def': '2.2',
     'cloud_api': '2.0',
