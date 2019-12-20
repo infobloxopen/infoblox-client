@@ -114,7 +114,7 @@ class Connector(object):
 
         self.wapi_url = "https://%s/wapi/v%s/" % (self.host,
                                                   self.wapi_version)
-        self.cloud_api_enabled = self.validate_wapi_major_version(
+        self.cloud_api_enabled = self.is_cloud_wapi(
             self.wapi_version)
 
     def _configure_session(self):
@@ -488,7 +488,7 @@ class Connector(object):
         return self._parse_reply(r)
 
     @staticmethod
-    def validate_wapi_major_version(wapi_version):
+    def is_cloud_wapi(wapi_version):
         """Validate that a WAPI semantic version is valid.
 
         Args:

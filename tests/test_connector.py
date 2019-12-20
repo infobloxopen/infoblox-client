@@ -545,14 +545,14 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
         wapi_not_cloud = ('1.4.1', '1.9/', '1.99', 'asd', 'v1.4')
         for url in wapi_not_cloud:
             self.assertFalse(
-                connector.Connector.validate_wapi_major_version(url))
+                connector.Connector.is_cloud_wapi(url))
 
     def test_cloud_api_detection(self):
         wapi_cloud = ('2.1/', '/2.0/', '2.0.1',
                       '3.0/', '11.0.1/', 'v2.1', 'v2.0')
         for url in wapi_cloud:
             self.assertTrue(
-                connector.Connector.validate_wapi_major_version(url))
+                connector.Connector.is_cloud_wapi(url))
 
     def test_allow_options_as_dict(self):
         opts = dict(host='infoblox.example.org',
@@ -614,7 +614,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_is_cloud_wapi_raises_exception(self):
         for value in (None, '', 0, 1, self, 1.2):
             self.assertRaises(ValueError,
-                              connector.Connector.validate_wapi_major_version,
+                              connector.Connector.is_cloud_wapi,
                               value)
 
     def test__parse_reply_raises_connection_error(self):
