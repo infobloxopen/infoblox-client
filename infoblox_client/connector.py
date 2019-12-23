@@ -16,15 +16,12 @@
 import functools
 import re
 import urllib
-
 import requests
 import six
 import urllib3
 from requests import exceptions as req_exc
-
 from infoblox_client import exceptions as ib_ex
 from infoblox_client import utils
-
 
 IP_PATTERN = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
 
