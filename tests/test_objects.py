@@ -526,3 +526,26 @@ class TestObjects(unittest.TestCase):
         data = {'host_name': 'cp.com',
                 'unknown_field': 'some_data'}
         self.assertEqual(data, objects.Member._remap_fields(data))
+
+    def test_search_ptrrecordv4(self):
+        mocked_ib_object = {
+            u'_ref': u'record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default',
+            u'ptrdname': u'foobar.com', 'ipv4addr': u'30.0.0.2', u'view': u'default'
+        }
+        dummy_ib_object = {
+            u'_ref': u'dummy_string',
+            u'ptrdname': u'foobar.com', 'ipv4addr': u'', u'view': u'default'
+        }
+        connector = self._mock_connector(get_object=[mocked_ib_object])
+
+        actual = objects.PtrRecord.search(connector, ptrdname="foobar.com")
+        expected = objects.PtrRecordV4.from_dict(connector, mocked_ib_object)
+        self.assertEqual(actual, expected)
+
+        with mock.patch.object(objects.InfobloxObject, '_search',
+                               return_value=([dummy_ib_object, mocked_ib_object], objects.PtrRecordV4)) as _search_mock:
+            actual = objects.PtrRecord.search(connector, ptrdname="foobar.com")
+            expected = objects.PtrRecordV4.from_dict(connector, mocked_ib_object)
+            self.assertEqual(actual, expected)
+            
+

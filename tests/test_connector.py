@@ -123,6 +123,38 @@ class TestInfobloxConnector(unittest.TestCase):
                 verify=self.default_opts.ssl_verify,
             )
 
+    def test_get_object_for_ptr_record(self):
+        objtype = 'record:ptr'
+        payload = {'dummy_payload': 'dummy_value'}
+        mocked_ib_object = {
+            u'_ref': u'record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default',
+            u'ptrdname': u'foobar.com', 'ipv4addr': None, u'view': u'default'
+        }
+        dummy_ib_object = {
+            u'_ref': u'dummy_string_with_1.2.3.4_as_dummy_ip',
+            u'ptrdname': u'foobar.com', 'ipv4addr': None, u'view': u'default'
+        }
+
+        mocked_ib_object_expected = {
+            u'_ref': u'record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default',
+            u'ptrdname': u'foobar.com', 'ipv4addr': '30.0.0.2', u'view': u'default'
+        }
+        dummy_ib_object_expected = {
+            u'_ref': u'dummy_string_with_1.2.3.4_as_dummy_ip',
+            u'ptrdname': u'foobar.com', 'ipv4addr': '4.3.2.1', u'view': u'default'
+        }
+
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            patched_get.return_value.status_code = 200
+            patched_get.return_value.content = '{}'
+
+            with patch.object(connector.Connector, '_handle_get_object',
+                                   return_value=[dummy_ib_object, mocked_ib_object]) as patched_handle_get_object:
+                actual = self.connector.get_object(objtype, payload)
+                expected = [dummy_ib_object_expected, mocked_ib_object_expected]
+                self.assertEqual(actual, expected)
+
     def test_get_objects_with_extattrs(self):
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
@@ -617,6 +649,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
                               connector.Connector.is_cloud_wapi,
                               value)
 
+
     def test__parse_reply_raises_connection_error(self):
         request = mock.Mock()
         request.content = ('<HTML><BODY BGCOLOR="FFFFFF">'
@@ -639,3 +672,21 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
 
         parsed_reply = connector.Connector._parse_reply(request)
         self.assertEqual(expected_reply, parsed_reply)
+
+    def test__extract_ip(self):
+        ip_addr = connector.Connector._extract_ip(
+            'record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default'
+        )
+        self.assertEqual(ip_addr, '30.0.0.2')
+
+        domain = connector.Connector._extract_ip(
+            'record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5jb20udmFpc2guY2hlY2suYWEuY29t:check.dom.com/default'
+        )
+        self.assertEqual(domain, '')
+
+        empty_string = connector.Connector._extract_ip('')
+        self.assertEqual(empty_string, None)
+
+        no_input = connector.Connector._extract_ip(None)
+        self.assertEqual(no_input, None)
+
