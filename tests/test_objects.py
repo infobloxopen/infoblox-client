@@ -48,7 +48,6 @@ DEFAULT_MX_RECORD = {
     'mail_exchanger': 'demo.my_zone.com'
 }
 
-
 class TestObjects(unittest.TestCase):
 
     def _mock_connector(self, get_object=None, create_object=None,
@@ -189,7 +188,7 @@ class TestObjects(unittest.TestCase):
                  'ipv4addr': '22.0.0.2'}],
              'view': 'some-dns-view'},
             ['ipv4addrs', 'extattrs', 'aliases'])
-
+        
     def test_create_host_record_with_ip(self):
         mock_record = DEFAULT_HOST_RECORD
         host_record_copy = copy.deepcopy(mock_record)
