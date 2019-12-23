@@ -507,7 +507,6 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(data, objects.Member._remap_fields(data))
 
 
-
     def test_search_ptrrecordv4(self):
         mocked_ib_object = {
             u'_ref': u'record:ptr/ZG5zLmJpbmRfcHRyJC5fZGVmYXVsdC5hcnBhLmluLWFkZHIuMzAuMC4wLjIuYWEuY29t:2.0.0.30.in-addr.arpa/default',
