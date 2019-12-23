@@ -535,7 +535,6 @@ class TestInfobloxConnector(unittest.TestCase):
             self.connector.get_object(objtype, {})
             self.assertEqual(None, self.connector.session.auth)
 
-
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
         # timeout exception raises InfobloxTimeoutError
