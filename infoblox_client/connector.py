@@ -15,15 +15,18 @@
 
 import functools
 import re
-import requests
-from requests import exceptions as req_exc
-import six
 import urllib
+
+import requests
+import six
 import urllib3
+from requests import exceptions as req_exc
+
 from infoblox_client import exceptions as ib_ex
 from infoblox_client import utils
 
-ip_pattern = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+
+IP_PATTERN = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
 
 try:
     import urlparse
@@ -235,7 +238,7 @@ class Connector(object):
         if not ref_value:
             return
 
-        ip = re.findall(ip_pattern, ref_value)
+        ip = re.findall(IP_PATTERN, ref_value)
         ip = ip[0] if ip else ''
 
         if ip:
@@ -296,11 +299,10 @@ class Connector(object):
         ib_object = self._handle_get_object(obj_type, query_params, extattrs,
                                             proxy_flag)
 
-        if ib_object:
-            if isinstance(ib_object, list):
-                for obj in ib_object:
-                    if isinstance(obj, dict) and obj.get('ipv4addr') is None:
-                        obj['ipv4addr'] = self._extract_ip(obj.get('_ref', ''))
+        if ib_object and isinstance(ib_object, list):
+            for obj in ib_object:
+                if isinstance(obj, dict) and obj.get('ipv4addr') is None:
+                    obj['ipv4addr'] = self._extract_ip(obj.get('_ref', ''))
             return ib_object
 
         # Do second get call with force_proxy if not done yet
