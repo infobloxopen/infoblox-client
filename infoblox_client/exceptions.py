@@ -26,23 +26,25 @@ class BaseExc(Exception):
     def __init__(self, **kwargs):
         super(BaseExc, self).__init__(self.message % kwargs)
         self.msg = self.message % kwargs
+        self.kwargs = kwargs
 
 
 class InfobloxException(BaseExc):
     """Generic Infoblox Exception."""
+
     def __init__(self, response, **kwargs):
         self.response = response
         super(InfobloxException, self).__init__(**kwargs)
 
 
 class InfobloxSearchError(InfobloxException):
-    message = ("Cannot search '%(obj_type)s' object(s): "
-               "%(content)s [code %(code)s]")
+    message = "Cannot search '%(obj_type)s' object(s): " \
+              "%(content)s [code %(code)s]"
 
 
 class InfobloxCannotCreateObject(InfobloxException):
-    message = ("Cannot create '%(obj_type)s' object(s): "
-               "%(content)s [code %(code)s]")
+    message = "Cannot create '%(obj_type)s' object(s): " \
+              "%(content)s [code %(code)s]"
 
 
 class InfobloxMemberAlreadyAssigned(InfobloxCannotCreateObject):
@@ -50,68 +52,68 @@ class InfobloxMemberAlreadyAssigned(InfobloxCannotCreateObject):
 
 
 class InfobloxCannotDeleteObject(InfobloxException):
-    message = ("Cannot delete object with ref %(ref)s: "
-               "%(content)s [code %(code)s]")
+    message = "Cannot delete object with ref %(ref)s: " \
+              "%(content)s [code %(code)s]"
 
 
 class InfobloxCannotUpdateObject(InfobloxException):
-    message = ("Cannot update object with ref %(ref)s: "
-               "%(content)s [code %(code)s]")
+    message = "Cannot update object with ref %(ref)s: " \
+              "%(content)s [code %(code)s]"
 
 
 class InfobloxFuncException(InfobloxException):
-    message = ("Error occurred during function's '%(func_name)s' call: "
-               "ref %(ref)s: %(content)s [code %(code)s]")
+    message = "Error occurred during function's '%(func_name)s' call: " \
+              "ref %(ref)s: %(content)s [code %(code)s]"
 
 
 class InfobloxHostRecordIpAddrNotCreated(BaseExc):
-    message = ("Infoblox host record ipv4addr/ipv6addr has not been "
-               "created for IP %(ip)s, mac %(mac)s")
+    message = "Infoblox host record ipv4addr/ipv6addr has not been " \
+              "created for IP %(ip)s, mac %(mac)s"
 
 
 class InfobloxCannotAllocateIp(BaseExc):
-    message = ("Cannot allocate IP %(ip_data)s")
+    message = "Cannot allocate IP %(ip_data)s"
 
 
 class InfobloxDidNotReturnCreatedIPBack(BaseExc):
-    message = ("Infoblox did not return created IP back")
+    message = "Infoblox did not return created IP back"
 
 
 class InfobloxNetworkNotAvailable(BaseExc):
-    message = ("No network view %(network_view)s for %(cidr)s")
+    message = "No network view %(network_view)s for %(cidr)s"
 
 
 class InfobloxObjectParsingError(BaseExc):
-    message = ("Infoblox object cannot be parsed from dict: %(data)s")
+    message = "Infoblox object cannot be parsed from dict: %(data)s"
 
 
 class HostRecordNotPresent(InfobloxObjectParsingError):
-    message = ("Cannot parse Host Record object from dict because "
-               "'ipv4addrs'/'ipv6addrs' is absent.")
+    message = "Cannot parse Host Record object from dict because " \
+              "'ipv4addrs'/'ipv6addrs' is absent."
 
 
 class InfobloxInvalidIp(InfobloxObjectParsingError):
-    message = ("Bad IP address: %(ip)s")
+    message = "Bad IP address: %(ip)s"
 
 
 class InfobloxConnectionError(BaseExc):
-    message = ("Infoblox HTTP request failed with: %(reason)s")
+    message = "Infoblox HTTP request failed with: %(reason)s"
 
 
 class InfobloxConfigException(BaseExc):
     """Generic Infoblox Config Exception."""
-    message = ("Config error: %(msg)s")
+    message = "Config error: %(msg)s"
 
 
 class InfobloxBadWAPICredential(InfobloxException):
-    message = ("Infoblox IPAM is misconfigured: "
-               "infoblox_username and infoblox_password are incorrect.")
+    message = "Infoblox IPAM is misconfigured: " \
+              "infoblox_username and infoblox_password are incorrect."
 
 
 class InfobloxTimeoutError(InfobloxException):
-    message = ("Connection to NIOS timed out")
+    message = "Connection to NIOS timed out"
 
 
 class InfobloxGridTemporaryUnavailable(InfobloxException):
-    message = ("Cannot perform operation %(operation)s with ref %(ref)s: "
-               "%(content)s [code %(code)s]")
+    message = "Cannot perform operation %(operation)s with ref %(ref)s: " \
+              "%(content)s [code %(code)s]"

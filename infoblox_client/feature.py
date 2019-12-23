@@ -34,6 +34,7 @@ class Feature(object):
       - Known features and corresponding WAPI version requirement
     the Feature class represents available NIOS features as attributes.
     """
+
     def __init__(self, version, feature_versions=None):
         self._wapi_version = None
 
@@ -61,6 +62,7 @@ class WapiVersionUtil(object):
     Provide methods that manipulate and get information from
     WAPI version string.
     """
+
     def __init__(self, version):
         self._version_parts = self._get_wapi_version_parts(version)
 
@@ -89,18 +91,18 @@ class WapiVersionUtil(object):
             elif b is None:
                 return True
             elif not a == b:
-                return (a > b)
+                return a > b
         return True
 
     @staticmethod
     def _get_wapi_version_parts(version):
         parts = version.split('.')
-        if (not parts or len(parts) > 3 or len(parts) < 2):
+        if not parts or len(parts) > 3 or len(parts) < 2:
             raise ValueError("Invalid argument was passed")
         for p in parts:
             if not len(p) or not p.isdigit():
                 raise ValueError("Invalid argument was passed")
         parts = [int(x) for x in parts]
         if len(parts) == 2:
-            parts.append(None)
+            parts.append(0)
         return parts
