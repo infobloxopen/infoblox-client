@@ -462,7 +462,10 @@ class SubObjects(BaseObject):
 
     @classmethod
     def from_dict(cls, ip_dict):
-        return cls(**ip_dict)
+        if isinstance(ip_dict, list):
+            return [cls(**item) for item in ip_dict]
+        else:
+            return cls(**ip_dict)
 
     def to_dict(self):
         return {field: getattr(self, field) for field in self._fields
@@ -994,14 +997,8 @@ class AdAuthService(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_domain_controllers(members):
-        if not members:
-            return None
-        return [AdAuthServer.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'domain_controllers': _build_domain_controllers.__func__,
+        'domain_controllers': AdAuthServer.from_dict,
     }
 
 
@@ -1015,14 +1012,8 @@ class Admingroup(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_user_access(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'user_access': _build_user_access.__func__,
+        'user_access': Addressac.from_dict,
     }
 
 
@@ -1124,14 +1115,8 @@ class Awsrte53Taskgroup(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_task_list(members):
-        if not members:
-            return None
-        return [Awsrte53Task.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'task_list': _build_task_list.__func__,
+        'task_list': Awsrte53Task.from_dict,
     }
 
     def task_control(self, *args, **kwargs):
@@ -1203,14 +1188,8 @@ class Capacityreport(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_object_counts(members):
-        if not members:
-            return None
-        return [CapacityreportObjectcount.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'object_counts': _build_object_counts.__func__,
+        'object_counts': CapacityreportObjectcount.from_dict,
     }
 
 
@@ -1224,14 +1203,8 @@ class Captiveportal(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_files(members):
-        if not members:
-            return None
-        return [CaptiveportalFile.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'files': _build_files.__func__,
+        'files': CaptiveportalFile.from_dict,
     }
 
 
@@ -1245,14 +1218,8 @@ class CertificateAuthservice(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_ocsp_responders(members):
-        if not members:
-            return None
-        return [OcspResponder.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'ocsp_responders': _build_ocsp_responders.__func__,
+        'ocsp_responders': OcspResponder.from_dict,
     }
 
     def test_ocsp_responder_settings(self, *args, **kwargs):
@@ -1500,21 +1467,9 @@ class DiscoveryDevice(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_network_infos(members):
-        if not members:
-            return None
-        return [DiscoveryNetworkinfo.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_vlan_infos(members):
-        if not members:
-            return None
-        return [DiscoveryVlaninfo.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'network_infos': _build_network_infos.__func__,
-        'vlan_infos': _build_vlan_infos.__func__,
+        'network_infos': DiscoveryNetworkinfo.from_dict,
+        'vlan_infos': DiscoveryVlaninfo.from_dict,
     }
 
 
@@ -1539,21 +1494,9 @@ class DiscoveryDeviceinterface(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_ifaddr_infos(members):
-        if not members:
-            return None
-        return [DiscoveryIfaddrinfo.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_vlan_infos(members):
-        if not members:
-            return None
-        return [DiscoveryVlaninfo.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'ifaddr_infos': _build_ifaddr_infos.__func__,
-        'vlan_infos': _build_vlan_infos.__func__,
+        'ifaddr_infos': DiscoveryIfaddrinfo.from_dict,
+        'vlan_infos': DiscoveryVlaninfo.from_dict,
     }
 
 
@@ -1567,14 +1510,8 @@ class DiscoveryDeviceneighbor(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_vlan_infos(members):
-        if not members:
-            return None
-        return [DiscoveryVlaninfo.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'vlan_infos': _build_vlan_infos.__func__,
+        'vlan_infos': DiscoveryVlaninfo.from_dict,
     }
 
 
@@ -1610,49 +1547,13 @@ class DiscoveryGridproperties(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_auto_conversion_settings(members):
-        if not members:
-            return None
-        return [DiscoveryAutoconversionsetting.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_cli_credentials(members):
-        if not members:
-            return None
-        return [DiscoveryClicredential.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ports(members):
-        if not members:
-            return None
-        return [DiscoveryPort.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_snmpv1v2_credentials(members):
-        if not members:
-            return None
-        return [DiscoverySnmpcredential.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_snmpv3_credentials(members):
-        if not members:
-            return None
-        return [DiscoverySnmp3Credential.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_vrf_mapping_rules(members):
-        if not members:
-            return None
-        return [DiscoveryVrfmappingrule.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'auto_conversion_settings': _build_auto_conversion_settings.__func__,
-        'cli_credentials': _build_cli_credentials.__func__,
-        'ports': _build_ports.__func__,
-        'snmpv1v2_credentials': _build_snmpv1v2_credentials.__func__,
-        'snmpv3_credentials': _build_snmpv3_credentials.__func__,
-        'vrf_mapping_rules': _build_vrf_mapping_rules.__func__,
+        'auto_conversion_settings': DiscoveryAutoconversionsetting.from_dict,
+        'cli_credentials': DiscoveryClicredential.from_dict,
+        'ports': DiscoveryPort.from_dict,
+        'snmpv1v2_credentials': DiscoverySnmpcredential.from_dict,
+        'snmpv3_credentials': DiscoverySnmp3Credential.from_dict,
+        'vrf_mapping_rules': DiscoveryVrfmappingrule.from_dict,
     }
 
     def advisor_run_now(self, *args, **kwargs):
@@ -1678,63 +1579,15 @@ class DiscoveryMemberproperties(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_cli_credentials(members):
-        if not members:
-            return None
-        return [DiscoveryClicredential.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_default_seed_routers(members):
-        if not members:
-            return None
-        return [DiscoverySeedrouter.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_gateway_seed_routers(members):
-        if not members:
-            return None
-        return [DiscoverySeedrouter.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_scan_interfaces(members):
-        if not members:
-            return None
-        return [DiscoveryScaninterface.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_sdn_configs(members):
-        if not members:
-            return None
-        return [DiscoverySdnconfig.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_seed_routers(members):
-        if not members:
-            return None
-        return [DiscoverySeedrouter.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_snmpv1v2_credentials(members):
-        if not members:
-            return None
-        return [DiscoverySnmpcredential.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_snmpv3_credentials(members):
-        if not members:
-            return None
-        return [DiscoverySnmp3Credential.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'cli_credentials': _build_cli_credentials.__func__,
-        'default_seed_routers': _build_default_seed_routers.__func__,
-        'gateway_seed_routers': _build_gateway_seed_routers.__func__,
-        'scan_interfaces': _build_scan_interfaces.__func__,
-        'sdn_configs': _build_sdn_configs.__func__,
-        'seed_routers': _build_seed_routers.__func__,
-        'snmpv1v2_credentials': _build_snmpv1v2_credentials.__func__,
-        'snmpv3_credentials': _build_snmpv3_credentials.__func__,
+        'cli_credentials': DiscoveryClicredential.from_dict,
+        'default_seed_routers': DiscoverySeedrouter.from_dict,
+        'gateway_seed_routers': DiscoverySeedrouter.from_dict,
+        'scan_interfaces': DiscoveryScaninterface.from_dict,
+        'sdn_configs': DiscoverySdnconfig.from_dict,
+        'seed_routers': DiscoverySeedrouter.from_dict,
+        'snmpv1v2_credentials': DiscoverySnmpcredential.from_dict,
+        'snmpv3_credentials': DiscoverySnmp3Credential.from_dict,
     }
 
 
@@ -1781,21 +1634,9 @@ class Discoverytask(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_tcp_ports(members):
-        if not members:
-            return None
-        return [Discoverytaskport.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_vservers(members):
-        if not members:
-            return None
-        return [Discoverytaskvserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'tcp_ports': _build_tcp_ports.__func__,
-        'vservers': _build_vservers.__func__,
+        'tcp_ports': Discoverytaskport.from_dict,
+        'vservers': Discoverytaskvserver.from_dict,
     }
 
     def network_discovery_control(self, *args, **kwargs):
@@ -1812,14 +1653,8 @@ class Distributionschedule(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_upgrade_groups(members):
-        if not members:
-            return None
-        return [UpgradegroupSchedule.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'upgrade_groups': _build_upgrade_groups.__func__,
+        'upgrade_groups': UpgradegroupSchedule.from_dict,
     }
 
 
@@ -1833,28 +1668,10 @@ class Dns64Group(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_clients(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_exclude(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_mapped(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'clients': _build_clients.__func__,
-        'exclude': _build_exclude.__func__,
-        'mapped': _build_mapped.__func__,
+        'clients': Addressac.from_dict,
+        'exclude': Addressac.from_dict,
+        'mapped': Addressac.from_dict,
     }
 
 
@@ -1913,14 +1730,8 @@ class DtcLbdn(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_pools(members):
-        if not members:
-            return None
-        return [DtcPoolLink.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'pools': _build_pools.__func__,
+        'pools': DtcPoolLink.from_dict,
     }
 
 
@@ -1989,14 +1800,8 @@ class DtcMonitorSnmp(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_oids(members):
-        if not members:
-            return None
-        return [DtcMonitorSnmpOid.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'oids': _build_oids.__func__,
+        'oids': DtcMonitorSnmpOid.from_dict,
     }
 
 
@@ -2032,21 +1837,9 @@ class DtcPool(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_consolidated_monitors(members):
-        if not members:
-            return None
-        return [DtcPoolConsolidatedMonitorHealth.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_servers(members):
-        if not members:
-            return None
-        return [DtcServerLink.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'consolidated_monitors': _build_consolidated_monitors.__func__,
-        'servers': _build_servers.__func__,
+        'consolidated_monitors': DtcPoolConsolidatedMonitorHealth.from_dict,
+        'servers': DtcServerLink.from_dict,
     }
 
 
@@ -2128,14 +1921,8 @@ class DtcServer(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_monitors(members):
-        if not members:
-            return None
-        return [DtcServerMonitor.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'monitors': _build_monitors.__func__,
+        'monitors': DtcServerMonitor.from_dict,
     }
 
 
@@ -2171,14 +1958,8 @@ class DtcTopologyRule(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_sources(members):
-        if not members:
-            return None
-        return [DtcTopologyRuleSource.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'sources': _build_sources.__func__,
+        'sources': DtcTopologyRuleSource.from_dict,
     }
 
 
@@ -2192,14 +1973,8 @@ class DxlEndpoint(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_brokers(members):
-        if not members:
-            return None
-        return [DxlEndpointBroker.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'brokers': _build_brokers.__func__,
+        'brokers': DxlEndpointBroker.from_dict,
     }
 
     def clear_outbound_worker_log(self, *args, **kwargs):
@@ -2219,14 +1994,8 @@ class EADefinition(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_list_values(members):
-        if not members:
-            return None
-        return [ExtensibleattributedefListvalues.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'list_values': _build_list_values.__func__,
+        'list_values': ExtensibleattributedefListvalues.from_dict,
     }
 
 
@@ -2385,14 +2154,8 @@ class Filtermac(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'options': _build_options.__func__,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -2406,14 +2169,8 @@ class Filternac(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'options': _build_options.__func__,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -2427,14 +2184,8 @@ class Filteroption(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_option_list(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'option_list': _build_option_list.__func__,
+        'option_list': Dhcpoption.from_dict,
     }
 
 
@@ -2481,35 +2232,11 @@ class FixedAddressV4(FixedAddress):
     _shadow_fields = ['_ref', 'ip']
     _ip_version = 4
 
-    @staticmethod
-    def _build_cli_credentials(members):
-        if not members:
-            return None
-        return [DiscoveryClicredential.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ms_options(members):
-        if not members:
-            return None
-        return [Msdhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'cli_credentials': _build_cli_credentials.__func__,
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'ms_options': _build_ms_options.__func__,
-        'options': _build_options.__func__,
+        'cli_credentials': DiscoveryClicredential.from_dict,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'ms_options': Msdhcpoption.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -2544,21 +2271,9 @@ class FixedAddressV6(FixedAddress):
             self.duid = None 
     
 
-    @staticmethod
-    def _build_cli_credentials(members):
-        if not members:
-            return None
-        return [DiscoveryClicredential.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'cli_credentials': _build_cli_credentials.__func__,
-        'options': _build_options.__func__,
+        'cli_credentials': DiscoveryClicredential.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -2583,21 +2298,9 @@ class FixedAddressTemplateV4(FixedAddressTemplate):
     _shadow_fields = ['_ref']
     _ip_version = 4
 
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'options': _build_options.__func__,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -2613,14 +2316,8 @@ class FixedAddressTemplateV6(FixedAddressTemplate):
     _shadow_fields = ['_ref']
     _ip_version = 6
 
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'options': _build_options.__func__,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -2645,49 +2342,13 @@ class Grid(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_external_syslog_backup_servers(members):
-        if not members:
-            return None
-        return [Extsyslogbackupserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_lom_users(members):
-        if not members:
-            return None
-        return [Lomuser.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_syslog_servers(members):
-        if not members:
-            return None
-        return [Syslogserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_threshold_traps(members):
-        if not members:
-            return None
-        return [Thresholdtrap.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_trap_notifications(members):
-        if not members:
-            return None
-        return [Trapnotification.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_updates_download_member_config(members):
-        if not members:
-            return None
-        return [Updatesdownloadmemberconfig.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'external_syslog_backup_servers': _build_external_syslog_backup_servers.__func__,
-        'lom_users': _build_lom_users.__func__,
-        'syslog_servers': _build_syslog_servers.__func__,
-        'threshold_traps': _build_threshold_traps.__func__,
-        'trap_notifications': _build_trap_notifications.__func__,
-        'updates_download_member_config': _build_updates_download_member_config.__func__,
+        'external_syslog_backup_servers': Extsyslogbackupserver.from_dict,
+        'lom_users': Lomuser.from_dict,
+        'syslog_servers': Syslogserver.from_dict,
+        'threshold_traps': Thresholdtrap.from_dict,
+        'trap_notifications': Trapnotification.from_dict,
+        'updates_download_member_config': Updatesdownloadmemberconfig.from_dict,
     }
 
     def control_ip_address(self, *args, **kwargs):
@@ -2767,14 +2428,8 @@ class GridCloudapi(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_allowed_api_admins(members):
-        if not members:
-            return None
-        return [GridCloudapiUser.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'allowed_api_admins': _build_allowed_api_admins.__func__,
+        'allowed_api_admins': GridCloudapiUser.from_dict,
     }
 
 
@@ -2843,35 +2498,11 @@ class GridDhcpproperties(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_ipv6_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_option60_match_rules(members):
-        if not members:
-            return None
-        return [Option60Matchrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'ipv6_options': _build_ipv6_options.__func__,
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'option60_match_rules': _build_option60_match_rules.__func__,
-        'options': _build_options.__func__,
+        'ipv6_options': Dhcpoption.from_dict,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'option60_match_rules': Option60Matchrule.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -2885,84 +2516,18 @@ class GridDns(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_allow_query(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_allow_transfer(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_allow_update(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_blackhole_list(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_client_subnet_domains(members):
-        if not members:
-            return None
-        return [Clientsubnetdomain.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_custom_root_name_servers(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_dnssec_trusted_keys(members):
-        if not members:
-            return None
-        return [Dnssectrustedkey.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_filter_aaaa_list(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_fixed_rrset_order_fqdns(members):
-        if not members:
-            return None
-        return [GridDnsFixedrrsetorderfqdn.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_recursive_query_list(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_sortlist(members):
-        if not members:
-            return None
-        return [Sortlist.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'allow_query': _build_allow_query.__func__,
-        'allow_transfer': _build_allow_transfer.__func__,
-        'allow_update': _build_allow_update.__func__,
-        'blackhole_list': _build_blackhole_list.__func__,
-        'client_subnet_domains': _build_client_subnet_domains.__func__,
-        'custom_root_name_servers': _build_custom_root_name_servers.__func__,
-        'dnssec_trusted_keys': _build_dnssec_trusted_keys.__func__,
-        'filter_aaaa_list': _build_filter_aaaa_list.__func__,
-        'fixed_rrset_order_fqdns': _build_fixed_rrset_order_fqdns.__func__,
-        'recursive_query_list': _build_recursive_query_list.__func__,
-        'sortlist': _build_sortlist.__func__,
+        'allow_query': Addressac.from_dict,
+        'allow_transfer': Addressac.from_dict,
+        'allow_update': Addressac.from_dict,
+        'blackhole_list': Addressac.from_dict,
+        'client_subnet_domains': Clientsubnetdomain.from_dict,
+        'custom_root_name_servers': Extserver.from_dict,
+        'dnssec_trusted_keys': Dnssectrustedkey.from_dict,
+        'filter_aaaa_list': Addressac.from_dict,
+        'fixed_rrset_order_fqdns': GridDnsFixedrrsetorderfqdn.from_dict,
+        'recursive_query_list': Addressac.from_dict,
+        'sortlist': Sortlist.from_dict,
     }
 
     def run_scavenging(self, *args, **kwargs):
@@ -2990,14 +2555,8 @@ class GridLicensePool(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_subpools(members):
-        if not members:
-            return None
-        return [GridLicensesubpool.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'subpools': _build_subpools.__func__,
+        'subpools': GridLicensesubpool.from_dict,
     }
 
 
@@ -3036,14 +2595,8 @@ class GridMemberCloudapi(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_allowed_api_admins(members):
-        if not members:
-            return None
-        return [GridCloudapiUser.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'allowed_api_admins': _build_allowed_api_admins.__func__,
+        'allowed_api_admins': GridCloudapiUser.from_dict,
     }
 
 
@@ -3141,14 +2694,8 @@ class GridThreatprotection(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_nat_rules(members):
-        if not members:
-            return None
-        return [ThreatprotectionNatrule.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'nat_rules': _build_nat_rules.__func__,
+        'nat_rules': ThreatprotectionNatrule.from_dict,
     }
 
     def atp_object_reset(self, *args, **kwargs):
@@ -3201,14 +2748,8 @@ class HsmSafenetgroup(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_hsm_safenet(members):
-        if not members:
-            return None
-        return [HsmSafenet.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'hsm_safenet': _build_hsm_safenet.__func__,
+        'hsm_safenet': HsmSafenet.from_dict,
     }
 
     def refresh_hsm(self, *args, **kwargs):
@@ -3228,14 +2769,8 @@ class HsmThalesgroup(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_thales_hsm(members):
-        if not members:
-            return None
-        return [HsmThales.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'thales_hsm': _build_thales_hsm.__func__,
+        'thales_hsm': HsmThales.from_dict,
     }
 
     def refresh_hsm(self, *args, **kwargs):
@@ -3312,42 +2847,12 @@ class NetworkV4(Network):
     _shadow_fields = ['_ref', 'cidr']
     _ip_version = 4
 
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_members(members):
-        if not members:
-            return None
-        return [Msdhcpserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_vlans(members):
-        if not members:
-            return None
-        return [Vlanlink.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_zone_associations(members):
-        if not members:
-            return None
-        return [Zoneassociation.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'members': _build_members.__func__,
-        'options': _build_options.__func__,
-        'vlans': _build_vlans.__func__,
-        'zone_associations': _build_zone_associations.__func__,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'members': Msdhcpserver.from_dict,
+        'options': Dhcpoption.from_dict,
+        'vlans': Vlanlink.from_dict,
+        'zone_associations': Zoneassociation.from_dict,
     }
 
     def expand_network(self, *args, **kwargs):
@@ -3381,35 +2886,11 @@ class NetworkV6(Network):
     _shadow_fields = ['_ref', 'cidr']
     _ip_version = 6
 
-    @staticmethod
-    def _build_members(members):
-        if not members:
-            return None
-        return [Dhcpmember.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_vlans(members):
-        if not members:
-            return None
-        return [Vlanlink.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_zone_associations(members):
-        if not members:
-            return None
-        return [Zoneassociation.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'members': _build_members.__func__,
-        'options': _build_options.__func__,
-        'vlans': _build_vlans.__func__,
-        'zone_associations': _build_zone_associations.__func__,
+        'members': Dhcpmember.from_dict,
+        'options': Dhcpoption.from_dict,
+        'vlans': Vlanlink.from_dict,
+        'zone_associations': Zoneassociation.from_dict,
     }
 
     def expand_network(self, *args, **kwargs):
@@ -3449,28 +2930,10 @@ class NetworkContainerV4(NetworkContainer):
     _shadow_fields = ['_ref']
     _ip_version = 4
 
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_zone_associations(members):
-        if not members:
-            return None
-        return [Zoneassociation.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'options': _build_options.__func__,
-        'zone_associations': _build_zone_associations.__func__,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'options': Dhcpoption.from_dict,
+        'zone_associations': Zoneassociation.from_dict,
     }
 
     def next_available_network(self, *args, **kwargs):
@@ -3492,21 +2955,9 @@ class NetworkContainerV6(NetworkContainer):
     _shadow_fields = ['_ref']
     _ip_version = 6
 
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_zone_associations(members):
-        if not members:
-            return None
-        return [Zoneassociation.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'options': _build_options.__func__,
-        'zone_associations': _build_zone_associations.__func__,
+        'options': Dhcpoption.from_dict,
+        'zone_associations': Zoneassociation.from_dict,
     }
 
     def next_available_network(self, *args, **kwargs):
@@ -3534,28 +2985,10 @@ class NetworkTemplateV4(NetworkTemplate):
     _shadow_fields = ['_ref']
     _ip_version = 4
 
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_members(members):
-        if not members:
-            return None
-        return [Msdhcpserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'members': _build_members.__func__,
-        'options': _build_options.__func__,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'members': Msdhcpserver.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -3571,21 +3004,9 @@ class NetworkTemplateV6(NetworkTemplate):
     _shadow_fields = ['_ref']
     _ip_version = 6
 
-    @staticmethod
-    def _build_members(members):
-        if not members:
-            return None
-        return [Dhcpmember.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'members': _build_members.__func__,
-        'options': _build_options.__func__,
+        'members': Dhcpmember.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -3610,70 +3031,16 @@ class IPRangeV4(IPRange):
     _shadow_fields = ['_ref', 'cidr']
     _ip_version = 4
 
-    @staticmethod
-    def _build_exclude(members):
-        if not members:
-            return None
-        return [Exclusionrange.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_fingerprint_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_mac_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ms_options(members):
-        if not members:
-            return None
-        return [Msdhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_nac_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_option_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_relay_agent_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'exclude': _build_exclude.__func__,
-        'fingerprint_filter_rules': _build_fingerprint_filter_rules.__func__,
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'mac_filter_rules': _build_mac_filter_rules.__func__,
-        'ms_options': _build_ms_options.__func__,
-        'nac_filter_rules': _build_nac_filter_rules.__func__,
-        'option_filter_rules': _build_option_filter_rules.__func__,
-        'options': _build_options.__func__,
-        'relay_agent_filter_rules': _build_relay_agent_filter_rules.__func__,
+        'exclude': Exclusionrange.from_dict,
+        'fingerprint_filter_rules': Filterrule.from_dict,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'mac_filter_rules': Filterrule.from_dict,
+        'ms_options': Msdhcpoption.from_dict,
+        'nac_filter_rules': Filterrule.from_dict,
+        'option_filter_rules': Filterrule.from_dict,
+        'options': Dhcpoption.from_dict,
+        'relay_agent_filter_rules': Filterrule.from_dict,
     }
 
     def next_available_ip(self, *args, **kwargs):
@@ -3692,14 +3059,8 @@ class IPRangeV6(IPRange):
     _shadow_fields = ['_ref', 'cidr']
     _ip_version = 6
 
-    @staticmethod
-    def _build_exclude(members):
-        if not members:
-            return None
-        return [Exclusionrange.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'exclude': _build_exclude.__func__,
+        'exclude': Exclusionrange.from_dict,
     }
 
     def next_available_ip(self, *args, **kwargs):
@@ -3727,70 +3088,16 @@ class RangeTemplateV4(RangeTemplate):
     _shadow_fields = ['_ref']
     _ip_version = 4
 
-    @staticmethod
-    def _build_exclude(members):
-        if not members:
-            return None
-        return [Exclusionrangetemplate.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_fingerprint_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_mac_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ms_options(members):
-        if not members:
-            return None
-        return [Msdhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_nac_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_option_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_relay_agent_filter_rules(members):
-        if not members:
-            return None
-        return [Filterrule.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'exclude': _build_exclude.__func__,
-        'fingerprint_filter_rules': _build_fingerprint_filter_rules.__func__,
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'mac_filter_rules': _build_mac_filter_rules.__func__,
-        'ms_options': _build_ms_options.__func__,
-        'nac_filter_rules': _build_nac_filter_rules.__func__,
-        'option_filter_rules': _build_option_filter_rules.__func__,
-        'options': _build_options.__func__,
-        'relay_agent_filter_rules': _build_relay_agent_filter_rules.__func__,
+        'exclude': Exclusionrangetemplate.from_dict,
+        'fingerprint_filter_rules': Filterrule.from_dict,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'mac_filter_rules': Filterrule.from_dict,
+        'ms_options': Msdhcpoption.from_dict,
+        'nac_filter_rules': Filterrule.from_dict,
+        'option_filter_rules': Filterrule.from_dict,
+        'options': Dhcpoption.from_dict,
+        'relay_agent_filter_rules': Filterrule.from_dict,
     }
 
 
@@ -3806,14 +3113,8 @@ class RangeTemplateV6(RangeTemplate):
     _shadow_fields = ['_ref']
     _ip_version = 6
 
-    @staticmethod
-    def _build_exclude(members):
-        if not members:
-            return None
-        return [Exclusionrangetemplate.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'exclude': _build_exclude.__func__,
+        'exclude': Exclusionrangetemplate.from_dict,
     }
 
 
@@ -3838,21 +3139,9 @@ class SharedNetworkV4(SharedNetwork):
     _shadow_fields = ['_ref']
     _ip_version = 4
 
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'options': _build_options.__func__,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -3868,14 +3157,8 @@ class SharedNetworkV6(SharedNetwork):
     _shadow_fields = ['_ref']
     _ip_version = 6
 
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'options': _build_options.__func__,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -3900,21 +3183,9 @@ class LdapAuthService(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_ea_mapping(members):
-        if not members:
-            return None
-        return [LdapEamapping.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_servers(members):
-        if not members:
-            return None
-        return [LdapServer.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'ea_mapping': _build_ea_mapping.__func__,
-        'servers': _build_servers.__func__,
+        'ea_mapping': LdapEamapping.from_dict,
+        'servers': LdapServer.from_dict,
     }
 
     def check_ldap_server_settings(self, *args, **kwargs):
@@ -3986,105 +3257,21 @@ class Member(InfobloxObject):
     _remap = {'name': 'host_name'}
     _shadow_fields = ['_ref', 'name']
 
-    @staticmethod
-    def _build_additional_ip_list(members):
-        if not members:
-            return None
-        return [Interface.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_bgp_as(members):
-        if not members:
-            return None
-        return [Bgpas.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_external_syslog_backup_servers(members):
-        if not members:
-            return None
-        return [Extsyslogbackupserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ipv6_static_routes(members):
-        if not members:
-            return None
-        return [Ipv6Networksetting.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_lom_network_config(members):
-        if not members:
-            return None
-        return [Lomnetworkconfig.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_lom_users(members):
-        if not members:
-            return None
-        return [Lomuser.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_member_service_communication(members):
-        if not members:
-            return None
-        return [Memberservicecommunication.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_node_info(members):
-        if not members:
-            return None
-        return [Nodeinfo.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ospf_list(members):
-        if not members:
-            return None
-        return [Ospf.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_service_status(members):
-        if not members:
-            return None
-        return [Memberservicestatus.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_static_routes(members):
-        if not members:
-            return None
-        return [SettingNetwork.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_syslog_servers(members):
-        if not members:
-            return None
-        return [Syslogserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_threshold_traps(members):
-        if not members:
-            return None
-        return [Thresholdtrap.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_trap_notifications(members):
-        if not members:
-            return None
-        return [Trapnotification.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'additional_ip_list': _build_additional_ip_list.__func__,
-        'bgp_as': _build_bgp_as.__func__,
-        'external_syslog_backup_servers': _build_external_syslog_backup_servers.__func__,
-        'ipv6_static_routes': _build_ipv6_static_routes.__func__,
-        'lom_network_config': _build_lom_network_config.__func__,
-        'lom_users': _build_lom_users.__func__,
-        'member_service_communication': _build_member_service_communication.__func__,
-        'node_info': _build_node_info.__func__,
-        'ospf_list': _build_ospf_list.__func__,
-        'service_status': _build_service_status.__func__,
-        'static_routes': _build_static_routes.__func__,
-        'syslog_servers': _build_syslog_servers.__func__,
-        'threshold_traps': _build_threshold_traps.__func__,
-        'trap_notifications': _build_trap_notifications.__func__,
+        'additional_ip_list': Interface.from_dict,
+        'bgp_as': Bgpas.from_dict,
+        'external_syslog_backup_servers': Extsyslogbackupserver.from_dict,
+        'ipv6_static_routes': Ipv6Networksetting.from_dict,
+        'lom_network_config': Lomnetworkconfig.from_dict,
+        'lom_users': Lomuser.from_dict,
+        'member_service_communication': Memberservicecommunication.from_dict,
+        'node_info': Nodeinfo.from_dict,
+        'ospf_list': Ospf.from_dict,
+        'service_status': Memberservicestatus.from_dict,
+        'static_routes': SettingNetwork.from_dict,
+        'syslog_servers': Syslogserver.from_dict,
+        'threshold_traps': Thresholdtrap.from_dict,
+        'trap_notifications': Trapnotification.from_dict,
     }
 
     def capture_traffic_control(self, *args, **kwargs):
@@ -4140,42 +3327,12 @@ class MemberDhcpproperties(InfobloxObject):
             self.ipv4addr = ip
     
 
-    @staticmethod
-    def _build_ddns_zone_primaries(members):
-        if not members:
-            return None
-        return [Dhcpddns.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ipv6_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_option60_match_rules(members):
-        if not members:
-            return None
-        return [Option60Matchrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'ddns_zone_primaries': _build_ddns_zone_primaries.__func__,
-        'ipv6_options': _build_ipv6_options.__func__,
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'option60_match_rules': _build_option60_match_rules.__func__,
-        'options': _build_options.__func__,
+        'ddns_zone_primaries': Dhcpddns.from_dict,
+        'ipv6_options': Dhcpoption.from_dict,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'option60_match_rules': Option60Matchrule.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
     def clear_nac_auth_cache(self, *args, **kwargs):
@@ -4216,105 +3373,21 @@ class MemberDns(InfobloxObject):
             self.ipv4addr = ip
     
 
-    @staticmethod
-    def _build_additional_ip_list_struct(members):
-        if not members:
-            return None
-        return [MemberDnsip.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_allow_query(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_allow_transfer(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_allow_update(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_blackhole_list(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_custom_root_name_servers(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_dns_view_address_settings(members):
-        if not members:
-            return None
-        return [SettingViewaddress.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_dnssec_trusted_keys(members):
-        if not members:
-            return None
-        return [Dnssectrustedkey.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_filter_aaaa_list(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_fixed_rrset_order_fqdns(members):
-        if not members:
-            return None
-        return [GridDnsFixedrrsetorderfqdn.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_glue_record_addresses(members):
-        if not members:
-            return None
-        return [MemberDnsgluerecordaddr.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ipv6_glue_record_addresses(members):
-        if not members:
-            return None
-        return [MemberDnsgluerecordaddr.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_recursive_query_list(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_sortlist(members):
-        if not members:
-            return None
-        return [Sortlist.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'additional_ip_list_struct': _build_additional_ip_list_struct.__func__,
-        'allow_query': _build_allow_query.__func__,
-        'allow_transfer': _build_allow_transfer.__func__,
-        'allow_update': _build_allow_update.__func__,
-        'blackhole_list': _build_blackhole_list.__func__,
-        'custom_root_name_servers': _build_custom_root_name_servers.__func__,
-        'dns_view_address_settings': _build_dns_view_address_settings.__func__,
-        'dnssec_trusted_keys': _build_dnssec_trusted_keys.__func__,
-        'filter_aaaa_list': _build_filter_aaaa_list.__func__,
-        'fixed_rrset_order_fqdns': _build_fixed_rrset_order_fqdns.__func__,
-        'glue_record_addresses': _build_glue_record_addresses.__func__,
-        'ipv6_glue_record_addresses': _build_ipv6_glue_record_addresses.__func__,
-        'recursive_query_list': _build_recursive_query_list.__func__,
-        'sortlist': _build_sortlist.__func__,
+        'additional_ip_list_struct': MemberDnsip.from_dict,
+        'allow_query': Addressac.from_dict,
+        'allow_transfer': Addressac.from_dict,
+        'allow_update': Addressac.from_dict,
+        'blackhole_list': Addressac.from_dict,
+        'custom_root_name_servers': Extserver.from_dict,
+        'dns_view_address_settings': SettingViewaddress.from_dict,
+        'dnssec_trusted_keys': Dnssectrustedkey.from_dict,
+        'filter_aaaa_list': Addressac.from_dict,
+        'fixed_rrset_order_fqdns': GridDnsFixedrrsetorderfqdn.from_dict,
+        'glue_record_addresses': MemberDnsgluerecordaddr.from_dict,
+        'ipv6_glue_record_addresses': MemberDnsgluerecordaddr.from_dict,
+        'recursive_query_list': Addressac.from_dict,
+        'sortlist': Sortlist.from_dict,
     }
 
     def clear_dns_cache(self, *args, **kwargs):
@@ -4331,28 +3404,10 @@ class MemberFiledistribution(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_ftp_acls(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_http_acls(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_tftp_acls(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'ftp_acls': _build_ftp_acls.__func__,
-        'http_acls': _build_http_acls.__func__,
-        'tftp_acls': _build_tftp_acls.__func__,
+        'ftp_acls': Addressac.from_dict,
+        'http_acls': Addressac.from_dict,
+        'tftp_acls': Addressac.from_dict,
     }
 
 
@@ -4399,14 +3454,8 @@ class MemberThreatprotection(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_nat_rules(members):
-        if not members:
-            return None
-        return [ThreatprotectionNatrule.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'nat_rules': _build_nat_rules.__func__,
+        'nat_rules': ThreatprotectionNatrule.from_dict,
     }
 
 
@@ -4489,21 +3538,9 @@ class Namedacl(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_access_list(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_exploded_access_list(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'access_list': _build_access_list.__func__,
-        'exploded_access_list': _build_exploded_access_list.__func__,
+        'access_list': Addressac.from_dict,
+        'exploded_access_list': Addressac.from_dict,
     }
 
     def validate_acl_items(self, *args, **kwargs):
@@ -4556,35 +3593,11 @@ class NetworkView(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_associated_members(members):
-        if not members:
-            return None
-        return [NetworkviewAssocmember.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ddns_zone_primaries(members):
-        if not members:
-            return None
-        return [Dhcpddns.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_remote_forward_zones(members):
-        if not members:
-            return None
-        return [Remoteddnszone.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_remote_reverse_zones(members):
-        if not members:
-            return None
-        return [Remoteddnszone.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'associated_members': _build_associated_members.__func__,
-        'ddns_zone_primaries': _build_ddns_zone_primaries.__func__,
-        'remote_forward_zones': _build_remote_forward_zones.__func__,
-        'remote_reverse_zones': _build_remote_reverse_zones.__func__,
+        'associated_members': NetworkviewAssocmember.from_dict,
+        'ddns_zone_primaries': Dhcpddns.from_dict,
+        'remote_forward_zones': Remoteddnszone.from_dict,
+        'remote_reverse_zones': Remoteddnszone.from_dict,
     }
 
 
@@ -4615,14 +3628,8 @@ class NotificationRestTemplate(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_parameters(members):
-        if not members:
-            return None
-        return [NotificationRestTemplateparameter.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'parameters': _build_parameters.__func__,
+        'parameters': NotificationRestTemplateparameter.from_dict,
     }
 
 
@@ -4636,14 +3643,8 @@ class NotificationRule(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_expression_list(members):
-        if not members:
-            return None
-        return [NotificationRuleexpressionop.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'expression_list': _build_expression_list.__func__,
+        'expression_list': NotificationRuleexpressionop.from_dict,
     }
 
     def trigger_outbound(self, *args, **kwargs):
@@ -4660,35 +3661,11 @@ class Nsgroup(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_external_primaries(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_external_secondaries(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_grid_primary(members):
-        if not members:
-            return None
-        return [Memberserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_grid_secondaries(members):
-        if not members:
-            return None
-        return [Memberserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'external_primaries': _build_external_primaries.__func__,
-        'external_secondaries': _build_external_secondaries.__func__,
-        'grid_primary': _build_grid_primary.__func__,
-        'grid_secondaries': _build_grid_secondaries.__func__,
+        'external_primaries': Extserver.from_dict,
+        'external_secondaries': Extserver.from_dict,
+        'grid_primary': Memberserver.from_dict,
+        'grid_secondaries': Memberserver.from_dict,
     }
 
 
@@ -4702,14 +3679,8 @@ class NsgroupDelegation(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_delegate_to(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'delegate_to': _build_delegate_to.__func__,
+        'delegate_to': Extserver.from_dict,
     }
 
 
@@ -4723,14 +3694,8 @@ class NsgroupForwardingmember(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_forwarding_servers(members):
-        if not members:
-            return None
-        return [Forwardingmemberserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'forwarding_servers': _build_forwarding_servers.__func__,
+        'forwarding_servers': Forwardingmemberserver.from_dict,
     }
 
 
@@ -4744,14 +3709,8 @@ class NsgroupForwardstubserver(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_external_servers(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'external_servers': _build_external_servers.__func__,
+        'external_servers': Extserver.from_dict,
     }
 
 
@@ -4765,14 +3724,8 @@ class NsgroupStubmember(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_stub_members(members):
-        if not members:
-            return None
-        return [Memberserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'stub_members': _build_stub_members.__func__,
+        'stub_members': Memberserver.from_dict,
     }
 
 
@@ -4808,14 +3761,8 @@ class OutboundCloudclient(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_outbound_cloud_client_events(members):
-        if not members:
-            return None
-        return [OutboundCloudclientEvent.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'outbound_cloud_client_events': _build_outbound_cloud_client_events.__func__,
+        'outbound_cloud_client_events': OutboundCloudclientEvent.from_dict,
     }
 
 
@@ -4884,42 +3831,12 @@ class ParentalcontrolSubscribersite(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_abss(members):
-        if not members:
-            return None
-        return [ParentalcontrolAbs.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_members(members):
-        if not members:
-            return None
-        return [ParentalcontrolSitemember.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_msps(members):
-        if not members:
-            return None
-        return [ParentalcontrolMsp.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_nas_gateways(members):
-        if not members:
-            return None
-        return [ParentalcontrolNasgateway.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_spms(members):
-        if not members:
-            return None
-        return [ParentalcontrolSpm.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'abss': _build_abss.__func__,
-        'members': _build_members.__func__,
-        'msps': _build_msps.__func__,
-        'nas_gateways': _build_nas_gateways.__func__,
-        'spms': _build_spms.__func__,
+        'abss': ParentalcontrolAbs.from_dict,
+        'members': ParentalcontrolSitemember.from_dict,
+        'msps': ParentalcontrolMsp.from_dict,
+        'nas_gateways': ParentalcontrolNasgateway.from_dict,
+        'spms': ParentalcontrolSpm.from_dict,
     }
 
 
@@ -4958,14 +3875,8 @@ class RadiusAuthservice(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_servers(members):
-        if not members:
-            return None
-        return [RadiusServer.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'servers': _build_servers.__func__,
+        'servers': RadiusServer.from_dict,
     }
 
     def check_radius_server_settings(self, *args, **kwargs):
@@ -5108,11 +4019,11 @@ class HostRecord(InfobloxObject):
 class HostRecordV4(HostRecord):
     _infoblox_type = 'record:host'
     _fields = ['aliases', 'allow_telnet', 'cli_credentials', 'cloud_info', 'comment', 'configure_for_dns', 'ddns_protected', 'device_description', 'device_location', 'device_type', 'device_vendor', 'disable', 'disable_discovery', 'dns_aliases', 'dns_name', 'enable_immediate_discovery', 'extattrs', 'ipv4addrs', 'last_queried', 'ms_ad_user_data', 'name', 'network_view', 'restart_if_needed', 'rrset_order', 'snmp3_credential', 'snmp_credential', 'ttl', 'use_cli_credentials', 'use_snmp3_credential', 'use_snmp_credential', 'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['name', 'view']
+    _search_for_update_fields = ['name', 'view', 'ipv4addr']
     _updateable_search_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'view']
-    _all_searchable_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'network_view', 'view', 'zone']
-    _return_fields = ['extattrs', 'ipv4addrs', 'name', 'view', 'ipv4addr']
-    _remap = {'ip': 'ipv4addr', 'ips': 'ipv4addrs'}
+    _all_searchable_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'network_view', 'view', 'zone', 'ipv4addr']
+    _return_fields = ['extattrs', 'ipv4addrs', 'name', 'view', 'aliases']
+    _remap = {'ip': 'ipv4addrs', 'ips': 'ipv4addrs'}
     _shadow_fields = ['_ref', 'ipv4addr']
     _ip_version = 4
 
@@ -5163,17 +4074,11 @@ class HostRecordV4(HostRecord):
             raise ib_ex.InfobloxInvalidIp(ip=ip)
         return [IPv4.from_dict(ip_addr) for ip_addr in ips]
 
-    _custom_field_processing = {'ipv4addrs': _build_ip.__func__}
     
 
-    @staticmethod
-    def _build_cli_credentials(members):
-        if not members:
-            return None
-        return [DiscoveryClicredential.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'cli_credentials': _build_cli_credentials.__func__,
+        'cli_credentials': DiscoveryClicredential.from_dict,
+        'ipv4addrs': _build_ip.__func__,
     }
 
 
@@ -5181,11 +4086,11 @@ class HostRecordV4(HostRecord):
 class HostRecordV6(HostRecord):
     _infoblox_type = 'record:host'
     _fields = ['aliases', 'allow_telnet', 'cli_credentials', 'cloud_info', 'comment', 'configure_for_dns', 'ddns_protected', 'device_description', 'device_location', 'device_type', 'device_vendor', 'disable', 'disable_discovery', 'dns_aliases', 'dns_name', 'enable_immediate_discovery', 'extattrs', 'ipv6addrs', 'last_queried', 'ms_ad_user_data', 'name', 'network_view', 'restart_if_needed', 'rrset_order', 'snmp3_credential', 'snmp_credential', 'ttl', 'use_cli_credentials', 'use_snmp3_credential', 'use_snmp_credential', 'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['name', 'view']
+    _search_for_update_fields = ['name', 'view', 'ipv6addr']
     _updateable_search_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'view']
-    _all_searchable_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'network_view', 'view', 'zone']
-    _return_fields = ['extattrs', 'ipv6addrs', 'name', 'view', 'ipv6addr']
-    _remap = {'ip': 'ipv6addr', 'ips': 'ipv6addrs'}
+    _all_searchable_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'network_view', 'view', 'zone', 'ipv6addr']
+    _return_fields = ['extattrs', 'ipv6addrs', 'name', 'view', 'aliases']
+    _remap = {'ip': 'ipv6addrs', 'ips': 'ipv6addrs'}
     _shadow_fields = ['_ref', 'ipv6addr']
     _ip_version = 6
 
@@ -5236,17 +4141,11 @@ class HostRecordV6(HostRecord):
             raise ib_ex.InfobloxInvalidIp(ip=ip)
         return [IPv6.from_dict(ip_addr) for ip_addr in ips]
 
-    _custom_field_processing = {'ipv6addrs': _build_ip.__func__}
     
 
-    @staticmethod
-    def _build_cli_credentials(members):
-        if not members:
-            return None
-        return [DiscoveryClicredential.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'cli_credentials': _build_cli_credentials.__func__,
+        'cli_credentials': DiscoveryClicredential.from_dict,
+        'ipv6addrs': _build_ip.__func__,
     }
 
 
@@ -5260,21 +4159,9 @@ class IPv4HostAddress(InfobloxObject):
     _remap = {'ip': 'ipv4addr'}
     _shadow_fields = ['_ref', 'ip']
 
-    @staticmethod
-    def _build_logic_filter_rules(members):
-        if not members:
-            return None
-        return [Logicfilterrule.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'logic_filter_rules': _build_logic_filter_rules.__func__,
-        'options': _build_options.__func__,
+        'logic_filter_rules': Logicfilterrule.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -5288,14 +4175,8 @@ class IPv6HostAddress(InfobloxObject):
     _remap = {'ip': 'ipv6addr'}
     _shadow_fields = ['_ref', 'ip']
 
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'options': _build_options.__func__,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -5331,14 +4212,8 @@ class NsRecord(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_addresses(members):
-        if not members:
-            return None
-        return [Zonenameserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'addresses': _build_addresses.__func__,
+        'addresses': Zonenameserver.from_dict,
     }
 
 
@@ -5388,7 +4263,7 @@ class PtrRecord(InfobloxObject):
 class PtrRecordV4(PtrRecord):
     _infoblox_type = 'record:ptr'
     _fields = ['aws_rte53_record_info', 'cloud_info', 'comment', 'creation_time', 'creator', 'ddns_principal', 'ddns_protected', 'disable', 'discovered_data', 'dns_name', 'dns_ptrdname', 'extattrs', 'forbid_reclamation', 'ipv4addr', 'last_queried', 'ms_ad_user_data', 'name', 'ptrdname', 'reclaimable', 'shared_record_group', 'ttl', 'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['ptrdname', 'view']
+    _search_for_update_fields = ['ptrdname', 'view', 'ipv4addr']
     _updateable_search_fields = ['comment', 'creator', 'ddns_principal', 'ipv4addr', 'name', 'ptrdname']
     _all_searchable_fields = ['comment', 'creator', 'ddns_principal', 'ipv4addr', 'name', 'ptrdname', 'reclaimable', 'view', 'zone']
     _return_fields = ['extattrs', 'ptrdname', 'view', 'ipv4addr']
@@ -5401,7 +4276,7 @@ class PtrRecordV4(PtrRecord):
 class PtrRecordV6(PtrRecord):
     _infoblox_type = 'record:ptr'
     _fields = ['aws_rte53_record_info', 'cloud_info', 'comment', 'creation_time', 'creator', 'ddns_principal', 'ddns_protected', 'disable', 'discovered_data', 'dns_name', 'dns_ptrdname', 'extattrs', 'forbid_reclamation', 'ipv6addr', 'last_queried', 'ms_ad_user_data', 'name', 'ptrdname', 'reclaimable', 'shared_record_group', 'ttl', 'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['ptrdname', 'view']
+    _search_for_update_fields = ['ptrdname', 'view', 'ipv6addr']
     _updateable_search_fields = ['comment', 'creator', 'ddns_principal', 'ipv6addr', 'name', 'ptrdname']
     _all_searchable_fields = ['comment', 'creator', 'ddns_principal', 'ipv6addr', 'name', 'ptrdname', 'reclaimable', 'view', 'zone']
     _return_fields = ['extattrs', 'ptrdname', 'view', 'ipv6addr']
@@ -5544,7 +4419,7 @@ class RpzPtrRecord(InfobloxObject):
 class RpzPtrRecordV4(RpzPtrRecord):
     _infoblox_type = 'record:rpz:ptr'
     _fields = ['comment', 'disable', 'extattrs', 'ipv4addr', 'name', 'ptrdname', 'rp_zone', 'ttl', 'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['ptrdname', 'view']
+    _search_for_update_fields = ['ptrdname', 'view', 'ipv4addr']
     _updateable_search_fields = ['comment', 'ipv4addr', 'name', 'ptrdname', 'view']
     _all_searchable_fields = ['comment', 'ipv4addr', 'name', 'ptrdname', 'view', 'zone']
     _return_fields = ['extattrs', 'ptrdname', 'view', 'ipv4addr']
@@ -5557,7 +4432,7 @@ class RpzPtrRecordV4(RpzPtrRecord):
 class RpzPtrRecordV6(RpzPtrRecord):
     _infoblox_type = 'record:rpz:ptr'
     _fields = ['comment', 'disable', 'extattrs', 'ipv6addr', 'name', 'ptrdname', 'rp_zone', 'ttl', 'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['ptrdname', 'view']
+    _search_for_update_fields = ['ptrdname', 'view', 'ipv6addr']
     _updateable_search_fields = ['comment', 'ipv6addr', 'name', 'ptrdname', 'view']
     _all_searchable_fields = ['comment', 'ipv6addr', 'name', 'ptrdname', 'view', 'zone']
     _return_fields = ['extattrs', 'ptrdname', 'view', 'ipv6addr']
@@ -5642,14 +4517,8 @@ class UnknownRecord(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_subfield_values(members):
-        if not members:
-            return None
-        return [Rdatasubfield.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'subfield_values': _build_subfield_values.__func__,
+        'subfield_values': Rdatasubfield.from_dict,
     }
 
 
@@ -5707,21 +4576,9 @@ class DHCPRoamingHost(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_ipv6_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_options(members):
-        if not members:
-            return None
-        return [Dhcpoption.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'ipv6_options': _build_ipv6_options.__func__,
-        'options': _build_options.__func__,
+        'ipv6_options': Dhcpoption.from_dict,
+        'options': Dhcpoption.from_dict,
     }
 
 
@@ -5735,14 +4592,8 @@ class Ruleset(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_nxdomain_rules(members):
-        if not members:
-            return None
-        return [Nxdomainrule.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'nxdomain_rules': _build_nxdomain_rules.__func__,
+        'nxdomain_rules': Nxdomainrule.from_dict,
     }
 
 
@@ -5778,14 +4629,8 @@ class Scheduledtask(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_changed_objects(members):
-        if not members:
-            return None
-        return [Changedobject.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'changed_objects': _build_changed_objects.__func__,
+        'changed_objects': Changedobject.from_dict,
     }
 
 
@@ -5911,21 +4756,9 @@ class SmartfolderGlobal(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_group_bys(members):
-        if not members:
-            return None
-        return [SmartfolderGroupby.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_query_items(members):
-        if not members:
-            return None
-        return [SmartfolderQueryitem.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'group_bys': _build_group_bys.__func__,
-        'query_items': _build_query_items.__func__,
+        'group_bys': SmartfolderGroupby.from_dict,
+        'query_items': SmartfolderQueryitem.from_dict,
     }
 
     def save_as(self, *args, **kwargs):
@@ -5942,21 +4775,9 @@ class SmartfolderPersonal(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_group_bys(members):
-        if not members:
-            return None
-        return [SmartfolderGroupby.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_query_items(members):
-        if not members:
-            return None
-        return [SmartfolderQueryitem.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'group_bys': _build_group_bys.__func__,
-        'query_items': _build_query_items.__func__,
+        'group_bys': SmartfolderGroupby.from_dict,
+        'query_items': SmartfolderQueryitem.from_dict,
     }
 
     def save_as(self, *args, **kwargs):
@@ -6006,14 +4827,8 @@ class SyslogEndpoint(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_syslog_servers(members):
-        if not members:
-            return None
-        return [SyslogEndpointServers.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'syslog_servers': _build_syslog_servers.__func__,
+        'syslog_servers': SyslogEndpointServers.from_dict,
     }
 
     def test_syslog_connection(self, *args, **kwargs):
@@ -6030,14 +4845,8 @@ class TacacsplusAuthservice(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_servers(members):
-        if not members:
-            return None
-        return [TacacsplusServer.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'servers': _build_servers.__func__,
+        'servers': TacacsplusServer.from_dict,
     }
 
     def check_tacacsplus_server_settings(self, *args, **kwargs):
@@ -6075,14 +4884,8 @@ class Taxii(InfobloxObject):
             self.ipv4addr = ip
     
 
-    @staticmethod
-    def _build_taxii_rpz_config(members):
-        if not members:
-            return None
-        return [TaxiiRpzconfig.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'taxii_rpz_config': _build_taxii_rpz_config.__func__,
+        'taxii_rpz_config': TaxiiRpzconfig.from_dict,
     }
 
 
@@ -6096,14 +4899,8 @@ class Tftpfiledir(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_vtftp_dir_members(members):
-        if not members:
-            return None
-        return [Vtftpdirmember.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'vtftp_dir_members': _build_vtftp_dir_members.__func__,
+        'vtftp_dir_members': Vtftpdirmember.from_dict,
     }
 
 
@@ -6227,14 +5024,8 @@ class ThreatprotectionStatistics(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_stat_infos(members):
-        if not members:
-            return None
-        return [ThreatprotectionStatinfo.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'stat_infos': _build_stat_infos.__func__,
+        'stat_infos': ThreatprotectionStatinfo.from_dict,
     }
 
 
@@ -6248,14 +5039,8 @@ class Upgradegroup(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_members(members):
-        if not members:
-            return None
-        return [UpgradegroupMember.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'members': _build_members.__func__,
+        'members': UpgradegroupMember.from_dict,
     }
 
 
@@ -6269,14 +5054,8 @@ class Upgradeschedule(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_upgrade_groups(members):
-        if not members:
-            return None
-        return [UpgradegroupSchedule.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'upgrade_groups': _build_upgrade_groups.__func__,
+        'upgrade_groups': UpgradegroupSchedule.from_dict,
     }
 
 
@@ -6290,21 +5069,9 @@ class Upgradestatus(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_hotfixes(members):
-        if not members:
-            return None
-        return [Hotfix.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_steps(members):
-        if not members:
-            return None
-        return [Upgradestep.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'hotfixes': _build_hotfixes.__func__,
-        'steps': _build_steps.__func__,
+        'hotfixes': Hotfix.from_dict,
+        'steps': Upgradestep.from_dict,
     }
 
 
@@ -6336,63 +5103,21 @@ class Vdiscoverytask(InfobloxObject):
 class DNSView(InfobloxObject):
     _infoblox_type = 'view'
     _fields = ['blacklist_action', 'blacklist_log_query', 'blacklist_redirect_addresses', 'blacklist_redirect_ttl', 'blacklist_rulesets', 'cloud_info', 'comment', 'custom_root_name_servers', 'ddns_force_creation_timestamp_update', 'ddns_principal_group', 'ddns_principal_tracking', 'ddns_restrict_patterns', 'ddns_restrict_patterns_list', 'ddns_restrict_protected', 'ddns_restrict_secure', 'ddns_restrict_static', 'disable', 'dns64_enabled', 'dns64_groups', 'dnssec_enabled', 'dnssec_expired_signatures_enabled', 'dnssec_negative_trust_anchors', 'dnssec_trusted_keys', 'dnssec_validation_enabled', 'enable_blacklist', 'enable_fixed_rrset_order_fqdns', 'enable_match_recursive_only', 'extattrs', 'filter_aaaa', 'filter_aaaa_list', 'fixed_rrset_order_fqdns', 'forward_only', 'forwarders', 'is_default', 'lame_ttl', 'match_clients', 'match_destinations', 'max_cache_ttl', 'max_ncache_ttl', 'name', 'network_view', 'notify_delay', 'nxdomain_log_query', 'nxdomain_redirect', 'nxdomain_redirect_addresses', 'nxdomain_redirect_addresses_v6', 'nxdomain_redirect_ttl', 'nxdomain_rulesets', 'recursion', 'response_rate_limiting', 'root_name_server_type', 'rpz_drop_ip_rule_enabled', 'rpz_drop_ip_rule_min_prefix_length_ipv4', 'rpz_drop_ip_rule_min_prefix_length_ipv6', 'rpz_qname_wait_recurse', 'scavenging_settings', 'sortlist', 'use_blacklist', 'use_ddns_force_creation_timestamp_update', 'use_ddns_patterns_restriction', 'use_ddns_principal_security', 'use_ddns_restrict_protected', 'use_ddns_restrict_static', 'use_dns64', 'use_dnssec', 'use_filter_aaaa', 'use_fixed_rrset_order_fqdns', 'use_forwarders', 'use_lame_ttl', 'use_max_cache_ttl', 'use_max_ncache_ttl', 'use_nxdomain_redirect', 'use_recursion', 'use_response_rate_limiting', 'use_root_name_server', 'use_rpz_drop_ip_rule', 'use_rpz_qname_wait_recurse', 'use_scavenging_settings', 'use_sortlist']
-    _search_for_update_fields = ['comment', 'is_default', 'name']
+    _search_for_update_fields = ['comment', 'is_default', 'name', 'network_view']
     _updateable_search_fields = ['blacklist_action', 'blacklist_log_query', 'comment', 'dns64_enabled', 'dnssec_enabled', 'dnssec_expired_signatures_enabled', 'dnssec_validation_enabled', 'enable_blacklist', 'filter_aaaa', 'forward_only', 'name', 'network_view', 'nxdomain_log_query', 'nxdomain_redirect', 'recursion', 'root_name_server_type']
     _all_searchable_fields = ['blacklist_action', 'blacklist_log_query', 'comment', 'dns64_enabled', 'dnssec_enabled', 'dnssec_expired_signatures_enabled', 'dnssec_validation_enabled', 'enable_blacklist', 'filter_aaaa', 'forward_only', 'is_default', 'name', 'network_view', 'nxdomain_log_query', 'nxdomain_redirect', 'recursion', 'root_name_server_type']
     _return_fields = ['comment', 'extattrs', 'is_default', 'name']
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_custom_root_name_servers(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_dnssec_trusted_keys(members):
-        if not members:
-            return None
-        return [Dnssectrustedkey.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_filter_aaaa_list(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_fixed_rrset_order_fqdns(members):
-        if not members:
-            return None
-        return [GridDnsFixedrrsetorderfqdn.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_match_clients(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_match_destinations(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_sortlist(members):
-        if not members:
-            return None
-        return [Sortlist.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'custom_root_name_servers': _build_custom_root_name_servers.__func__,
-        'dnssec_trusted_keys': _build_dnssec_trusted_keys.__func__,
-        'filter_aaaa_list': _build_filter_aaaa_list.__func__,
-        'fixed_rrset_order_fqdns': _build_fixed_rrset_order_fqdns.__func__,
-        'match_clients': _build_match_clients.__func__,
-        'match_destinations': _build_match_destinations.__func__,
-        'sortlist': _build_sortlist.__func__,
+        'custom_root_name_servers': Extserver.from_dict,
+        'dnssec_trusted_keys': Dnssectrustedkey.from_dict,
+        'filter_aaaa_list': Addressac.from_dict,
+        'fixed_rrset_order_fqdns': GridDnsFixedrrsetorderfqdn.from_dict,
+        'match_clients': Addressac.from_dict,
+        'match_destinations': Addressac.from_dict,
+        'sortlist': Sortlist.from_dict,
     }
 
     def run_scavenging(self, *args, **kwargs):
@@ -6444,123 +5169,27 @@ class DNSZone(InfobloxObject):
     _search_for_update_fields = ['fqdn', 'view']
     _updateable_search_fields = ['comment', 'view']
     _all_searchable_fields = ['comment', 'dnssec_ksk_rollover_date', 'dnssec_zsk_rollover_date', 'fqdn', 'parent', 'view', 'zone_format']
-    _return_fields = ['extattrs', 'fqdn', 'view']
+    _return_fields = ['extattrs', 'fqdn', 'view', 'zone_format', 'ns_group', 'prefix', 'grid_primary', 'grid_secondaries']
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_allow_active_dir(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_allow_query(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_allow_transfer(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_allow_update(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_dnssec_keys(members):
-        if not members:
-            return None
-        return [Dnsseckey.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_external_primaries(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_external_secondaries(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_grid_primary(members):
-        if not members:
-            return None
-        return [Memberserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_grid_secondaries(members):
-        if not members:
-            return None
-        return [Memberserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_member_soa_mnames(members):
-        if not members:
-            return None
-        return [GridmemberSoamname.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_member_soa_serials(members):
-        if not members:
-            return None
-        return [GridmemberSoaserial.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ms_allow_transfer(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ms_dc_ns_record_creation(members):
-        if not members:
-            return None
-        return [MsserverDcnsrecordcreation.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ms_primaries(members):
-        if not members:
-            return None
-        return [Msdnsserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_ms_secondaries(members):
-        if not members:
-            return None
-        return [Msdnsserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_update_forwarding(members):
-        if not members:
-            return None
-        return [Addressac.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'allow_active_dir': _build_allow_active_dir.__func__,
-        'allow_query': _build_allow_query.__func__,
-        'allow_transfer': _build_allow_transfer.__func__,
-        'allow_update': _build_allow_update.__func__,
-        'dnssec_keys': _build_dnssec_keys.__func__,
-        'external_primaries': _build_external_primaries.__func__,
-        'external_secondaries': _build_external_secondaries.__func__,
-        'grid_primary': _build_grid_primary.__func__,
-        'grid_secondaries': _build_grid_secondaries.__func__,
-        'member_soa_mnames': _build_member_soa_mnames.__func__,
-        'member_soa_serials': _build_member_soa_serials.__func__,
-        'ms_allow_transfer': _build_ms_allow_transfer.__func__,
-        'ms_dc_ns_record_creation': _build_ms_dc_ns_record_creation.__func__,
-        'ms_primaries': _build_ms_primaries.__func__,
-        'ms_secondaries': _build_ms_secondaries.__func__,
-        'update_forwarding': _build_update_forwarding.__func__,
+        'allow_active_dir': Addressac.from_dict,
+        'allow_query': Addressac.from_dict,
+        'allow_transfer': Addressac.from_dict,
+        'allow_update': Addressac.from_dict,
+        'dnssec_keys': Dnsseckey.from_dict,
+        'external_primaries': Extserver.from_dict,
+        'external_secondaries': Extserver.from_dict,
+        'grid_primary': Memberserver.from_dict,
+        'grid_secondaries': Memberserver.from_dict,
+        'member_soa_mnames': GridmemberSoamname.from_dict,
+        'member_soa_serials': GridmemberSoaserial.from_dict,
+        'ms_allow_transfer': Addressac.from_dict,
+        'ms_dc_ns_record_creation': MsserverDcnsrecordcreation.from_dict,
+        'ms_primaries': Msdnsserver.from_dict,
+        'ms_secondaries': Msdnsserver.from_dict,
+        'update_forwarding': Addressac.from_dict,
     }
 
     def copyzonerecords(self, *args, **kwargs):
@@ -6612,14 +5241,8 @@ class DNSZoneDelegated(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_delegate_to(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'delegate_to': _build_delegate_to.__func__,
+        'delegate_to': Extserver.from_dict,
     }
 
     def lock_unlock_zone(self, *args, **kwargs):
@@ -6636,21 +5259,9 @@ class DNSZoneForward(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_forward_to(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_forwarding_servers(members):
-        if not members:
-            return None
-        return [Forwardingmemberserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'forward_to': _build_forward_to.__func__,
-        'forwarding_servers': _build_forwarding_servers.__func__,
+        'forward_to': Extserver.from_dict,
+        'forwarding_servers': Forwardingmemberserver.from_dict,
     }
 
     def lock_unlock_zone(self, *args, **kwargs):
@@ -6667,49 +5278,13 @@ class ZoneRp(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_external_primaries(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_external_secondaries(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_grid_primary(members):
-        if not members:
-            return None
-        return [Memberserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_grid_secondaries(members):
-        if not members:
-            return None
-        return [Memberserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_member_soa_mnames(members):
-        if not members:
-            return None
-        return [GridmemberSoamname.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_member_soa_serials(members):
-        if not members:
-            return None
-        return [GridmemberSoaserial.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'external_primaries': _build_external_primaries.__func__,
-        'external_secondaries': _build_external_secondaries.__func__,
-        'grid_primary': _build_grid_primary.__func__,
-        'grid_secondaries': _build_grid_secondaries.__func__,
-        'member_soa_mnames': _build_member_soa_mnames.__func__,
-        'member_soa_serials': _build_member_soa_serials.__func__,
+        'external_primaries': Extserver.from_dict,
+        'external_secondaries': Extserver.from_dict,
+        'grid_primary': Memberserver.from_dict,
+        'grid_secondaries': Memberserver.from_dict,
+        'member_soa_mnames': GridmemberSoamname.from_dict,
+        'member_soa_serials': GridmemberSoaserial.from_dict,
     }
 
     def copy_rpz_records(self, *args, **kwargs):
@@ -6729,28 +5304,10 @@ class ZoneStub(InfobloxObject):
     _remap = {}
     _shadow_fields = ['_ref']
 
-    @staticmethod
-    def _build_stub_from(members):
-        if not members:
-            return None
-        return [Extserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_stub_members(members):
-        if not members:
-            return None
-        return [Memberserver.from_dict(m) for m in members]
-
-    @staticmethod
-    def _build_stub_msservers(members):
-        if not members:
-            return None
-        return [Msdnsserver.from_dict(m) for m in members]
-
     _custom_field_processing = {
-        'stub_from': _build_stub_from.__func__,
-        'stub_members': _build_stub_members.__func__,
-        'stub_msservers': _build_stub_msservers.__func__,
+        'stub_from': Extserver.from_dict,
+        'stub_members': Memberserver.from_dict,
+        'stub_msservers': Msdnsserver.from_dict,
     }
 
     def lock_unlock_zone(self, *args, **kwargs):
