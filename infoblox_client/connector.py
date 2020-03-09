@@ -21,12 +21,6 @@ import six
 import urllib3
 from requests import exceptions as req_exc
 
-from infoblox_client import exceptions as ib_ex
-from infoblox_client import utils
-
-IP_PATTERN = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
-
-
 try:
     import urlparse
 except ImportError:
@@ -42,6 +36,8 @@ try:
 except ImportError:  # pragma: no cover
     import json as jsonutils
 
+from infoblox_client import exceptions as ib_ex
+from infoblox_client import utils
 
 LOG = logging.getLogger(__name__)
 CLOUD_WAPI_MAJOR_VERSION = 2
@@ -234,18 +230,6 @@ class Connector(object):
         else:
             LOG.debug(*message)
 
-    @staticmethod
-    def _extract_ip(ref_value=''):
-        if not ref_value:
-            return
-
-        ip = re.findall(IP_PATTERN, ref_value)
-        ip = ip[0] if ip else ''
-
-        if ip:
-            ip = '.'.join(ip.split('.')[::-1])
-        return ip
-
     @reraise_neutron_exception
     def get_object(self, obj_type, payload=None, return_fields=None,
                    extattrs=None, force_proxy=False, max_results=None,
@@ -299,11 +283,7 @@ class Connector(object):
         proxy_flag = self.cloud_api_enabled and force_proxy
         ib_object = self._handle_get_object(obj_type, query_params, extattrs,
                                             proxy_flag)
-
-        if ib_object and isinstance(ib_object, list):
-            for obj in ib_object:
-                if isinstance(obj, dict) and obj.get('ipv4addr') is None:
-                    obj['ipv4addr'] = self._extract_ip(obj.get('_ref', ''))
+        if ib_object:
             return ib_object
 
         # Do second get call with force_proxy if not done yet

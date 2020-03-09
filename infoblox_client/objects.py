@@ -363,8 +363,6 @@ class InfobloxObject(BaseObject):
     def search(cls, connector, **kwargs):
         ib_obj, parse_class = cls._search(
             connector, **kwargs)
-        if ib_obj and len(ib_obj) > 1 and ib_obj[1]:
-            return parse_class.from_dict(connector, ib_obj[1])
         if ib_obj:
             return parse_class.from_dict(connector, ib_obj[0])
 
