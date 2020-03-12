@@ -2,6 +2,10 @@
 
 History
 -------
+0.4.25 (2020-03-12)
+___________________
+* Bug Fixes
+
 0.4.24 (2020-02-25)
 ___________________
 * Added some extra fields(ms_server) for Fixed Address
