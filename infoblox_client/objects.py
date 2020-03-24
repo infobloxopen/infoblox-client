@@ -802,6 +802,16 @@ class FixedAddressV4(FixedAddress):
 
     _custom_field_processing = {'options': _build_options.__func__}
 
+    @property
+    def ipv4addr(self):
+        # Convert IPAllocation objects to string
+        if hasattr(self, '_ipv4addr'):
+            return str(self._ipv4addr)
+
+    @ipv4addr.setter
+    def ipv4addr(self, ipv4addr):
+        self._ipv4addr = ipv4addr
+
 
 class FixedAddressV6(FixedAddress):
     """FixedAddress for IPv6"""
@@ -832,6 +842,16 @@ class FixedAddressV6(FixedAddress):
             self.duid = ib_utils.generate_duid(mac)
         elif not hasattr(self, 'duid'):
             self.duid = None
+
+    @property
+    def ipv6addr(self):
+        # Convert IPAllocation objects to string
+        if hasattr(self, '_ipv6addr'):
+            return str(self._ipv6addr)
+
+    @ipv6addr.setter
+    def ipv6addr(self, ipv6addr):
+        self._ipv6addr = ipv6addr
 
 
 class ARecordBase(InfobloxObject):
