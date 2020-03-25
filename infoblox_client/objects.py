@@ -2228,9 +2228,22 @@ class FixedAddressV4(FixedAddress):
     _updateable_search_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'ipv4addr', 'mac', 'match_client', 'ms_server', 'network', 'network_view']
     _all_searchable_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'ipv4addr', 'mac', 'match_client', 'ms_server', 'network', 'network_view']
     _return_fields = ['extattrs', 'ipv4addr', 'network_view', 'mac']
-    _remap = {'ip': 'ipv4addr'}
+    _remap = {'ipv4addr': 'ip'}
     _shadow_fields = ['_ref', 'ip']
     _ip_version = 4
+
+    @property
+    def ip(self):
+        if hasattr(self, '_ip'):
+            return str(self._ip)
+
+    # This object represents both ipv4 and ipv6 objects, so it doesn't need
+    # versioned object for that. Just set v4 or v6 field in addition
+    # to setting shadow field 'ip' itself.
+    @ip.setter
+    def ip(self, ip):
+        self._ip = ip
+    
 
     _custom_field_processing = {
         'cli_credentials': DiscoveryClicredential.from_dict,
@@ -2248,8 +2261,8 @@ class FixedAddressV6(FixedAddress):
     _updateable_search_fields = ['address_type', 'comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'duid', 'ipv6addr', 'ipv6prefix', 'ipv6prefix_bits', 'network', 'network_view']
     _all_searchable_fields = ['address_type', 'comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'duid', 'ipv6addr', 'ipv6prefix', 'ipv6prefix_bits', 'network', 'network_view']
     _return_fields = ['duid', 'extattrs', 'ipv6addr', 'network_view']
-    _remap = {'ip': 'ipv6addr'}
-    _shadow_fields = ['_ref', 'ip', 'mac']
+    _remap = {'ipv6addr': 'ip'}
+    _shadow_fields = ['_ref', 'mac', 'ip']
     _ip_version = 6
 
     """Set mac and duid fields
@@ -2269,6 +2282,19 @@ class FixedAddressV6(FixedAddress):
             self.duid = ib_utils.generate_duid(mac)
         elif not hasattr(self, 'duid'):
             self.duid = None 
+    
+
+    @property
+    def ip(self):
+        if hasattr(self, '_ip'):
+            return str(self._ip)
+
+    # This object represents both ipv4 and ipv6 objects, so it doesn't need
+    # versioned object for that. Just set v4 or v6 field in addition
+    # to setting shadow field 'ip' itself.
+    @ip.setter
+    def ip(self, ip):
+        self._ip = ip
     
 
     _custom_field_processing = {
@@ -3317,6 +3343,7 @@ class MemberDhcpproperties(InfobloxObject):
     @ip.setter
     def ip(self, ip):
         self._ip = ip
+    
         if ib_utils.determine_ip_version(ip) == 6:
             if 'ipv6addr' not in self._fields:
                 raise ib_ex.InfobloxInvalidIp(ip=ip)
@@ -3363,6 +3390,7 @@ class MemberDns(InfobloxObject):
     @ip.setter
     def ip(self, ip):
         self._ip = ip
+    
         if ib_utils.determine_ip_version(ip) == 6:
             if 'ipv6addr' not in self._fields:
                 raise ib_ex.InfobloxInvalidIp(ip=ip)
@@ -4018,10 +4046,10 @@ class HostRecord(InfobloxObject):
 
 class HostRecordV4(HostRecord):
     _infoblox_type = 'record:host'
-    _fields = ['aliases', 'allow_telnet', 'cli_credentials', 'cloud_info', 'comment', 'configure_for_dns', 'ddns_protected', 'device_description', 'device_location', 'device_type', 'device_vendor', 'disable', 'disable_discovery', 'dns_aliases', 'dns_name', 'enable_immediate_discovery', 'extattrs', 'ipv4addrs', 'last_queried', 'ms_ad_user_data', 'name', 'network_view', 'restart_if_needed', 'rrset_order', 'snmp3_credential', 'snmp_credential', 'ttl', 'use_cli_credentials', 'use_snmp3_credential', 'use_snmp_credential', 'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['name', 'view', 'ipv4addr']
+    _fields = ['aliases', 'allow_telnet', 'cli_credentials', 'cloud_info', 'comment', 'configure_for_dns', 'ddns_protected', 'device_description', 'device_location', 'device_type', 'device_vendor', 'disable', 'disable_discovery', 'dns_aliases', 'dns_name', 'enable_immediate_discovery', 'extattrs', 'ipv4addrs', 'last_queried', 'ms_ad_user_data', 'name', 'network_view', 'restart_if_needed', 'rrset_order', 'snmp3_credential', 'snmp_credential', 'ttl', 'use_cli_credentials', 'use_snmp3_credential', 'use_snmp_credential', 'use_ttl', 'view', 'zone', 'mac']
+    _search_for_update_fields = ['name', 'view', 'mac', 'ipv4addr']
     _updateable_search_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'view']
-    _all_searchable_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'network_view', 'view', 'zone', 'ipv4addr']
+    _all_searchable_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'network_view', 'view', 'zone', 'mac', 'ipv4addr']
     _return_fields = ['extattrs', 'ipv4addrs', 'name', 'view', 'aliases']
     _remap = {'ip': 'ipv4addrs', 'ips': 'ipv4addrs'}
     _shadow_fields = ['_ref', 'ipv4addr']
@@ -4085,10 +4113,10 @@ class HostRecordV4(HostRecord):
 
 class HostRecordV6(HostRecord):
     _infoblox_type = 'record:host'
-    _fields = ['aliases', 'allow_telnet', 'cli_credentials', 'cloud_info', 'comment', 'configure_for_dns', 'ddns_protected', 'device_description', 'device_location', 'device_type', 'device_vendor', 'disable', 'disable_discovery', 'dns_aliases', 'dns_name', 'enable_immediate_discovery', 'extattrs', 'ipv6addrs', 'last_queried', 'ms_ad_user_data', 'name', 'network_view', 'restart_if_needed', 'rrset_order', 'snmp3_credential', 'snmp_credential', 'ttl', 'use_cli_credentials', 'use_snmp3_credential', 'use_snmp_credential', 'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['name', 'view', 'ipv6addr']
+    _fields = ['aliases', 'allow_telnet', 'cli_credentials', 'cloud_info', 'comment', 'configure_for_dns', 'ddns_protected', 'device_description', 'device_location', 'device_type', 'device_vendor', 'disable', 'disable_discovery', 'dns_aliases', 'dns_name', 'enable_immediate_discovery', 'extattrs', 'ipv6addrs', 'last_queried', 'ms_ad_user_data', 'name', 'network_view', 'restart_if_needed', 'rrset_order', 'snmp3_credential', 'snmp_credential', 'ttl', 'use_cli_credentials', 'use_snmp3_credential', 'use_snmp_credential', 'use_ttl', 'view', 'zone', 'mac']
+    _search_for_update_fields = ['name', 'view', 'mac', 'ipv6addr']
     _updateable_search_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'view']
-    _all_searchable_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'network_view', 'view', 'zone', 'ipv6addr']
+    _all_searchable_fields = ['comment', 'device_description', 'device_location', 'device_type', 'device_vendor', 'name', 'network_view', 'view', 'zone', 'mac', 'ipv6addr']
     _return_fields = ['extattrs', 'ipv6addrs', 'name', 'view', 'aliases']
     _remap = {'ip': 'ipv6addrs', 'ips': 'ipv6addrs'}
     _shadow_fields = ['_ref', 'ipv6addr']
@@ -4874,6 +4902,7 @@ class Taxii(InfobloxObject):
     @ip.setter
     def ip(self, ip):
         self._ip = ip
+    
         if ib_utils.determine_ip_version(ip) == 6:
             if 'ipv6addr' not in self._fields:
                 raise ib_ex.InfobloxInvalidIp(ip=ip)

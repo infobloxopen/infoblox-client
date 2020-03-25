@@ -136,7 +136,7 @@ class TestObjects(unittest.TestCase):
             {'name': 'mx.demo.my_zone.com',
              'mail_exchanger': 'demo.my_zone.com',
              'view': 'my_dns_view',
-             'preference': 1}, ['name', 'mail_exchanger', 'preference'])
+             'preference': 1}, ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
 
     def test_update_MX_Record(self):
         mx_record_copy = [
@@ -151,7 +151,7 @@ class TestObjects(unittest.TestCase):
                                      update_if_exists=True)
         connector.update_object.assert_called_once_with(mx_record_copy[0]['_ref'],
                 {'name': 'mx1.demo.my_zone.com', 'mail_exchanger': 'demo2.my_zone.com', 'preference': 1},
-                ['name', 'mail_exchanger', 'preference'])
+                ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
 
     def test_search_and_delete_MX_Record(self):
         mx_record_copy = copy.deepcopy(DEFAULT_MX_RECORD)
@@ -163,7 +163,7 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'record:mx',{'view': 'some_view', 'name': 'some_name'},
             extattrs=None, force_proxy=False, max_results=None,
-            return_fields=['name', 'mail_exchanger', 'preference'])
+            return_fields=['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
         mx_record.delete()
         connector.delete_object.assert_called_once_with(DEFAULT_MX_RECORD['_ref'])
 
@@ -187,7 +187,7 @@ class TestObjects(unittest.TestCase):
                 {'mac': 'fa:16:3e:29:87:70',
                  'ipv4addr': '22.0.0.2'}],
              'view': 'some-dns-view'},
-            ['ipv4addrs', 'extattrs', 'aliases'])
+            ['extattrs', 'ipv4addrs', 'name', 'view', 'aliases'])
                     
     def test_create_host_record_with_ip(self):
         mock_record = DEFAULT_HOST_RECORD
@@ -307,7 +307,7 @@ class TestObjects(unittest.TestCase):
         connector.create_object.assert_called_once_with(
             'ipv6fixedaddress',
             {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',
-             'duid': mock.ANY, 'ms_server': {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.1.0'}}, mock.ANY)
+             'duid': mock.ANY }, mock.ANY)
 
     @mock.patch('infoblox_client.utils.generate_duid')
     def test_fixed_address_v6(self, generate):
