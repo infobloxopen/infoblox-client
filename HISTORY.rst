@@ -2,6 +2,15 @@
 
 History
 -------
+0.4.25 (2020-03-12)
+___________________
+* Bug Fixes
+
+0.4.24 (2020-02-25)
+___________________
+* Added some extra fields(ms_server) for Fixed Address
+* Supporting MX record
+* Bug Fixes - PTR records now return an IP
 
 0.4.23 (2019-09-10)
 ___________________

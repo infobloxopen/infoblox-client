@@ -260,7 +260,7 @@ class ObjectManagerTestCase(unittest.TestCase):
 
     def test_update_network_merges_eas(self):
         original_ea = objects.EA({'User EA': 'user value',
-                                 'Subnet ID': 'one'})
+                                  'Subnet ID': 'one'})
         new_ea = objects.EA({'Subnet ID': 'two'})
         merged_ea = objects.EA({'User EA': 'user value',
                                 'Subnet ID': 'two'}).to_dict()
@@ -758,7 +758,7 @@ class ObjectManagerTestCase(unittest.TestCase):
             'zone_format': 'FORWARD',
             'ns_group': 'test_group',
             'extattrs': old_attrs
-            }
+        }
 
         connector = mock.Mock()
         connector.get_object.return_value = [zone]
