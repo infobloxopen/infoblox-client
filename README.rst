@@ -1,8 +1,18 @@
 ===============================
 Infoblox Client
 ===============================
-**This is development branch of infoblox-client. Expect incompatiblities and random breakage**
-----------------------------------------------------------------------------------------------
+
+.. image:: https://travis-ci.org/infobloxopen/infoblox-client.svg?branch=master
+        :target: https://travis-ci.org/infobloxopen/infoblox-client
+
+.. image:: https://img.shields.io/pypi/v/infoblox-client.svg
+        :target: https://pypi.python.org/pypi/infoblox-client
+
+.. image:: https://codecov.io/github/infobloxopen/infoblox-client/coverage.svg?branch=master
+        :target: https://codecov.io/github/infobloxopen/infoblox-client?branch=master
+
+.. image:: https://readthedocs.org/projects/infoblox-client/badge/?version=latest
+        :target: http://infoblox-client.readthedocs.org/en/latest/?badge=latest
 
 Client for interacting with Infoblox NIOS over WAPI.
 
