@@ -1096,10 +1096,11 @@ class MXRecord(InfobloxObject):
 
 class TXTRecord(InfobloxObject):
     _infoblox_type = 'record:txt'
-    _fields = ['aws_rte53_record_info', 'cloud_info', 'comment', 'creation_time',
-               'creator', 'ddns_principal', 'ddns_protected', 'disable', 'dns_name',
-               'extattrs', 'forbid_reclamation', 'last_queried', 'name', 'reclaimable',
-               'shared_record_group', 'text', 'ttl', 'use_ttl', 'view', 'zone']
+    _fields = ['aws_rte53_record_info', 'cloud_info', 'comment',
+               'creation_time','creator', 'ddns_principal', 'ddns_protected',
+               'disable', 'dns_name', 'extattrs', 'forbid_reclamation',
+               'last_queried', 'name', 'reclaimable', 'shared_record_group',
+               'text', 'ttl', 'use_ttl', 'view', 'zone']
     _search_for_update_fields = ['name', 'view']
     _updateable_search_fields = ['comment', 'creator', 'ddns_principal',
                                  'name', 'text', 'view']
