@@ -1,6 +1,0 @@
-Defaulting to user installation because normal site-packages is not writeable
-Collecting python-dateutil
-  Using cached python_dateutil-2.8.1-py2.py3-none-any.whl (227 kB)
-Requirement already satisfied: six>=1.5 in /home/ubuntu/.local/lib/python3.5/site-packages (from python-dateutil) (1.14.0)
-Installing collected packages: python-dateutil
-Successfully installed python-dateutil-2.8.1
