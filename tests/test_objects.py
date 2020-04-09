@@ -541,7 +541,7 @@ class TestObjects(unittest.TestCase):
         txt_record_copy = copy.deepcopy(mock_record)
         connector = self._mock_connector(create_object=txt_record_copy)
         txt = objects.TXTRecord.create(connector, name='text_test.my_zone.com',
-                                     text='hello_test',
+                                     text='hello_text',
                                      view='my_dns_view')
         self.assertIsInstance(txt, objects.TXTRecord)
         connector.create_object.assert_called_once_with(
