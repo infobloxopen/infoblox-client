@@ -49,6 +49,14 @@ DEFAULT_MX_RECORD = {
     'mail_exchanger': 'demo.my_zone.com'
 }
 
+DEFAULT_TXT_RECORD = {
+    '_ref': 'record:txt/%s'
+            'text_test.my_zone.com/my_dns_view' % REC,
+    'view': 'my_dns_view',
+    'name': 'text_test.my_zone.com',
+    'text': 'hello_test'
+}
+
 
 class TestObjects(unittest.TestCase):
 
@@ -138,7 +146,7 @@ class TestObjects(unittest.TestCase):
             {'name': 'mx.demo.my_zone.com',
              'mail_exchanger': 'demo.my_zone.com',
              'view': 'my_dns_view',
-             'preference': 1}, ['name', 'mail_exchanger', 'preference'])
+             'preference': 1}, ['name', 'mail_exchanger', 'preference', 'extattrs'])
 
     def test_update_MX_Record(self):
         mx_record_copy = [
@@ -158,7 +166,7 @@ class TestObjects(unittest.TestCase):
             {'name': 'mx1.demo.my_zone.com',
              'mail_exchanger': 'demo2.my_zone.com',
              'preference': 1},
-            ['name', 'mail_exchanger', 'preference'])
+            ['name', 'mail_exchanger', 'preference', 'extattrs'])
 
     def test_search_and_delete_MX_Record(self):
         mx_record_copy = copy.deepcopy(DEFAULT_MX_RECORD)
@@ -171,10 +179,11 @@ class TestObjects(unittest.TestCase):
             'record:mx', {'view': 'some_view',
                           'name': 'some_name'},
             extattrs=None, force_proxy=False, max_results=None,
-            return_fields=['name', 'mail_exchanger', 'preference'])
+            return_fields=['name', 'mail_exchanger', 'preference', 'extattrs'])
         mx_record.delete()
         connector.delete_object.assert_called_once_with(
             DEFAULT_MX_RECORD['_ref'])
+
 
     def test_create_host_record_with_ttl(self):
         mock_record = DEFAULT_HOST_RECORD
@@ -526,3 +535,18 @@ class TestObjects(unittest.TestCase):
         data = {'host_name': 'cp.com',
                 'unknown_field': 'some_data'}
         self.assertEqual(data, objects.Member._remap_fields(data))
+
+    def test_TXT_Record(self):
+        mock_record = DEFAULT_TXT_RECORD
+        txt_record_copy = copy.deepcopy(mock_record)
+        connector = self._mock_connector(create_object=txt_record_copy)
+        txt = objects.TXTRecord.create(connector, name='text_test.my_zone.com',
+                                     text='hello_text',
+                                     view='my_dns_view')
+        self.assertIsInstance(txt, objects.TXTRecord)
+        connector.create_object.assert_called_once_with(
+            'record:txt',
+            {'name': 'text_test.my_zone.com',
+             'text': 'hello_text',
+             'view': 'my_dns_view',
+            }, ['extattrs', 'name', 'text', 'view'])

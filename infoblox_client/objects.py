@@ -1090,5 +1090,21 @@ class MXRecord(InfobloxObject):
     _all_searchable_fields = ['name', 'mail_exchanger', 'comment', 'creator',
                               'ddns_principal', 'preference', 'view', 'zone']
     _updateable_search_fields = ['name', 'mail_exchanger', 'preference']
-    _return_fields = ['name', 'mail_exchanger', 'preference']
+    _return_fields = ['name', 'mail_exchanger', 'preference', 'extattrs']
+    _shadow_fields = ['_ref']
+
+
+class TXTRecord(InfobloxObject):
+    _infoblox_type = 'record:txt'
+    _fields = ['aws_rte53_record_info', 'cloud_info', 'comment',
+               'creation_time', 'creator', 'ddns_principal', 'ddns_protected',
+               'disable', 'dns_name', 'extattrs', 'forbid_reclamation',
+               'last_queried', 'name', 'reclaimable', 'shared_record_group',
+               'text', 'ttl', 'use_ttl', 'view', 'zone']
+    _search_for_update_fields = ['name', 'view']
+    _updateable_search_fields = ['comment', 'creator', 'ddns_principal',
+                                 'name', 'text', 'view']
+    _all_searchable_fields = ['comment', 'creator', 'ddns_principal', 'name',
+                              'reclaimable', 'text', 'view', 'zone']
+    _return_fields = ['extattrs', 'name', 'text', 'view']
     _shadow_fields = ['_ref']
