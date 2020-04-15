@@ -49,6 +49,14 @@ DEFAULT_MX_RECORD = {
     'mail_exchanger': 'demo.my_zone.com'
 }
 
+DEFAULT_TXT_RECORD = {
+    '_ref': 'record:txt/%s'
+            'text_test.my_zone.com/my_dns_view' % REC,
+    'view': 'my_dns_view',
+    'name': 'text_test.my_zone.com',
+    'text': 'hello_test'
+}
+
 
 class TestObjects(unittest.TestCase):
 
@@ -175,6 +183,7 @@ class TestObjects(unittest.TestCase):
         mx_record.delete()
         connector.delete_object.assert_called_once_with(
             DEFAULT_MX_RECORD['_ref'])
+
 
     def test_create_host_record_with_ttl(self):
         mock_record = DEFAULT_HOST_RECORD
@@ -524,3 +533,18 @@ class TestObjects(unittest.TestCase):
         data = {'host_name': 'cp.com',
                 'unknown_field': 'some_data'}
         self.assertEqual(data, objects.Member._remap_fields(data))
+
+    def test_TXT_Record(self):
+        mock_record = DEFAULT_TXT_RECORD
+        txt_record_copy = copy.deepcopy(mock_record)
+        connector = self._mock_connector(create_object=txt_record_copy)
+        txt = objects.TXTRecord.create(connector, name='text_test.my_zone.com',
+                                     text='hello_text',
+                                     view='my_dns_view')
+        self.assertIsInstance(txt, objects.TXTRecord)
+        connector.create_object.assert_called_once_with(
+            'record:txt',
+            {'name': 'text_test.my_zone.com',
+             'text': 'hello_text',
+             'view': 'my_dns_view',
+            }, ['extattrs', 'name', 'text', 'view'])
