@@ -651,7 +651,7 @@ class ObjectManagerTestCase(unittest.TestCase):
     def test_member_is_assigned_as_list_on_network_create(self):
         net_view = 'net-view-name'
         cidr = '192.168.1.0/24'
-        nameservers = []
+        nameservers = ['1.1.1.1']
         members = [
             objects.AnyMember(name='just-a-single-member-ip',
                               ip='192.168.1.25',
@@ -666,7 +666,8 @@ class ObjectManagerTestCase(unittest.TestCase):
                          'name': 'just-a-single-member-ip'}],
             'network_view': net_view,
             'network': cidr,
-            'options': [{'name': 'routers', 'value': gateway_ip},
+            'options': [{'name': 'domain-name-servers', 'value': '1.1.1.1'},
+                        {'name': 'routers', 'value': gateway_ip},
                         {'name': 'dhcp-server-identifier',
                          'value': dhcp_trel_ip,
                          'num': 54}]}
