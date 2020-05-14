@@ -2,6 +2,13 @@
 
 History
 -------
+
+0.5.0 (2020-05-14)
+------------------
+* Majorly Updated objects with around 380+ NIOS object calls supported now.(Find the infoblox_client/objects.py file to list the supported objects and its descriptions)
+* Bug Fixes
+* python-six dependency set to >=1.11.0 
+
 0.4.25 (2020-03-12)
 ___________________
 * Bug Fixes
