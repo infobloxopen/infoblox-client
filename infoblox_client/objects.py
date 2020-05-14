@@ -10265,7 +10265,7 @@ class Member(InfobloxObject):
     _return_fields = ['config_addr_type', 'extattrs', 'host_name', 'platform',
                       'service_type_configuration']
     _remap = {'name': 'host_name'}
-    _shadow_fields = ['_ref', 'name']
+    _shadow_fields = ['_ref', 'name', 'ip']
 
     _custom_field_processing = {
         'additional_ip_list': Interface.from_dict,
