@@ -1,0 +1,564 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>History &#8212; Infoblox Client 0.5.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Credits" href="authors.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="authors.html" title="Credits"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Infoblox Client 0.5.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="history">
+<h1>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="id1">
+<h1>0.5.0 (2020-05-14)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Majorly Updated objects with around 380+ NIOS object calls supported now.(Find the infoblox_client/objects.py file to list the supported objects and its descriptions)</p></li>
+<li><p>Bug Fixes</p></li>
+<li><p>python-six dependency set to &gt;=1.11.0</p></li>
+</ul>
+<div class="section" id="id2">
+<h2>0.4.25 (2020-03-12)<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Bug Fixes</p></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>0.4.24 (2020-02-25)<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Added some extra fields(ms_server) for Fixed Address</p></li>
+<li><p>Supporting MX record</p></li>
+<li><p>Bug Fixes - PTR records now return an IP</p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h2>0.4.23 (2019-09-10)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Added some extra fields for network class</p></li>
+<li><p>Fixed update option for A Record</p></li>
+<li><p>Adding fields for fixed address</p></li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h2>0.4.22 (2019-02-21)<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Supported returning default fileds plus user required fields reflecting WAPI</p></li>
+<li><p>Supporting ‘aliases’ parameter of HOST record for DNS</p></li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h2>0.4.21 (2019-01-18)<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Supporting wapi version 2.10 or above</p></li>
+</ul>
+</div>
+<div class="section" id="id7">
+<h2>0.4.20 (2018-03-27)<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Updated default WAPI version from 1.4 to 2.1</p></li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h2>0.4.19 (2018-02-06)<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Changed logging of failure on object search from Error to Warning</p></li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h2>0.4.18 (2017-11-20)<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Fix bug related to temporary unavailable status code</p></li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h2>0.4.17 (2017-11-09)<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Added pagination support for wapi calls</p></li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h2>0.4.15 (2017-07-18)<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Changed logic of generate duid using only mac address</p></li>
+</ul>
+</div>
+<div class="section" id="id12">
+<h2>0.4.14 (2017-05-18)<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add function to check object is created or reused</p></li>
+</ul>
+</div>
+<div class="section" id="id13">
+<h2>0.4.13 (2017-03-01)<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add TTL field to HostRecordV*</p></li>
+<li><p>Add CNAME record support</p></li>
+<li><p>Specify return fields for an SRV record</p></li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h2>0.4.12 (2016-12-08)<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Allow search all fields</p></li>
+<li><p>Remove ptrdname from PTR record search attributes</p></li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h2>0.4.11 (2016-10-31)<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add search HostRecords by MAC</p></li>
+</ul>
+</div>
+<div class="section" id="id16">
+<h2>0.4.10 (2016-10-24)<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Updated history and author</p></li>
+</ul>
+</div>
+<div class="section" id="id17">
+<h2>0.4.9 (2016-10-24)<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add function to get fixed addresses by mac</p></li>
+</ul>
+</div>
+<div class="section" id="id18">
+<h2>0.4.8 (2016-10-10)<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add ptrdname search option to PtrRecord objects</p></li>
+</ul>
+</div>
+<div class="section" id="id19">
+<h2>0.4.7 (2016-07-14)<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add zones extensible attribute update support</p></li>
+</ul>
+</div>
+<div class="section" id="id20">
+<h2>0.4.6 (2016-07-01)<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add network_view support for host records</p></li>
+</ul>
+</div>
+<div class="section" id="id21">
+<h2>0.4.5 (2016-06-13)<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Allow raising exception in create_ea_definition</p></li>
+<li><p>Add pep8 check to tox</p></li>
+<li><p>Add pep8 check to Travis CI</p></li>
+<li><p>Add examples of searching by regular expression</p></li>
+</ul>
+</div>
+<div class="section" id="id22">
+<h2>0.4.4 (2016-05-11)<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Pass only_ref option to update_from_dict</p></li>
+<li><p>Do not fail on processing unknown fields</p></li>
+<li><p>Fetch only object reference for service restart</p></li>
+<li><p>Update README with example of using EA</p></li>
+</ul>
+</div>
+<div class="section" id="id23">
+<h2>0.4.3 (2016-03-28)<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add default fields for Member</p></li>
+<li><p>Update docstring for create_network</p></li>
+<li><p>Add  fields to FixedAddressV4 and IPAddress</p></li>
+</ul>
+</div>
+<div class="section" id="id24">
+<h2>0.4.2 (2016-03-04)<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add max_retries option to connector</p></li>
+<li><p>Log failure on get with Error log level</p></li>
+</ul>
+</div>
+<div class="section" id="id25">
+<h2>0.4.1 (2016-02-26)<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add ‘max_results’ as connector option</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id26">
+<h1>0.4.0 (2016-02-19)<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Add max_results option to connector and objects</p></li>
+<li><p>Add Tenant object</p></li>
+<li><p>Update README.rst with more examples</p></li>
+</ul>
+<div class="section" id="id27">
+<h2>0.3.9 (2016-02-18)<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add ‘configure_for_dns’ field for HostRecord</p></li>
+</ul>
+</div>
+<div class="section" id="id28">
+<h2>0.3.8 (2016-02-17)<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add ‘extattrs’ to DNSZone/DNSView return_fields</p></li>
+</ul>
+</div>
+<div class="section" id="id29">
+<h2>0.3.7 (2016-02-12)<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add return_fields to NetworkView</p></li>
+</ul>
+</div>
+<div class="section" id="id30">
+<h2>0.3.6 (2016-01-28)<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add support for list and tuple values to EA object</p></li>
+<li><p>Remove _value_to_bool</p></li>
+</ul>
+</div>
+<div class="section" id="id31">
+<h2>0.3.5 (2016-01-22)<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>No changes</p></li>
+</ul>
+</div>
+<div class="section" id="id32">
+<h2>0.3.4 (2016-01-21)<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Do not override verify flag on request level</p></li>
+</ul>
+</div>
+<div class="section" id="id33">
+<h2>0.3.3 (2016-01-20)<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>create_required_ea_definitions return created list</p></li>
+<li><p>Add ‘start_addr’, ‘end_addr’ to ip detection list</p></li>
+<li><p>Add request type to connector logger</p></li>
+<li><p>Flake8 fixes</p></li>
+</ul>
+</div>
+<div class="section" id="id34">
+<h2>0.3.2 (2016-01-19)<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Convert strings into booleans for ssl_verify</p></li>
+<li><p>Update AUTHORS.rst, add contributors</p></li>
+<li><p>Remove unused methods from utils.py</p></li>
+</ul>
+</div>
+<div class="section" id="id35">
+<h2>0.3.1 (2016-01-14)<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add ‘zone’ to search fields of Host Record</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id36">
+<h1>0.3.0 (2016-01-14)<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Update development status from Pre-Alpha to Alpha</p></li>
+<li><p>Feature/tox testing (huge changes in testing env)</p></li>
+<li><p>Add ‘network’ to search fields of FixedAddress</p></li>
+<li><p>Allow domain-name-servers for ipv6</p></li>
+<li><p>Update existent EA for network instead of replace</p></li>
+</ul>
+<div class="section" id="id37">
+<h2>0.2.3 (2016-01-06)<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Return None if search failed instead of exception</p></li>
+<li><p>Add ip_version as a public property for objects</p></li>
+</ul>
+</div>
+<div class="section" id="id38">
+<h2>0.2.2 (2015-12-23)<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Fix updating object from create method</p></li>
+<li><p>Rework delete_all_associated_objects logic</p></li>
+<li><p>Fix error handling in create_object</p></li>
+<li><p>Do not catch exception on create_dns_zone level</p></li>
+<li><p>Update feature version for member_ipv6_setting</p></li>
+</ul>
+</div>
+<div class="section" id="id39">
+<h2>0.2.1 (2015-12-18)<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add InfobloxMemberAlreadyAssigned exception</p></li>
+<li><p>Update dns record if already exists</p></li>
+<li><p>Add ‘log_api_calls_as_info’ option for connector</p></li>
+<li><p>Check for empty values in EA</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id40">
+<h1>0.2.0 (2015-12-17)<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Deprecate network_exists method in object_manager</p></li>
+<li><p>Add _global_field_processing for objects</p></li>
+<li><p>Add parsing ‘extattrs’ into EA objects for all InfobloxObject childs</p></li>
+<li><p>Add docs badge to README.rst</p></li>
+<li><p>Reworked get_network in object_manager</p></li>
+<li><p>Move _eq_ to BaseObject</p></li>
+<li><p>Check if fixed address is found before delete</p></li>
+</ul>
+<div class="section" id="id41">
+<h2>0.1.4 (2015-12-08)<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Field updates for Member object</p></li>
+<li><p>Log all api calls in connector on debug level</p></li>
+</ul>
+</div>
+<div class="section" id="id42">
+<h2>0.1.3 (2015-12-04)<a class="headerlink" href="#id42" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add ‘network’ field to ip versioned fields</p></li>
+<li><p>Skip adding DHCP options for IPv6 network</p></li>
+<li><p>Do not search IPRange before creating</p></li>
+</ul>
+</div>
+<div class="section" id="id43">
+<h2>0.1.2 (2015-12-02)<a class="headerlink" href="#id43" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Do not fail if object is not found on delete</p></li>
+<li><p>Raise exception with details if reply is not json</p></li>
+<li><p>Add ‘silent_ssl_warnings’ option to connector</p></li>
+</ul>
+</div>
+<div class="section" id="id44">
+<h2>0.1.1 (2015-12-01)<a class="headerlink" href="#id44" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Fix unbind_name_from_record_a</p></li>
+</ul>
+</div>
+<div class="section" id="id45">
+<h2>0.1.0 (2015-12-01)<a class="headerlink" href="#id45" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add new field type ‘_updateable_search_field’ to objects and fix HostRecord search</p></li>
+<li><p>Fix ‘make docs’</p></li>
+<li><p>Update README.rst (fixed formatting)</p></li>
+</ul>
+</div>
+<div class="section" id="id46">
+<h2>0.0.11 (2015-11-25)<a class="headerlink" href="#id46" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Fix adding second ip to HostRecord</p></li>
+<li><p>Fix failing in pdb</p></li>
+<li><p>Convert EA values into boolean if possible</p></li>
+<li><p>Added ‘ips’ allias for ip field in HostRecord</p></li>
+</ul>
+</div>
+<div class="section" id="id47">
+<h2>0.0.10 (2015-11-19)<a class="headerlink" href="#id47" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add utility to determine supported feature</p></li>
+<li><p>Update README.rst with objects interface</p></li>
+</ul>
+</div>
+<div class="section" id="id48">
+<h2>0.0.9 (2015-11-13)<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add allowed_object_types field for EA Definition</p></li>
+<li><p>Allow to return default fields for object</p></li>
+<li><p>Update README.rst with list of supported objects</p></li>
+</ul>
+</div>
+<div class="section" id="id49">
+<h2>0.0.8 (2015-11-12)<a class="headerlink" href="#id49" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add Extensible Attributes Definition support</p></li>
+<li><p>Fixed options processing for create_network in object_manager</p></li>
+<li><p>Fixed missed DNSZone object in create_dns_zone</p></li>
+</ul>
+</div>
+<div class="section" id="id50">
+<h2>0.0.7 (2015-10-27)<a class="headerlink" href="#id50" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Added ‘network’ to IPRange search fields</p></li>
+<li><p>Modified <cite>get</cite> method of the EA class to allow return default values</p></li>
+</ul>
+</div>
+<div class="section" id="id51">
+<h2>0.0.6 (2015-10-26)<a class="headerlink" href="#id51" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Added initial support of Extensible Attributes as sub objects</p></li>
+<li><p>Added search by Extensible Attributes</p></li>
+<li><p>Improved validation in connector</p></li>
+<li><p>Added delete_object_by_ref to object manager</p></li>
+</ul>
+</div>
+<div class="section" id="id52">
+<h2>0.0.5 (2015-10-12)<a class="headerlink" href="#id52" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Fixed issues in working with objects</p></li>
+<li><p>Added missed _get_object_type_from_ref</p></li>
+<li><p>Added code coverage</p></li>
+<li><p>Updated links to point to infobloxopen repository</p></li>
+</ul>
+</div>
+<div class="section" id="id53">
+<h2>0.0.4 (2015-09-23)<a class="headerlink" href="#id53" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Added object abstraction for interacting with NIOS objects</p></li>
+<li><p>Added object_manager to simplify some operations on objects</p></li>
+</ul>
+</div>
+<div class="section" id="id54">
+<h2>0.0.3 (2015-09-15)<a class="headerlink" href="#id54" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Added dependencies to package.</p></li>
+</ul>
+</div>
+<div class="section" id="id55">
+<h2>0.0.2 (2015-09-11)<a class="headerlink" href="#id55" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Fixed using dashes in package directory names that prevented package import after install.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id56">
+<h1>0.0.1 (2015-09-11)<a class="headerlink" href="#id56" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Added connector to send wapi requests to NIOS, does not includes NIOS object model at this point.</p></li>
+<li><p>First release on PyPI.</p></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">History</a></li>
+<li><a class="reference internal" href="#id1">0.5.0 (2020-05-14)</a><ul>
+<li><a class="reference internal" href="#id2">0.4.25 (2020-03-12)</a></li>
+<li><a class="reference internal" href="#id3">0.4.24 (2020-02-25)</a></li>
+<li><a class="reference internal" href="#id4">0.4.23 (2019-09-10)</a></li>
+<li><a class="reference internal" href="#id5">0.4.22 (2019-02-21)</a></li>
+<li><a class="reference internal" href="#id6">0.4.21 (2019-01-18)</a></li>
+<li><a class="reference internal" href="#id7">0.4.20 (2018-03-27)</a></li>
+<li><a class="reference internal" href="#id8">0.4.19 (2018-02-06)</a></li>
+<li><a class="reference internal" href="#id9">0.4.18 (2017-11-20)</a></li>
+<li><a class="reference internal" href="#id10">0.4.17 (2017-11-09)</a></li>
+<li><a class="reference internal" href="#id11">0.4.15 (2017-07-18)</a></li>
+<li><a class="reference internal" href="#id12">0.4.14 (2017-05-18)</a></li>
+<li><a class="reference internal" href="#id13">0.4.13 (2017-03-01)</a></li>
+<li><a class="reference internal" href="#id14">0.4.12 (2016-12-08)</a></li>
+<li><a class="reference internal" href="#id15">0.4.11 (2016-10-31)</a></li>
+<li><a class="reference internal" href="#id16">0.4.10 (2016-10-24)</a></li>
+<li><a class="reference internal" href="#id17">0.4.9 (2016-10-24)</a></li>
+<li><a class="reference internal" href="#id18">0.4.8 (2016-10-10)</a></li>
+<li><a class="reference internal" href="#id19">0.4.7 (2016-07-14)</a></li>
+<li><a class="reference internal" href="#id20">0.4.6 (2016-07-01)</a></li>
+<li><a class="reference internal" href="#id21">0.4.5 (2016-06-13)</a></li>
+<li><a class="reference internal" href="#id22">0.4.4 (2016-05-11)</a></li>
+<li><a class="reference internal" href="#id23">0.4.3 (2016-03-28)</a></li>
+<li><a class="reference internal" href="#id24">0.4.2 (2016-03-04)</a></li>
+<li><a class="reference internal" href="#id25">0.4.1 (2016-02-26)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id26">0.4.0 (2016-02-19)</a><ul>
+<li><a class="reference internal" href="#id27">0.3.9 (2016-02-18)</a></li>
+<li><a class="reference internal" href="#id28">0.3.8 (2016-02-17)</a></li>
+<li><a class="reference internal" href="#id29">0.3.7 (2016-02-12)</a></li>
+<li><a class="reference internal" href="#id30">0.3.6 (2016-01-28)</a></li>
+<li><a class="reference internal" href="#id31">0.3.5 (2016-01-22)</a></li>
+<li><a class="reference internal" href="#id32">0.3.4 (2016-01-21)</a></li>
+<li><a class="reference internal" href="#id33">0.3.3 (2016-01-20)</a></li>
+<li><a class="reference internal" href="#id34">0.3.2 (2016-01-19)</a></li>
+<li><a class="reference internal" href="#id35">0.3.1 (2016-01-14)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id36">0.3.0 (2016-01-14)</a><ul>
+<li><a class="reference internal" href="#id37">0.2.3 (2016-01-06)</a></li>
+<li><a class="reference internal" href="#id38">0.2.2 (2015-12-23)</a></li>
+<li><a class="reference internal" href="#id39">0.2.1 (2015-12-18)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id40">0.2.0 (2015-12-17)</a><ul>
+<li><a class="reference internal" href="#id41">0.1.4 (2015-12-08)</a></li>
+<li><a class="reference internal" href="#id42">0.1.3 (2015-12-04)</a></li>
+<li><a class="reference internal" href="#id43">0.1.2 (2015-12-02)</a></li>
+<li><a class="reference internal" href="#id44">0.1.1 (2015-12-01)</a></li>
+<li><a class="reference internal" href="#id45">0.1.0 (2015-12-01)</a></li>
+<li><a class="reference internal" href="#id46">0.0.11 (2015-11-25)</a></li>
+<li><a class="reference internal" href="#id47">0.0.10 (2015-11-19)</a></li>
+<li><a class="reference internal" href="#id48">0.0.9 (2015-11-13)</a></li>
+<li><a class="reference internal" href="#id49">0.0.8 (2015-11-12)</a></li>
+<li><a class="reference internal" href="#id50">0.0.7 (2015-10-27)</a></li>
+<li><a class="reference internal" href="#id51">0.0.6 (2015-10-26)</a></li>
+<li><a class="reference internal" href="#id52">0.0.5 (2015-10-12)</a></li>
+<li><a class="reference internal" href="#id53">0.0.4 (2015-09-23)</a></li>
+<li><a class="reference internal" href="#id54">0.0.3 (2015-09-15)</a></li>
+<li><a class="reference internal" href="#id55">0.0.2 (2015-09-11)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id56">0.0.1 (2015-09-11)</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="authors.html"
+                        title="previous chapter">Credits</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/history.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="authors.html" title="Credits"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Infoblox Client 0.5.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015-2016, Infoblox.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>
