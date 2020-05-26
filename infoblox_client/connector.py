@@ -70,7 +70,7 @@ class Connector(object):
                        'http_pool_connections': 10,
                        'http_pool_maxsize': 10,
                        'max_retries': 3,
-                       'wapi_version': '2.1',
+                       'wapi_version': '2.7',
                        'max_results': None,
                        'log_api_calls_as_info': False,
                        'paging': False}
