@@ -598,7 +598,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
         self.assertEqual(10, conn.http_pool_connections)
         self.assertEqual(10, conn.http_pool_maxsize)
         self.assertEqual(3, conn.max_retries)
-        self.assertEqual('2.1', conn.wapi_version)
+        self.assertEqual('2.7', conn.wapi_version)
         self.assertEqual(None, conn.max_results)
 
     def test_blank_values_not_allowed(self):
