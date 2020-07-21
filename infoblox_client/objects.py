@@ -1138,7 +1138,7 @@ class Admingroup(InfobloxObject):
                'use_account_inactivity_lockout_enable',
                'use_disable_concurrent_login', 'use_lockout_setting',
                'use_password_setting', 'user_access']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name', 'roles', 'superuser']
     _all_searchable_fields = ['comment', 'name', 'roles', 'superuser']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -1176,7 +1176,7 @@ class Adminrole(InfobloxObject):
     """
     _infoblox_type = 'adminrole'
     _fields = ['comment', 'disable', 'extattrs', 'name']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -1220,7 +1220,7 @@ class Adminuser(InfobloxObject):
                'client_certificate_serial_number', 'comment', 'disable',
                'email', 'enable_certificate_authentication', 'extattrs',
                'name', 'password', 'status', 'time_zone', 'use_time_zone']
-    _search_for_update_fields = ['admin_groups', 'comment', 'name']
+    _search_for_update_fields = ['admin_groups', 'name']
     _updateable_search_fields = ['admin_groups', 'ca_certificate_issuer',
                                  'client_certificate_serial_number', 'comment',
                                  'name']
@@ -1322,7 +1322,7 @@ class Allrecords(InfobloxObject):
     _fields = ['address', 'comment', 'creator', 'ddns_principal',
                'ddns_protected', 'disable', 'dtc_obscured', 'name',
                'reclaimable', 'record', 'ttl', 'type', 'view', 'zone']
-    _search_for_update_fields = ['comment', 'name', 'type', 'view', 'zone']
+    _search_for_update_fields = ['name', 'type', 'view', 'zone']
     _updateable_search_fields = []
     _all_searchable_fields = ['comment', 'creator', 'ddns_principal', 'name',
                               'reclaimable', 'type', 'view', 'zone']
@@ -1506,7 +1506,7 @@ class Awsrte53Taskgroup(InfobloxObject):
                'consolidated_view', 'disabled', 'grid_member', 'name',
                'network_view', 'network_view_mapping_policy', 'sync_status',
                'task_list']
-    _search_for_update_fields = ['account_id', 'comment', 'disabled', 'name',
+    _search_for_update_fields = ['account_id', 'disabled', 'name',
                                  'sync_status']
     _updateable_search_fields = ['comment', 'disabled', 'grid_member', 'name']
     _all_searchable_fields = ['account_id', 'comment', 'consolidate_zones',
@@ -1642,7 +1642,7 @@ class Bulkhost(InfobloxObject):
                'extattrs', 'last_queried', 'name_template', 'network_view',
                'policy', 'prefix', 'reverse', 'start_addr', 'template_format',
                'ttl', 'use_name_template', 'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['comment', 'prefix']
+    _search_for_update_fields = ['prefix']
     _updateable_search_fields = ['comment', 'disable', 'end_addr',
                                  'name_template', 'prefix', 'reverse',
                                  'start_addr', 'ttl', 'use_name_template',
@@ -2092,7 +2092,7 @@ class DdnsPrincipalcluster(InfobloxObject):
     """
     _infoblox_type = 'ddns:principalcluster'
     _fields = ['comment', 'group', 'name', 'principals']
-    _search_for_update_fields = ['comment', 'group', 'name']
+    _search_for_update_fields = ['group', 'name']
     _updateable_search_fields = ['comment', 'group', 'name']
     _all_searchable_fields = ['comment', 'group', 'name']
     _return_fields = ['comment', 'group', 'name', 'principals']
@@ -2114,7 +2114,7 @@ class DdnsPrincipalclusterGroup(InfobloxObject):
     """
     _infoblox_type = 'ddns:principalcluster:group'
     _fields = ['clusters', 'comment', 'name']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'name']
@@ -2390,7 +2390,7 @@ class DhcpOptionSpaceV4(DhcpOptionSpace):
     """
     _infoblox_type = 'dhcpoptionspace'
     _fields = ['comment', 'name', 'option_definitions', 'space_type']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'name']
@@ -2416,7 +2416,7 @@ class DhcpOptionSpaceV6(DhcpOptionSpace):
     """
     _infoblox_type = 'ipv6dhcpoptionspace'
     _fields = ['comment', 'enterprise_number', 'name', 'option_definitions']
-    _search_for_update_fields = ['comment', 'enterprise_number', 'name']
+    _search_for_update_fields = ['enterprise_number', 'name']
     _updateable_search_fields = ['comment', 'enterprise_number', 'name']
     _all_searchable_fields = ['comment', 'enterprise_number', 'name']
     _return_fields = ['comment', 'enterprise_number', 'name']
@@ -3166,7 +3166,7 @@ class Dns64Group(InfobloxObject):
     _infoblox_type = 'dns64group'
     _fields = ['clients', 'comment', 'disable', 'enable_dnssec_dns64',
                'exclude', 'extattrs', 'mapped', 'name', 'prefix']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name', 'prefix']
     _all_searchable_fields = ['comment', 'name', 'prefix']
     _return_fields = ['comment', 'disable', 'extattrs', 'name']
@@ -3237,7 +3237,7 @@ class DtcAllrecords(InfobloxObject):
     """
     _infoblox_type = 'dtc:allrecords'
     _fields = ['comment', 'disable', 'dtc_server', 'record', 'ttl', 'type']
-    _search_for_update_fields = ['comment', 'dtc_server', 'type']
+    _search_for_update_fields = ['dtc_server', 'type']
     _updateable_search_fields = []
     _all_searchable_fields = ['comment', 'dtc_server', 'type']
     _return_fields = ['comment', 'dtc_server', 'type']
@@ -3306,7 +3306,7 @@ class DtcLbdn(InfobloxObject):
     _fields = ['auth_zones', 'comment', 'disable', 'extattrs', 'health',
                'lb_method', 'name', 'patterns', 'persistence', 'pools',
                'priority', 'topology', 'ttl', 'types', 'use_ttl']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -3343,7 +3343,7 @@ class DtcMonitor(InfobloxObject):
     _infoblox_type = 'dtc:monitor'
     _fields = ['comment', 'extattrs', 'interval', 'monitor', 'name', 'port',
                'retry_down', 'retry_up', 'timeout', 'type']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name', 'type']
@@ -3404,7 +3404,7 @@ class DtcMonitorHttp(InfobloxObject):
                'extattrs', 'interval', 'name', 'port', 'request', 'result',
                'result_code', 'retry_down', 'retry_up', 'secure', 'timeout',
                'validate_cert']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -3434,7 +3434,7 @@ class DtcMonitorIcmp(InfobloxObject):
     _infoblox_type = 'dtc:monitor:icmp'
     _fields = ['comment', 'extattrs', 'interval', 'name', 'retry_down',
                'retry_up', 'timeout']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -3466,7 +3466,7 @@ class DtcMonitorPdp(InfobloxObject):
     _infoblox_type = 'dtc:monitor:pdp'
     _fields = ['comment', 'extattrs', 'interval', 'name', 'port', 'retry_down',
                'retry_up', 'timeout']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -3511,7 +3511,7 @@ class DtcMonitorSip(InfobloxObject):
                'name', 'port', 'request', 'result', 'result_code',
                'retry_down', 'retry_up', 'timeout', 'transport',
                'validate_cert']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -3552,7 +3552,7 @@ class DtcMonitorSnmp(InfobloxObject):
     _fields = ['comment', 'community', 'context', 'engine_id', 'extattrs',
                'interval', 'name', 'oids', 'port', 'retry_down', 'retry_up',
                'timeout', 'user', 'version']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'context', 'engine_id', 'name']
     _all_searchable_fields = ['comment', 'context', 'engine_id', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -3587,7 +3587,7 @@ class DtcMonitorTcp(InfobloxObject):
     _infoblox_type = 'dtc:monitor:tcp'
     _fields = ['comment', 'extattrs', 'interval', 'name', 'port', 'retry_down',
                'retry_up', 'timeout']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -3619,7 +3619,7 @@ class DtcObject(InfobloxObject):
     _fields = ['abstract_type', 'comment', 'display_type', 'extattrs',
                'ipv4_address_list', 'ipv6_address_list', 'name', 'object',
                'status', 'status_time']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = []
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['abstract_type', 'comment', 'display_type', 'extattrs',
@@ -3675,7 +3675,7 @@ class DtcPool(InfobloxObject):
                'lb_dynamic_ratio_preferred', 'lb_preferred_method',
                'lb_preferred_topology', 'monitors', 'name', 'quorum',
                'servers', 'ttl', 'use_ttl']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -3919,7 +3919,7 @@ class DtcServer(InfobloxObject):
     _fields = ['auto_create_host_record', 'comment', 'disable', 'extattrs',
                'health', 'host', 'monitors', 'name', 'sni_hostname',
                'use_sni_hostname']
-    _search_for_update_fields = ['comment', 'host', 'name']
+    _search_for_update_fields = ['host', 'name']
     _updateable_search_fields = ['comment', 'host', 'name', 'sni_hostname']
     _all_searchable_fields = ['comment', 'host', 'name', 'sni_hostname']
     _return_fields = ['comment', 'extattrs', 'host', 'name']
@@ -3949,7 +3949,7 @@ class DtcTopology(InfobloxObject):
     """
     _infoblox_type = 'dtc:topology'
     _fields = ['comment', 'extattrs', 'name', 'rules']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -4126,7 +4126,7 @@ class EADefinition(InfobloxObject):
     _fields = ['allowed_object_types', 'comment', 'default_value',
                'descendants_action', 'flags', 'list_values', 'max', 'min',
                'name', 'namespace', 'type']
-    _search_for_update_fields = ['comment', 'name', 'type']
+    _search_for_update_fields = ['name', 'type']
     _updateable_search_fields = ['comment', 'name', 'type']
     _all_searchable_fields = ['comment', 'name', 'namespace', 'type']
     _return_fields = ['comment', 'default_value', 'name', 'type']
@@ -4303,7 +4303,7 @@ class Filterfingerprint(InfobloxObject):
     """
     _infoblox_type = 'filterfingerprint'
     _fields = ['comment', 'extattrs', 'fingerprint', 'name']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -4351,7 +4351,7 @@ class Filtermac(InfobloxObject):
     _fields = ['comment', 'default_mac_address_expiration', 'disable',
                'enforce_expiration_times', 'extattrs', 'lease_time', 'name',
                'never_expires', 'options', 'reserved_for_infoblox']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -4389,7 +4389,7 @@ class Filternac(InfobloxObject):
     _infoblox_type = 'filternac'
     _fields = ['comment', 'expression', 'extattrs', 'lease_time', 'name',
                'options']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -4443,7 +4443,7 @@ class Filteroption(InfobloxObject):
     _fields = ['apply_as_class', 'bootfile', 'bootserver', 'comment',
                'expression', 'extattrs', 'lease_time', 'name', 'next_server',
                'option_list', 'option_space', 'pxe_lease_time']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -4511,7 +4511,7 @@ class Filterrelayagent(InfobloxObject):
                'is_circuit_id', 'is_circuit_id_substring', 'is_remote_id',
                'is_remote_id_substring', 'name', 'remote_id_name',
                'remote_id_substring_length', 'remote_id_substring_offset']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -4548,7 +4548,7 @@ class Fingerprint(InfobloxObject):
     _fields = ['comment', 'device_class', 'disable', 'extattrs',
                'ipv6_option_sequence', 'name', 'option_sequence', 'type',
                'vendor_id']
-    _search_for_update_fields = ['comment', 'device_class', 'name']
+    _search_for_update_fields = ['device_class', 'name']
     _updateable_search_fields = ['comment', 'device_class', 'name', 'type']
     _all_searchable_fields = ['comment', 'device_class', 'name', 'type']
     _return_fields = ['comment', 'device_class', 'extattrs', 'name']
@@ -4984,7 +4984,7 @@ class FixedAddressTemplateV4(FixedAddressTemplate):
                'use_ddns_domainname', 'use_deny_bootp', 'use_enable_ddns',
                'use_ignore_dhcp_option_list_request', 'use_logic_filter_rules',
                'use_nextserver', 'use_options', 'use_pxe_lease_time']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -5043,7 +5043,7 @@ class FixedAddressTemplateV6(FixedAddressTemplate):
                'use_domain_name_servers', 'use_options',
                'use_preferred_lifetime', 'use_valid_lifetime',
                'valid_lifetime']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -5396,7 +5396,7 @@ class Tenant(InfobloxObject):
     _infoblox_type = 'grid:cloudapi:tenant'
     _fields = ['cloud_info', 'comment', 'created_ts', 'id', 'last_event_ts',
                'name', 'network_count', 'vm_count']
-    _search_for_update_fields = ['comment', 'id', 'name']
+    _search_for_update_fields = ['id', 'name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'id', 'name']
     _return_fields = ['comment', 'id', 'name']
@@ -5457,7 +5457,7 @@ class GridCloudapiVm(InfobloxObject):
                'operating_system', 'primary_mac_address', 'subnet_address',
                'subnet_cidr', 'subnet_id', 'tenant_name', 'vm_type',
                'vpc_address', 'vpc_cidr', 'vpc_id', 'vpc_name']
-    _search_for_update_fields = ['comment', 'id', 'name']
+    _search_for_update_fields = ['id', 'name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'elastic_ip_address', 'id', 'name',
                               'primary_mac_address']
@@ -6548,7 +6548,7 @@ class GridServicerestartGroup(InfobloxObject):
     _fields = ['comment', 'extattrs', 'is_default', 'last_updated_time',
                'members', 'mode', 'name', 'position', 'recurring_schedule',
                'requests', 'service', 'status']
-    _search_for_update_fields = ['comment', 'name', 'service']
+    _search_for_update_fields = ['name', 'service']
     _updateable_search_fields = ['comment', 'name', 'service']
     _all_searchable_fields = ['comment', 'is_default', 'name', 'service']
     _return_fields = ['comment', 'extattrs', 'name', 'service']
@@ -6918,7 +6918,7 @@ class HsmSafenetgroup(InfobloxObject):
     _infoblox_type = 'hsm:safenetgroup'
     _fields = ['comment', 'group_sn', 'hsm_safenet', 'hsm_version', 'name',
                'pass_phrase', 'status']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'hsm_version', 'name']
@@ -6970,7 +6970,7 @@ class HsmThalesgroup(InfobloxObject):
     _infoblox_type = 'hsm:thalesgroup'
     _fields = ['card_name', 'comment', 'key_server_ip', 'key_server_port',
                'name', 'pass_phrase', 'protection', 'status', 'thales_hsm']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'key_server_ip', 'name']
@@ -7491,7 +7491,7 @@ class NetworkV4(Network):
                'use_subscribe_settings', 'use_update_dns_on_lease_renewal',
                'use_zone_associations', 'utilization', 'utilization_update',
                'vlans', 'zone_associations']
-    _search_for_update_fields = ['comment', 'network', 'network_view']
+    _search_for_update_fields = ['network', 'network_view']
     _updateable_search_fields = ['comment', 'discovered_bridge_domain',
                                  'discovered_tenant', 'ipv4addr', 'network',
                                  'rir_organization', 'unmanaged']
@@ -7744,7 +7744,7 @@ class NetworkV6(Network):
                'use_update_dns_on_lease_renewal', 'use_valid_lifetime',
                'use_zone_associations', 'valid_lifetime', 'vlans',
                'zone_associations']
-    _search_for_update_fields = ['comment', 'network', 'network_view']
+    _search_for_update_fields = ['network', 'network_view']
     _updateable_search_fields = ['comment', 'discovered_bridge_domain',
                                  'discovered_tenant', 'network',
                                  'network_view', 'rir_organization',
@@ -8060,7 +8060,7 @@ class NetworkContainerV4(NetworkContainer):
                'use_pxe_lease_time', 'use_recycle_leases',
                'use_subscribe_settings', 'use_update_dns_on_lease_renewal',
                'use_zone_associations', 'utilization', 'zone_associations']
-    _search_for_update_fields = ['comment', 'network', 'network_view']
+    _search_for_update_fields = ['network', 'network_view']
     _updateable_search_fields = ['comment', 'rir_organization', 'unmanaged']
     _all_searchable_fields = ['comment', 'discovery_engine_type', 'network',
                               'network_container', 'network_view', 'rir',
@@ -8248,7 +8248,7 @@ class NetworkContainerV6(NetworkContainer):
                'use_update_dns_on_lease_renewal', 'use_valid_lifetime',
                'use_zone_associations', 'utilization', 'valid_lifetime',
                'zone_associations']
-    _search_for_update_fields = ['comment', 'network', 'network_view']
+    _search_for_update_fields = ['network', 'network_view']
     _updateable_search_fields = ['comment', 'network_view', 'rir_organization',
                                  'unmanaged']
     _all_searchable_fields = ['comment', 'discovery_engine_type', 'network',
@@ -8485,7 +8485,7 @@ class NetworkTemplateV4(NetworkTemplate):
                'use_logic_filter_rules', 'use_nextserver', 'use_options',
                'use_pxe_lease_time', 'use_recycle_leases',
                'use_update_dns_on_lease_renewal']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name', 'rir_organization']
     _all_searchable_fields = ['comment', 'name', 'rir', 'rir_organization']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -8623,7 +8623,7 @@ class NetworkTemplateV6(NetworkTemplate):
                'use_preferred_lifetime', 'use_recycle_leases',
                'use_update_dns_on_lease_renewal', 'use_valid_lifetime',
                'valid_lifetime']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'ipv6prefix', 'name',
                                  'rir_organization']
     _all_searchable_fields = ['comment', 'ipv6prefix', 'name', 'rir',
@@ -8934,7 +8934,7 @@ class IPRangeV4(IPRange):
                'use_options', 'use_pxe_lease_time', 'use_recycle_leases',
                'use_subscribe_settings', 'use_unknown_clients',
                'use_update_dns_on_lease_renewal']
-    _search_for_update_fields = ['comment', 'end_addr', 'network',
+    _search_for_update_fields = ['end_addr', 'network',
                                  'network_view', 'start_addr']
     _updateable_search_fields = ['comment', 'end_addr', 'failover_association',
                                  'member', 'ms_server', 'network',
@@ -9068,7 +9068,7 @@ class IPRangeV6(IPRange):
                'template', 'use_blackout_setting',
                'use_discovery_basic_polling_settings', 'use_enable_discovery',
                'use_recycle_leases', 'use_subscribe_settings']
-    _search_for_update_fields = ['comment', 'end_addr', 'network',
+    _search_for_update_fields = ['end_addr', 'network',
                                  'network_view', 'start_addr']
     _updateable_search_fields = ['address_type', 'comment', 'end_addr',
                                  'ipv6_end_prefix', 'ipv6_prefix_bits',
@@ -9299,7 +9299,7 @@ class RangeTemplateV4(RangeTemplate):
                'use_ms_options', 'use_nextserver', 'use_options',
                'use_pxe_lease_time', 'use_recycle_leases',
                'use_unknown_clients', 'use_update_dns_on_lease_renewal']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'failover_association', 'member',
                                  'ms_server', 'name',
                                  'server_association_type']
@@ -9368,7 +9368,7 @@ class RangeTemplateV6(RangeTemplate):
                'exclude', 'member', 'name', 'number_of_addresses', 'offset',
                'recycle_leases', 'server_association_type',
                'use_recycle_leases']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'member', 'name',
                                  'server_association_type']
     _all_searchable_fields = ['comment', 'member', 'name',
@@ -9548,7 +9548,7 @@ class SharedNetworkV4(SharedNetwork):
                'use_lease_scavenge_time', 'use_logic_filter_rules',
                'use_nextserver', 'use_options', 'use_pxe_lease_time',
                'use_update_dns_on_lease_renewal']
-    _search_for_update_fields = ['comment', 'name', 'network_view']
+    _search_for_update_fields = ['name', 'network_view']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name', 'network_view']
     _return_fields = ['comment', 'extattrs', 'name', 'network_view',
@@ -9650,7 +9650,7 @@ class SharedNetworkV6(SharedNetwork):
                'use_domain_name_servers', 'use_enable_ddns', 'use_options',
                'use_preferred_lifetime', 'use_update_dns_on_lease_renewal',
                'use_valid_lifetime', 'valid_lifetime']
-    _search_for_update_fields = ['comment', 'name', 'network_view']
+    _search_for_update_fields = ['name', 'network_view']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name', 'network_view']
     _return_fields = ['comment', 'extattrs', 'name', 'network_view',
@@ -9740,7 +9740,7 @@ class LdapAuthService(InfobloxObject):
                'ldap_group_authentication_type', 'ldap_user_attribute', 'mode',
                'name', 'recovery_interval', 'retries', 'search_scope',
                'servers', 'timeout']
-    _search_for_update_fields = ['comment', 'mode', 'name']
+    _search_for_update_fields = ['mode', 'name']
     _updateable_search_fields = ['comment', 'mode', 'name', 'search_scope']
     _all_searchable_fields = ['comment', 'mode', 'name', 'search_scope']
     _return_fields = ['comment', 'disable', 'ldap_user_attribute', 'mode',
@@ -9995,7 +9995,7 @@ class Macfilteraddress(InfobloxObject):
                'guest_last_name', 'guest_middle_name', 'guest_phone',
                'is_registered_user', 'mac', 'never_expires',
                'reserved_for_infoblox', 'username']
-    _search_for_update_fields = ['authentication_time', 'comment',
+    _search_for_update_fields = ['authentication_time',
                                  'expiration_time', 'filter',
                                  'guest_custom_field1', 'guest_custom_field2',
                                  'guest_custom_field3', 'guest_custom_field4',
@@ -11742,7 +11742,7 @@ class Namedacl(InfobloxObject):
     _infoblox_type = 'namedacl'
     _fields = ['access_list', 'comment', 'exploded_access_list', 'extattrs',
                'name']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -11776,7 +11776,7 @@ class Natgroup(InfobloxObject):
     """
     _infoblox_type = 'natgroup'
     _fields = ['comment', 'name']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'name']
@@ -11896,7 +11896,7 @@ class NetworkView(InfobloxObject):
                'internal_forward_zones', 'is_default', 'mgm_private',
                'ms_ad_user_data', 'name', 'remote_forward_zones',
                'remote_reverse_zones']
-    _search_for_update_fields = ['comment', 'is_default', 'name']
+    _search_for_update_fields = ['is_default', 'name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'is_default', 'name']
     _return_fields = ['comment', 'extattrs', 'is_default', 'name']
@@ -12115,7 +12115,7 @@ class Nsgroup(InfobloxObject):
                'external_secondaries', 'grid_primary', 'grid_secondaries',
                'is_grid_default', 'is_multimaster', 'name',
                'use_external_primary']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -12640,7 +12640,7 @@ class RadiusAuthservice(InfobloxObject):
     _fields = ['acct_retries', 'acct_timeout', 'auth_retries', 'auth_timeout',
                'cache_ttl', 'comment', 'disable', 'enable_cache', 'mode',
                'name', 'recovery_interval', 'servers']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'mode', 'name']
     _all_searchable_fields = ['comment', 'mode', 'name']
     _return_fields = ['comment', 'disable', 'name']
@@ -13250,7 +13250,7 @@ class DtclbdnRecord(InfobloxObject):
     _infoblox_type = 'record:dtclbdn'
     _fields = ['comment', 'disable', 'extattrs', 'last_queried', 'lbdn',
                'name', 'pattern', 'view', 'zone']
-    _search_for_update_fields = ['comment', 'name', 'view', 'zone']
+    _search_for_update_fields = ['name', 'view', 'zone']
     _updateable_search_fields = []
     _all_searchable_fields = ['comment', 'disable', 'name', 'pattern', 'view',
                               'zone']
@@ -15805,7 +15805,7 @@ class Ruleset(InfobloxObject):
     """
     _infoblox_type = 'ruleset'
     _fields = ['comment', 'disabled', 'name', 'nxdomain_rules', 'type']
-    _search_for_update_fields = ['comment', 'disabled', 'name', 'type']
+    _search_for_update_fields = ['disabled', 'name', 'type']
     _updateable_search_fields = ['comment', 'disabled', 'name', 'type']
     _all_searchable_fields = ['comment', 'disabled', 'name', 'type']
     _return_fields = ['comment', 'disabled', 'name', 'type']
@@ -16272,7 +16272,7 @@ class Sharedrecordgroup(InfobloxObject):
     _infoblox_type = 'sharedrecordgroup'
     _fields = ['comment', 'extattrs', 'name', 'record_name_policy',
                'use_record_name_policy', 'zone_associations']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -16328,7 +16328,7 @@ class SmartfolderGlobal(InfobloxObject):
     """
     _infoblox_type = 'smartfolder:global'
     _fields = ['comment', 'group_bys', 'name', 'query_items']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'name']
@@ -16367,7 +16367,7 @@ class SmartfolderPersonal(InfobloxObject):
     """
     _infoblox_type = 'smartfolder:personal'
     _fields = ['comment', 'group_bys', 'is_shortcut', 'name', 'query_items']
-    _search_for_update_fields = ['comment', 'is_shortcut', 'name']
+    _search_for_update_fields = ['is_shortcut', 'name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'is_shortcut', 'name']
     _return_fields = ['comment', 'is_shortcut', 'name']
@@ -16406,7 +16406,7 @@ class Snmpuser(InfobloxObject):
     _fields = ['authentication_password', 'authentication_protocol', 'comment',
                'disable', 'extattrs', 'name', 'privacy_password',
                'privacy_protocol']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -16439,7 +16439,7 @@ class Superhost(InfobloxObject):
     _fields = ['comment', 'delete_associated_objects',
                'dhcp_associated_objects', 'disabled', 'dns_associated_objects',
                'extattrs', 'name']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'disabled', 'name']
     _all_searchable_fields = ['comment', 'disabled', 'name']
     _return_fields = ['comment', 'extattrs', 'name']
@@ -16477,7 +16477,7 @@ class Superhostchild(InfobloxObject):
     _fields = ['associated_object', 'comment', 'creation_timestamp', 'data',
                'disabled', 'name', 'network_view', 'parent', 'record_parent',
                'type', 'view']
-    _search_for_update_fields = ['comment', 'data', 'name', 'network_view',
+    _search_for_update_fields = ['data', 'name', 'network_view',
                                  'parent', 'record_parent', 'type', 'view']
     _updateable_search_fields = []
     _all_searchable_fields = ['comment', 'creation_timestamp', 'data', 'name',
@@ -16564,7 +16564,7 @@ class TacacsplusAuthservice(InfobloxObject):
     _infoblox_type = 'tacacsplus:authservice'
     _fields = ['acct_retries', 'acct_timeout', 'auth_retries', 'auth_timeout',
                'comment', 'disable', 'name', 'servers']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'disable', 'name']
@@ -16702,7 +16702,7 @@ class ThreatanalyticsWhitelist(InfobloxObject):
     """
     _infoblox_type = 'threatanalytics:whitelist'
     _fields = ['comment', 'disable', 'fqdn', 'type']
-    _search_for_update_fields = ['comment', 'fqdn']
+    _search_for_update_fields = ['fqdn']
     _updateable_search_fields = ['comment', 'fqdn']
     _all_searchable_fields = ['comment', 'fqdn', 'type']
     _return_fields = ['comment', 'disable', 'fqdn']
@@ -16814,7 +16814,7 @@ class ThreatprotectionProfile(InfobloxObject):
                'source_member', 'source_profile', 'use_current_ruleset',
                'use_disable_multiple_dns_tcp_request',
                'use_events_per_second_per_rule']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'current_ruleset',
                                  'disable_multiple_dns_tcp_request',
                                  'events_per_second_per_rule', 'name']
@@ -17018,7 +17018,7 @@ class Upgradegroup(InfobloxObject):
                'distribution_policy', 'distribution_time', 'members', 'name',
                'time_zone', 'upgrade_dependent_group', 'upgrade_policy',
                'upgrade_time']
-    _search_for_update_fields = ['comment', 'name']
+    _search_for_update_fields = ['name']
     _updateable_search_fields = ['comment', 'name']
     _all_searchable_fields = ['comment', 'name']
     _return_fields = ['comment', 'name']
@@ -17577,7 +17577,7 @@ class DNSView(InfobloxObject):
                'use_response_rate_limiting', 'use_root_name_server',
                'use_rpz_drop_ip_rule', 'use_rpz_qname_wait_recurse',
                'use_scavenging_settings', 'use_sortlist']
-    _search_for_update_fields = ['comment', 'is_default', 'name',
+    _search_for_update_fields = ['is_default', 'name',
                                  'network_view']
     _updateable_search_fields = ['blacklist_action', 'blacklist_log_query',
                                  'comment', 'dns64_enabled', 'dnssec_enabled',
