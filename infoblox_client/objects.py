@@ -308,8 +308,9 @@ class InfobloxObject(BaseObject):
                           "%(ib_obj)s"),
                          {'obj_type': local_obj.infoblox_type,
                           'ib_obj': local_obj})
+                response = "Infoblox Object already Exists"
                 if not update_if_exists:
-                    return local_obj, obj_created
+                    return local_obj, obj_created, response
         reply = None
         if not local_obj.ref:
             reply = connector.create_object(local_obj.infoblox_type,
@@ -319,23 +320,25 @@ class InfobloxObject(BaseObject):
             LOG.info("Infoblox %(obj_type)s was created: %(ib_obj)s",
                      {'obj_type': local_obj.infoblox_type,
                       'ib_obj': local_obj})
+            response = "Infoblox Object was Created"
         elif update_if_exists:
             update_fields = local_obj.to_dict(search_fields='exclude')
             reply = connector.update_object(local_obj.ref,
                                             update_fields,
                                             local_obj.return_fields)
             LOG.info('Infoblox object was updated: %s', local_obj.ref)
-        return cls._object_from_reply(local_obj, connector, reply), obj_created
+            response = "Infoblox Object was Updated"
+        return cls._object_from_reply(local_obj, connector, reply), obj_created, response
 
     @classmethod
     def create(cls, connector, check_if_exists=True,
                update_if_exists=False, **kwargs):
-        ib_object, _ = (
+        ib_object, _, response = (
             cls.create_check_exists(connector,
                                     check_if_exists=check_if_exists,
                                     update_if_exists=update_if_exists,
                                     **kwargs))
-        return ib_object
+        return ib_object, response
 
     @classmethod
     def _search(cls, connector, return_fields=None,
