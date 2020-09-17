@@ -219,6 +219,7 @@ class InfobloxObject(BaseObject):
     _custom_field_processing = {}
     _global_field_processing = {'extattrs': EA.from_dict}
     _ip_version = None
+    _response = None
 
     def __new__(cls, connector, **kwargs):
         return super(InfobloxObject,
@@ -308,9 +309,9 @@ class InfobloxObject(BaseObject):
                           "%(ib_obj)s"),
                          {'obj_type': local_obj.infoblox_type,
                           'ib_obj': local_obj})
-                response = "Infoblox Object already Exists"
+                local_obj.response = "Infoblox Object already Exists"
                 if not update_if_exists:
-                    return local_obj, obj_created, response
+                    return local_obj, obj_created
         reply = None
         if not local_obj.ref:
             reply = connector.create_object(local_obj.infoblox_type,
@@ -320,25 +321,25 @@ class InfobloxObject(BaseObject):
             LOG.info("Infoblox %(obj_type)s was created: %(ib_obj)s",
                      {'obj_type': local_obj.infoblox_type,
                       'ib_obj': local_obj})
-            response = "Infoblox Object was Created"
+            local_obj.response = "Infoblox Object was Created"
         elif update_if_exists:
             update_fields = local_obj.to_dict(search_fields='exclude')
             reply = connector.update_object(local_obj.ref,
                                             update_fields,
                                             local_obj.return_fields)
             LOG.info('Infoblox object was updated: %s', local_obj.ref)
-            response = "Infoblox Object was Updated"
-        return cls._object_from_reply(local_obj, connector, reply), obj_created, response
+            local_obj.response = "Infoblox Object was Updated"
+        return cls._object_from_reply(local_obj, connector, reply), obj_created
 
     @classmethod
     def create(cls, connector, check_if_exists=True,
                update_if_exists=False, **kwargs):
-        ib_object, _, response = (
+        ib_object, _ = (
             cls.create_check_exists(connector,
                                     check_if_exists=check_if_exists,
                                     update_if_exists=update_if_exists,
                                     **kwargs))
-        return ib_object, response
+        return ib_object
 
     @classmethod
     def _search(cls, connector, return_fields=None,
