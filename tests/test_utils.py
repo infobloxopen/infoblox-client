@@ -20,6 +20,12 @@ from infoblox_client import utils
 class TestUtils(unittest.TestCase):
 
     def test_is_valid_ip(self):
+        """
+        Check if the ip address is valid.
+
+        Args:
+            self: (todo): write your description
+        """
         ips = ('192.168.0.1',
                '8.8.8.8',
                'fffe::1')
@@ -27,6 +33,12 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(True, utils.is_valid_ip(ip))
 
     def test_is_invalid_ip(self):
+        """
+        Check if the ip is valid.
+
+        Args:
+            self: (todo): write your description
+        """
         ips = ('192.data.0.1',
                'text',
                None,
@@ -35,15 +47,33 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(False, utils.is_valid_ip(ip))
 
     def test_safe_json_load_no_exception(self):
+        """
+        Test if the json json json data to load json.
+
+        Args:
+            self: (todo): write your description
+        """
         data = 'Some regular not json text'
         self.assertEqual(None, utils.safe_json_load(data))
 
     def test_safe_json_load(self):
+        """
+        Test if the json file
+
+        Args:
+            self: (todo): write your description
+        """
         data = '{"array":[1,2,3]}'
         expected_data = {'array': [1, 2, 3]}
         self.assertEqual(expected_data, utils.safe_json_load(data))
 
     def test_try_value_to_bool(self):
+        """
+        Converts the test data to a bool
+
+        Args:
+            self: (todo): write your description
+        """
         test_data = ((True, True),
                      (False, False),
                      (str(True), True),
@@ -57,6 +87,12 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(result, utils.try_value_to_bool(value))
 
     def test_try_value_to_bool_not_strict(self):
+        """
+        Test if the test values in case of the boolean
+
+        Args:
+            self: (todo): write your description
+        """
         true_values = (True, 'True', 'true', 'TRUE', 'tRUE',
                        'On', 'ON', 'on', 'oN',
                        'Yes', 'YES', 'yes')
@@ -76,6 +112,12 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(v, utils.try_value_to_bool(v, strict_mode=False))
 
     def test_generate_duid(self):
+        """
+        Generate a unique pubid.
+
+        Args:
+            self: (todo): write your description
+        """
         # DUID mac address starts from position 12
         duid_mac_start_point = 12
 
@@ -87,6 +129,12 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(False, (duid[3:11] == "00:00:00"))
 
     def test_generate_duid_with_invalid_mac(self):
+        """
+        Generate a new mac address.
+
+        Args:
+            self: (todo): write your description
+        """
         mac = 123
         with self.assertRaises(ValueError):
             utils.generate_duid(mac)

@@ -31,6 +31,12 @@ from infoblox_client import exceptions
 
 class TestInfobloxConnector(unittest.TestCase):
     def setUp(self):
+        """
+        Sets up the options.
+
+        Args:
+            self: (todo): write your description
+        """
         super(TestInfobloxConnector, self).setUp()
 
         self.default_opts = self._prepare_options()
@@ -38,6 +44,11 @@ class TestInfobloxConnector(unittest.TestCase):
 
     @staticmethod
     def _prepare_options():
+        """
+        Prepare the options.
+
+        Args:
+        """
         opts = mock.Mock()
         opts.host = 'infoblox.example.org'
         opts.wapi_version = '1.1'
@@ -54,6 +65,12 @@ class TestInfobloxConnector(unittest.TestCase):
         return opts
 
     def test_create_object(self):
+        """
+        Create a new test.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
 
@@ -74,6 +91,12 @@ class TestInfobloxConnector(unittest.TestCase):
             self.assertEqual(None, self.connector.session.auth)
 
     def test_create_object_with_extattrs(self):
+        """
+        Create a new object that represents a mock object.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         payload = {'extattrs':
                    {'Subnet ID': {'value': 'fake_subnet_id'}},
@@ -92,6 +115,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_create_object_raises_member_assigned(self):
+        """
+        Create a new member manager.
+
+        Args:
+            self: (todo): write your description
+        """
         nios_error = (
             '{ "Error": "AdmConDataError: None (IBDataConflictError:'
             'IB.Data.Conflict:Member 10.39.12.91 is assigned to another '
@@ -108,6 +137,12 @@ class TestInfobloxConnector(unittest.TestCase):
                               'network', {'network': '192.178.1.0/24'})
 
     def test_get_object(self):
+        """
+        Get the test object.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
 
@@ -124,6 +159,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_get_objects_with_extattrs(self):
+        """
+        Get a dictionary of objects of the object.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
         extattrs = {
@@ -142,6 +183,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_get_object_with_default_and_extattrs(self):
+        """
+        Get object test object and return the object.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         extattrs = {'Subnet ID': {'value': 'fake_subnet_id'}}
         return_fields = ['default', 'extattrs']
@@ -163,6 +210,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_get_object_with_specific_return_fields(self):
+        """
+        Returns a dictionary of a given object.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         extattrs = {'Subnet ID': {'value': 'fake_subnet_id'}}
         return_fields = ['extattrs']
@@ -184,6 +237,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_get_objects_with_max_results(self):
+        """
+        Returns a dictionary of the results of a result.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:
@@ -198,6 +257,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_get_objects_with_max_results_as_connector_opt(self):
+        """
+        Returns a : class : class : connection.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:
@@ -217,6 +282,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_max_results_priority(self):
+        """
+        Get the maximum maximum number of an object.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:
@@ -237,6 +308,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_update_object(self):
+        """
+        Update an object.
+
+        Args:
+            self: (todo): write your description
+        """
         ref = 'network'
         payload = {'ip': '0.0.0.0'}
 
@@ -254,6 +331,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_update_object_with_http_error(self):
+        """
+        Update an http test.
+
+        Args:
+            self: (todo): write your description
+        """
         ref = 'network'
         payload = {'ip': '0.0.0.0'}
 
@@ -265,6 +348,12 @@ class TestInfobloxConnector(unittest.TestCase):
                               self.connector.update_object, ref, payload)
 
     def test_update_object_with_http_error_503(self):
+        """
+        Update an http test.
+
+        Args:
+            self: (todo): write your description
+        """
         ref = 'network'
         payload = {'ip': '0.0.0.0'}
 
@@ -276,6 +365,12 @@ class TestInfobloxConnector(unittest.TestCase):
                               self.connector.update_object, ref, payload)
 
     def test_delete_object(self):
+        """
+        Delete an object.
+
+        Args:
+            self: (todo): write your description
+        """
         ref = 'network'
         with patch.object(requests.Session, 'delete',
                           return_value=mock.Mock()) as patched_delete:
@@ -290,6 +385,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_delete_object_with_http_error(self):
+        """
+        Delete an http delete test.
+
+        Args:
+            self: (todo): write your description
+        """
         ref = 'network'
         with patch.object(requests.Session, 'delete',
                           return_value=mock.Mock()) as patched_delete:
@@ -299,6 +400,12 @@ class TestInfobloxConnector(unittest.TestCase):
                               self.connector.delete_object, ref)
 
     def test_delete_object_with_http_error_503(self):
+        """
+        Delete a test test.
+
+        Args:
+            self: (todo): write your description
+        """
         ref = 'network'
         with patch.object(requests.Session, 'delete',
                           return_value=mock.Mock()) as patched_delete:
@@ -308,12 +415,24 @@ class TestInfobloxConnector(unittest.TestCase):
                               self.connector.delete_object, ref)
 
     def test_construct_url_absolute_path_fails(self):
+        """
+        Constructs the url for the given urls.
+
+        Args:
+            self: (todo): write your description
+        """
         pathes = ('/starts_with_slash', '', None)
         for path in pathes:
             self.assertRaises(ValueError,
                               self.connector._construct_url, path)
 
     def test_construct_url_with_query_params_and_extattrs(self):
+        """
+        Constructs the url query params.
+
+        Args:
+            self: (todo): write your description
+        """
         query_params = {'some_option': 'some_value'}
         ext_attrs = {'Subnet ID': {'value': 'fake_subnet_id'}}
         url = self.connector._construct_url('network',
@@ -323,6 +442,12 @@ class TestInfobloxConnector(unittest.TestCase):
                          url)
 
     def test_construct_url_with_force_proxy(self):
+        """
+        : return :
+
+        Args:
+            self: (todo): write your description
+        """
         ext_attrs = {'Subnet ID': {'value': 'fake_subnet_id'}}
         url = self.connector._construct_url('network',
                                             extattrs=ext_attrs,
@@ -331,6 +456,12 @@ class TestInfobloxConnector(unittest.TestCase):
                          url)
 
     def test_get_object_with_proxy_flag(self):
+        """
+        Perform an object test for the given object
+
+        Args:
+            self: (todo): write your description
+        """
         self.connector._get_object = mock.MagicMock(return_value=False)
         self.connector._construct_url = mock.MagicMock()
         self.connector.cloud_api_enabled = True
@@ -346,6 +477,12 @@ class TestInfobloxConnector(unittest.TestCase):
                                                self.connector._construct_url)
 
     def test_get_object_without_proxy_flag(self):
+        """
+        Returns true if object s test for this object.
+
+        Args:
+            self: (todo): write your description
+        """
         self.connector._get_object = mock.MagicMock(return_value=False)
         self.connector._construct_url = mock.MagicMock()
         self.connector.cloud_api_enabled = True
@@ -358,6 +495,12 @@ class TestInfobloxConnector(unittest.TestCase):
         self.connector._construct_url.assert_has_calls(construct_calls)
 
     def test__get_object_search_error_return_none(self):
+        """
+        Get the response object for an object.
+
+        Args:
+            self: (todo): write your description
+        """
         response = mock.Mock()
         response.status_code = '404'
         response.content = 'Object not found'
@@ -368,16 +511,34 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(None, self.connector._get_object('network', url))
 
     def test_get_object_with_pagination_with_no_result(self):
+        """
+        Returns the test result as a test.
+
+        Args:
+            self: (todo): write your description
+        """
         self.connector._get_object = mock.MagicMock(return_value=None)
         result = self.connector.get_object('network', paging=True)
         self.assertEqual(None, result)
 
     def test_get_object_with_pagination_with_result(self):
+        """
+        Returns the test result as a string.
+
+        Args:
+            self: (todo): write your description
+        """
         self.connector._get_object = mock.MagicMock(return_value={"result": ["data"]})  # noqa: E501
         result = self.connector.get_object('network', paging=True)
         self.assertEqual(["data"], result)
 
     def test__handle_get_object_with_pagination_with_no_record(self):
+        """
+        Respond to the test query.
+
+        Args:
+            self: (todo): write your description
+        """
         query_params = {"_paging": 1,
                         "_return_as_object": 1,
                         "_max_results": 100}
@@ -387,6 +548,12 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(None, result)
 
     def test__handle_get_object_with_max_results_negative(self):
+        """
+        Gets the results of an object.
+
+        Args:
+            self: (todo): write your description
+        """
         query_params = {"_paging": 1,
                         "_return_as_object": 1,
                         "_max_results": -100}
@@ -396,6 +563,12 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(None, result)
 
     def test__handle_get_object_with_pagination_with_record(self):
+        """
+        Respond to the pagination query.
+
+        Args:
+            self: (todo): write your description
+        """
         query_params = {"_paging": 1,
                         "_return_as_object": 1,
                         "_max_results": 100}
@@ -405,6 +578,14 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(["data"], result)
 
     def _get_object(self, url, **opts):
+        """
+        Get an object
+
+        Args:
+            self: (todo): write your description
+            url: (str): write your description
+            opts: (str): write your description
+        """
         resp = requests.Response
         resp.status_code = 200
         if "_page_id" in url:
@@ -414,6 +595,12 @@ class TestInfobloxConnector(unittest.TestCase):
         return resp
 
     def test__handle_get_object_with_record_more_than_max_results_paging(self):
+        """
+        Respond to a test test results.
+
+        Args:
+            self: (todo): write your description
+        """
         query_params = {"_paging": 1,
                         "_return_as_object": 1,
                         "_max_results": 5}
@@ -424,6 +611,12 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], result)
 
     def test__handle_get_object_without_pagination(self):
+        """
+        Gets the pagination query result.
+
+        Args:
+            self: (todo): write your description
+        """
         query_params = {"_max_results": 100}
         self.connector._get_object = mock.MagicMock(return_value=None)
         result = self.connector._handle_get_object("network", query_params,
@@ -431,6 +624,12 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(None, result)
 
     def test__handle_get_object_without_pagination_with_record(self):
+        """
+        Respond to the pagination query.
+
+        Args:
+            self: (todo): write your description
+        """
         query_params = {"_max_results": 100}
         self.connector._get_object = mock.MagicMock(return_value=["data"])
         result = self.connector._handle_get_object("network", query_params,
@@ -438,6 +637,12 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(["data"], result)
 
     def test_call_func(self):
+        """
+        Returns the json - rpc request object.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
 
@@ -455,6 +660,12 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_call_func_with_http_error(self):
+        """
+        Decorator for httperror.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
 
@@ -469,6 +680,12 @@ class TestInfobloxConnector(unittest.TestCase):
                               payload)
 
     def test_call_func_with_http_error_503(self):
+        """
+        Decorator for http_call_func.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
 
@@ -483,6 +700,12 @@ class TestInfobloxConnector(unittest.TestCase):
                               payload)
 
     def test__check_service_availability(self):
+        """
+        Check if the service is alive.
+
+        Args:
+            self: (todo): write your description
+        """
         resp = requests.Response
         resp.status_code = 503
         resp.content = 'Temporary Unavailable'
@@ -493,6 +716,12 @@ class TestInfobloxConnector(unittest.TestCase):
                           '_ref')
 
     def test_get_object_with_cookies(self):
+        """
+        Get a dictionary of cookies.
+
+        Args:
+            self: (todo): write your description
+        """
         objtype = 'network'
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:
@@ -505,6 +734,12 @@ class TestInfobloxConnector(unittest.TestCase):
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
+        """
+        This is_neobloxron exception was raised.
+
+        Args:
+            self: (todo): write your description
+        """
         # timeout exception raises InfobloxTimeoutError
         f = mock.Mock()
         f.__name__ = 'mock'
@@ -526,6 +761,12 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
                               connector.reraise_neutron_exception(f))
 
     def test_exception_raised_for_non_authorized(self):
+        """
+        Sends a request has failed.
+
+        Args:
+            self: (todo): write your description
+        """
         response = mock.Mock()
         response.status_code = requests.codes.UNAUTHORIZED
         self.assertRaises(exceptions.InfobloxBadWAPICredential,
@@ -533,6 +774,12 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
                           response)
 
     def test_no_exceptions_for_ok_statuses(self):
+        """
+        Test if the http status code.
+
+        Args:
+            self: (todo): write your description
+        """
         response = mock.Mock()
         ok_statuses = (requests.codes.OK,
                        requests.codes.CREATED,
@@ -542,12 +789,24 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
             connector.Connector._validate_authorized(response)
 
     def test_non_cloud_api_detection(self):
+        """
+        Determine the cloud cloud. cloud cloud cloud api.
+
+        Args:
+            self: (todo): write your description
+        """
         wapi_not_cloud = ('1.4.1', '1.9/', '1.99', 'asd', 'v1.4')
         for url in wapi_not_cloud:
             self.assertFalse(
                 connector.Connector.is_cloud_wapi(url))
 
     def test_cloud_api_detection(self):
+        """
+        Determine cloud cloud cloud cloud api.
+
+        Args:
+            self: (todo): write your description
+        """
         wapi_cloud = ('2.1/', '/2.0/', '2.0.1',
                       '3.0/', '11.0.1/', 'v2.1', 'v2.0')
         for url in wapi_cloud:
@@ -555,6 +814,12 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
                 connector.Connector.is_cloud_wapi(url))
 
     def test_allow_options_as_dict(self):
+        """
+        Return a dictionary.
+
+        Args:
+            self: (todo): write your description
+        """
         opts = dict(host='infoblox.example.org',
                     wapi_version='1.1',
                     username='admin',
@@ -582,12 +847,24 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
                          conn.http_request_timeout)
 
     def test_incomplete_options_raises_exception(self):
+        """
+        Return the options that have the expected options.
+
+        Args:
+            self: (todo): write your description
+        """
         opts = dict(host='infoblox.example.org',
                     wapi_version='1.1')
         self.assertRaises(exceptions.InfobloxConfigException,
                           connector.Connector, opts)
 
     def test_default_options(self):
+        """
+        Get the default configuration.
+
+        Args:
+            self: (todo): write your description
+        """
         opts = dict(host='infoblox.example.org',
                     username='admin',
                     password='password')
@@ -602,6 +879,12 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
         self.assertEqual(None, conn.max_results)
 
     def test_blank_values_not_allowed(self):
+        """
+        Test for blank values are allowed.
+
+        Args:
+            self: (todo): write your description
+        """
         base_dict = {'host': '192.168.1.15',
                      'username': 'admin',
                      'password': 'pass'}
@@ -612,12 +895,24 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
                               connector.Connector, test_dict)
 
     def test_is_cloud_wapi_raises_exception(self):
+        """
+        Determine the cloudwapi is a - api.
+
+        Args:
+            self: (todo): write your description
+        """
         for value in (None, '', 0, 1, self, 1.2):
             self.assertRaises(ValueError,
                               connector.Connector.is_cloud_wapi,
                               value)
 
     def test__parse_reply_raises_connection_error(self):
+        """
+        Handle a reply reply reply reply.
+
+        Args:
+            self: (todo): write your description
+        """
         request = mock.Mock()
         request.content = ('<HTML><BODY BGCOLOR="FFFFFF">'
                            'Some error reply</BODY></HTML>\n')
@@ -626,6 +921,12 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
                           request)
 
     def test__parse_reply(self):
+        """
+        Test for reply.
+
+        Args:
+            self: (todo): write your description
+        """
         request = mock.Mock()
         request.content = (
             '[{"_ref": "network/ZG5zLm5ldHdvcmskMTAuNDAuMjUuMC8yNC8w:'

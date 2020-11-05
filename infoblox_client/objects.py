@@ -43,6 +43,12 @@ class BaseObject(object):
     _infoblox_type = None
 
     def __init__(self, **kwargs):
+        """
+        Initialize the fields of this field.
+
+        Args:
+            self: (todo): write your description
+        """
         mapped_args = self._remap_fields(kwargs)
         for field in self._fields + self._shadow_fields:
             if field in mapped_args:
@@ -53,6 +59,13 @@ class BaseObject(object):
                     setattr(self, field, None)
 
     def __getattr__(self, name):
+        """
+        Returns the value of a given attribute.
+
+        Args:
+            self: (todo): write your description
+            name: (str): write your description
+        """
         # Map aliases into real fields
         if name in self._remap:
             return getattr(self, self._remap[name])
@@ -61,12 +74,27 @@ class BaseObject(object):
             raise AttributeError
 
     def __setattr__(self, name, value):
+        """
+        Set an attribute of an attribute.
+
+        Args:
+            self: (todo): write your description
+            name: (str): write your description
+            value: (todo): write your description
+        """
         if name in self._remap:
             return setattr(self, self._remap[name], value)
         else:
             super(BaseObject, self).__setattr__(name, value)
 
     def __eq__(self, other):
+        """
+        Return true if other is equal to other.
+
+        Args:
+            self: (todo): write your description
+            other: (todo): write your description
+        """
         if isinstance(other, self.__class__):
             for field in self._fields:
                 if getattr(self, field) != getattr(other, field):
@@ -75,6 +103,12 @@ class BaseObject(object):
         return False
 
     def __repr__(self):
+        """
+        Return a human - readable representation of this object.
+
+        Args:
+            self: (todo): write your description
+        """
         data = {field: getattr(self, field)
                 for field in self._fields + self._shadow_fields
                 if hasattr(self, field) and getattr(self, field) is not None}
@@ -95,14 +129,33 @@ class BaseObject(object):
 
     @classmethod
     def from_dict(cls, ip_dict):
+        """
+        Initialize an object from a dictionary.
+
+        Args:
+            cls: (todo): write your description
+            ip_dict: (dict): write your description
+        """
         return cls(**ip_dict)
 
     def to_dict(self):
+        """
+        Return a dict of - serializable fields to a dictionary.
+
+        Args:
+            self: (todo): write your description
+        """
         return {field: getattr(self, field) for field in self._fields
                 if getattr(self, field, None) is not None}
 
     @property
     def ref(self):
+        """
+        Return the reference to this reference.
+
+        Args:
+            self: (todo): write your description
+        """
         if hasattr(self, '_ref'):
             return self._ref
 
@@ -125,6 +178,12 @@ class EA(object):
         self._ea_dict = ea_dict
 
     def __repr__(self):
+        """
+        Return a human - readable representation of this object.
+
+        Args:
+            self: (todo): write your description
+        """
         eas = ()
         if self._ea_dict:
             eas = ("{0}={1}".format(name, self._ea_dict[name])
@@ -221,14 +280,36 @@ class InfobloxObject(BaseObject):
     _ip_version = None
 
     def __new__(cls, connector, **kwargs):
+        """
+        Creates a new : class : class :.
+
+        Args:
+            cls: (todo): write your description
+            connector: (todo): write your description
+        """
         return super(InfobloxObject,
                      cls).__new__(cls.get_class_from_args(kwargs))
 
     def __init__(self, connector, **kwargs):
+        """
+        Initialize the connection.
+
+        Args:
+            self: (todo): write your description
+            connector: (todo): write your description
+        """
         self.connector = connector
         super(InfobloxObject, self).__init__(**kwargs)
 
     def update_from_dict(self, ip_dict, only_ref=False):
+        """
+        Updates fields dictionary from a dictionary
+
+        Args:
+            self: (todo): write your description
+            ip_dict: (dict): write your description
+            only_ref: (bool): write your description
+        """
         if only_ref:
             self._ref = ip_dict['_ref']
             return
@@ -256,6 +337,12 @@ class InfobloxObject(BaseObject):
 
     @staticmethod
     def value_to_dict(value):
+        """
+        Convert value ascii object.
+
+        Args:
+            value: (todo): write your description
+        """
         return value.to_dict() if hasattr(value, 'to_dict') else value
 
     def field_to_dict(self, field):
@@ -284,6 +371,14 @@ class InfobloxObject(BaseObject):
 
     @staticmethod
     def _object_from_reply(parse_class, connector, reply):
+        """
+        Parse a reply object from a reply.
+
+        Args:
+            parse_class: (todo): write your description
+            connector: (todo): write your description
+            reply: (int): write your description
+        """
         if not reply:
             return None
         if isinstance(reply, dict):
@@ -297,6 +392,15 @@ class InfobloxObject(BaseObject):
     @classmethod
     def create_check_exists(cls, connector, check_if_exists=True,
                             update_if_exists=False, **kwargs):
+        """
+        Create a new check if it does not exist.
+
+        Args:
+            cls: (todo): write your description
+            connector: (todo): write your description
+            check_if_exists: (bool): write your description
+            update_if_exists: (bool): write your description
+        """
         # obj_created is used to check if object is being created or
         # pre-exists. obj_created is True if object is not pre-exists
         # and getting created with this function call
@@ -330,6 +434,15 @@ class InfobloxObject(BaseObject):
     @classmethod
     def create(cls, connector, check_if_exists=True,
                update_if_exists=False, **kwargs):
+        """
+        Create an object.
+
+        Args:
+            cls: (todo): write your description
+            connector: (todo): write your description
+            check_if_exists: (bool): write your description
+            update_if_exists: (str): write your description
+        """
         ib_object, _ = (
             cls.create_check_exists(connector,
                                     check_if_exists=check_if_exists,
@@ -341,6 +454,17 @@ class InfobloxObject(BaseObject):
     def _search(cls, connector, return_fields=None,
                 search_extattrs=None, force_proxy=False,
                 max_results=None, **kwargs):
+        """
+        Perform a search.
+
+        Args:
+            cls: (todo): write your description
+            connector: (todo): write your description
+            return_fields: (bool): write your description
+            search_extattrs: (todo): write your description
+            force_proxy: (bool): write your description
+            max_results: (int): write your description
+        """
         ib_obj_for_search = cls(connector, **kwargs)
         search_dict = ib_obj_for_search.to_dict(search_fields='all')
         if return_fields is None and ib_obj_for_search.return_fields:
@@ -360,6 +484,13 @@ class InfobloxObject(BaseObject):
 
     @classmethod
     def search(cls, connector, **kwargs):
+        """
+        Search for an object and return the given object.
+
+        Args:
+            cls: (todo): write your description
+            connector: (str): write your description
+        """
         ib_obj, parse_class = cls._search(
             connector, **kwargs)
         if ib_obj:
@@ -367,6 +498,13 @@ class InfobloxObject(BaseObject):
 
     @classmethod
     def search_all(cls, connector, **kwargs):
+        """
+        Search for all objects.
+
+        Args:
+            cls: (todo): write your description
+            connector: (todo): write your description
+        """
         ib_objects, parsing_class = cls._search(
             connector, **kwargs)
         if ib_objects:
@@ -398,6 +536,12 @@ class InfobloxObject(BaseObject):
         return False
 
     def update(self):
+        """
+        Update the object
+
+        Args:
+            self: (todo): write your description
+        """
         update_fields = self.to_dict(search_fields='exclude')
         ib_obj = self.connector.update_object(self.ref,
                                               update_fields,
@@ -406,6 +550,12 @@ class InfobloxObject(BaseObject):
         return self._object_from_reply(self, self.connector, ib_obj)
 
     def delete(self):
+        """
+        Deletes the given object.
+
+        Args:
+            self: (todo): write your description
+        """
         try:
             self.connector.delete_object(self.ref)
         except ib_ex.InfobloxCannotDeleteObject as e:
@@ -413,18 +563,42 @@ class InfobloxObject(BaseObject):
 
     @property
     def infoblox_type(self):
+        """
+        The infoblox type.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._infoblox_type
 
     @property
     def return_fields(self):
+        """
+        Returns a list of fields that have been loaded.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._return_fields
 
     @property
     def ip_version(self):
+        """
+        Return the ip version.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._ip_version
 
     @classmethod
     def get_class_from_args(cls, kwargs):
+        """
+        Return class based on class.
+
+        Args:
+            cls: (todo): write your description
+        """
         # skip processing if cls already versioned class
         if cls._ip_version:
             return cls
@@ -440,6 +614,13 @@ class InfobloxObject(BaseObject):
         return cls.get_v4_class()
 
     def _call_func(self, function, *args, **kwargs):
+        """
+        Call a function call.
+
+        Args:
+            self: (todo): write your description
+            function: (todo): write your description
+        """
         ref = self._ref
         if ref is None:
             ref = self.infoblox_type
@@ -448,10 +629,22 @@ class InfobloxObject(BaseObject):
 
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the class for class
+
+        Args:
+            cls: (callable): write your description
+        """
         return cls
 
     @classmethod
     def get_v6_class(cls):
+        """
+        : return the class associated class associated class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return cls
 
 
@@ -460,12 +653,25 @@ class SubObjects(BaseObject):
 
     @classmethod
     def from_dict(cls, ip_dict):
+        """
+        Convert a dict from a dictionary.
+
+        Args:
+            cls: (todo): write your description
+            ip_dict: (dict): write your description
+        """
         if isinstance(ip_dict, list):
             return [cls(**item) for item in ip_dict]
         else:
             return cls(**ip_dict)
 
     def to_dict(self):
+        """
+        Return a dict of - serializable fields to a dictionary.
+
+        Args:
+            self: (todo): write your description
+        """
         return {field: getattr(self, field) for field in self._fields
                 if getattr(self, field, None) is not None}
 
@@ -479,6 +685,14 @@ class IP(SubObjects):
     # better way for mac processing?
     @classmethod
     def create(cls, ip=None, mac=None, **kwargs):
+        """
+        Create a new mac address.
+
+        Args:
+            cls: (callable): write your description
+            ip: (int): write your description
+            mac: (int): write your description
+        """
         if ip is None:
             raise ValueError
         if ib_utils.determine_ip_version(ip) == 6:
@@ -488,6 +702,13 @@ class IP(SubObjects):
             return IPv4(ip=ip, mac=mac, **kwargs)
 
     def __eq__(self, other):
+        """
+        Return true if two ipv6 addresses are equal.
+
+        Args:
+            self: (todo): write your description
+            other: (todo): write your description
+        """
         if isinstance(other, six.string_types):
             return self.ip == other
         elif isinstance(other, self.__class__):
@@ -496,22 +717,47 @@ class IP(SubObjects):
 
     @property
     def zone_auth(self):
+        """
+        The auth - auth_auth header.
+
+        Args:
+            self: (todo): write your description
+        """
         if self.host is not None:
             return self.host.partition('.')[2]
 
     @property
     def hostname(self):
+        """
+        The hostname.
+
+        Args:
+            self: (todo): write your description
+        """
         if self.host is not None:
             return self.host.partition('.')[0]
 
     @property
     def ip(self):
+        """
+        Returns the ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         # Convert IPAllocation objects to string
         if hasattr(self, '_ip'):
             return str(self._ip)
 
     @ip.setter
     def ip(self, ip):
+        """
+        Add ip : ip address
+
+        Args:
+            self: (todo): write your description
+            ip: (todo): write your description
+        """
         self._ip = ip
 
 
@@ -533,11 +779,24 @@ class AnyMember(SubObjects):
 
     @property
     def ip(self):
+        """
+        Returns the ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         if hasattr(self, '_ip'):
             return str(self._ip)
 
     @ip.setter
     def ip(self, ip):
+        """
+        Determine ip address.
+
+        Args:
+            self: (todo): write your description
+            ip: (todo): write your description
+        """
         # AnyMember represents both ipv4 and ipv6 objects, so don't need
         # versioned object for that. Just set v4 or v6 field additionally
         # to setting shadow 'ip' field itself.
@@ -553,22 +812,59 @@ class AnyMember(SubObjects):
 class IPAllocation(object):
 
     def __init__(self, address, next_available_ip):
+        """
+        Initialize the ip address.
+
+        Args:
+            self: (todo): write your description
+            address: (str): write your description
+            next_available_ip: (str): write your description
+        """
         self.ip_version = ib_utils.determine_ip_version(address)
         self.next_available_ip = next_available_ip
 
     def __repr__(self):
+        """
+        Return a human - readable string.
+
+        Args:
+            self: (todo): write your description
+        """
         return "IPAllocation: {0}".format(self.next_available_ip)
 
     def __str__(self):
+        """
+        : return string representation of the address.
+
+        Args:
+            self: (todo): write your description
+        """
         return str(self.next_available_ip)
 
     @classmethod
     def next_available_ip_from_cidr(cls, net_view_name, cidr):
+        """
+        Return next ip address from cidr
+
+        Args:
+            cls: (todo): write your description
+            net_view_name: (str): write your description
+            cidr: (str): write your description
+        """
         return cls(cidr, 'func:nextavailableip:'
                          '{cidr:s},{net_view_name:s}'.format(**locals()))
 
     @classmethod
     def next_available_ip_from_range(cls, net_view_name, first_ip, last_ip):
+        """
+        Return next ip address matching the next network.
+
+        Args:
+            cls: (todo): write your description
+            net_view_name: (str): write your description
+            first_ip: (str): write your description
+            last_ip: (str): write your description
+        """
         return cls(first_ip, 'func:nextavailableip:{first_ip}-{last_ip},'
                              '{net_view_name}'.format(**locals()))
 
@@ -1523,6 +1819,12 @@ class Awsrte53Taskgroup(InfobloxObject):
     }
 
     def task_control(self, *args, **kwargs):
+        """
+        Call the function.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("task_control", *args, **kwargs)
 
 
@@ -1896,6 +2198,12 @@ class CertificateAuthservice(InfobloxObject):
     }
 
     def test_ocsp_responder_settings(self, *args, **kwargs):
+        """
+        Todosp_oc.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_ocsp_responder_settings", *args, **kwargs)
 
 
@@ -1975,6 +2283,12 @@ class CiscoiseEndpoint(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def test_connection(self, *args, **kwargs):
+        """
+        Executes a test connection.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_connection", *args, **kwargs)
 
 
@@ -2020,6 +2334,12 @@ class Csvimporttask(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def stop(self, *args, **kwargs):
+        """
+        Call the call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("stop", *args, **kwargs)
 
 
@@ -2070,9 +2390,21 @@ class Dbsnapshot(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def rollback_db_snapshot(self, *args, **kwargs):
+        """
+        Rollback the database backends.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("rollback_db_snapshot", *args, **kwargs)
 
     def save_db_snapshot(self, *args, **kwargs):
+        """
+        Save a snapshot of the snapshot of the database.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("save_db_snapshot", *args, **kwargs)
 
 
@@ -2291,10 +2623,22 @@ class Dhcpfailover(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def set_dhcp_failover_partner_down(self, *args, **kwargs):
+        """
+        Sets the dhcp partner_partner_partner_partner_partner_down ).
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("set_dhcp_failover_partner_down", *args,
                                **kwargs)
 
     def set_dhcp_failover_secondary_recovery(self, *args, **kwargs):
+        """
+        Set dhcp dhcp dhcpover_failover_secondaryover_secondary_secondary.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("set_dhcp_failover_secondary_recovery", *args,
                                **kwargs)
 
@@ -2302,10 +2646,22 @@ class Dhcpfailover(InfobloxObject):
 class DhcpOptionDefinition(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the class associated with this class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return DhcpOptionDefinitionV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Returns the class of the given cls class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return DhcpOptionDefinitionV6
 
 
@@ -2367,10 +2723,22 @@ class DhcpOptionDefinitionV6(DhcpOptionDefinition):
 class DhcpOptionSpace(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the class associated with this class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return DhcpOptionSpaceV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Returns the class of the class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return DhcpOptionSpaceV6
 
 
@@ -2444,34 +2812,94 @@ class Discovery(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def clear_network_port_assignment(self, *args, **kwargs):
+        """
+        Clearses the assignment assignment constraints.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("clear_network_port_assignment", *args,
                                **kwargs)
 
     def control_switch_port(self, *args, **kwargs):
+        """
+        Send a switch port.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("control_switch_port", *args, **kwargs)
 
     def discovery_data_conversion(self, *args, **kwargs):
+        """
+        Call discovery discovery discovery discovery.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("discovery_data_conversion", *args, **kwargs)
 
     def get_device_support_info(self, *args, **kwargs):
+        """
+        Get device info.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("get_device_support_info", *args, **kwargs)
 
     def get_job_devices(self, *args, **kwargs):
+        """
+        Get a list.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("get_job_devices", *args, **kwargs)
 
     def get_job_process_details(self, *args, **kwargs):
+        """
+        Get details about a job.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("get_job_process_details", *args, **kwargs)
 
     def import_device_support_bundle(self, *args, **kwargs):
+        """
+        Imports a bundle bundle.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("import_device_support_bundle", *args, **kwargs)
 
     def modify_vrf_assignment(self, *args, **kwargs):
+        """
+        Rename a vrfignment.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("modify_vrf_assignment", *args, **kwargs)
 
     def provision_network_dhcp_relay(self, *args, **kwargs):
+        """
+        Evaluate a network - quota.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("provision_network_dhcp_relay", *args, **kwargs)
 
     def provision_network_port(self, *args, **kwargs):
+        """
+        Returns the port port.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("provision_network_port", *args, **kwargs)
 
 
@@ -2878,15 +3306,39 @@ class DiscoveryGridproperties(InfobloxObject):
     }
 
     def advisor_run_now(self, *args, **kwargs):
+        """
+        Execute the given function.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("advisor_run_now", *args, **kwargs)
 
     def advisor_test_connection(self, *args, **kwargs):
+        """
+        Executes a connection.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("advisor_test_connection", *args, **kwargs)
 
     def diagnostic(self, *args, **kwargs):
+        """
+        Calls the given function.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("diagnostic", *args, **kwargs)
 
     def diagnostic_status(self, *args, **kwargs):
+        """
+        Return the status of the vm.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("diagnostic_status", *args, **kwargs)
 
 
@@ -3078,6 +3530,12 @@ class Discoverytask(InfobloxObject):
     }
 
     def network_discovery_control(self, *args, **kwargs):
+        """
+        R this method is a network.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("network_discovery_control", *args, **kwargs)
 
 
@@ -3199,15 +3657,39 @@ class Dtc(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def add_certificate(self, *args, **kwargs):
+        """
+        Deprecated. use this keypair.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("add_certificate", *args, **kwargs)
 
     def generate_ea_topology_db(self, *args, **kwargs):
+        """
+        Generate topology topology. db.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("generate_ea_topology_db", *args, **kwargs)
 
     def import_maxminddb(self, *args, **kwargs):
+        """
+        Executes a database.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("import_maxminddb", *args, **kwargs)
 
     def query(self, *args, **kwargs):
+        """
+        Execute a query.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("query", *args, **kwargs)
 
 
@@ -3691,10 +4173,22 @@ class DtcPool(InfobloxObject):
 class ADtcRecordBase(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        : return : class :.
+
+        Args:
+            cls: (callable): write your description
+        """
         return ADtcRecord
 
     @classmethod
     def get_v6_class(cls):
+        """
+        : return : class :.
+
+        Args:
+            cls: (callable): write your description
+        """
         return AAAADtcRecord
 
 
@@ -4071,9 +4565,21 @@ class DxlEndpoint(InfobloxObject):
     }
 
     def clear_outbound_worker_log(self, *args, **kwargs):
+        """
+        Clear outbound worker handlers.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("clear_outbound_worker_log", *args, **kwargs)
 
     def test_broker_connectivity(self, *args, **kwargs):
+        """
+        See : class :.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_broker_connectivity", *args, **kwargs)
 
 
@@ -4157,129 +4663,375 @@ class Fileop(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def csv_error_log(self, *args, **kwargs):
+        """
+        Logs the error log.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("csv_error_log", *args, **kwargs)
 
     def csv_export(self, *args, **kwargs):
+        """
+        Execute the csv.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("csv_export", *args, **kwargs)
 
     def csv_import(self, *args, **kwargs):
+        """
+        Decorator.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("csv_import", *args, **kwargs)
 
     def csv_snapshot_file(self, *args, **kwargs):
+        """
+        Executes snapshot of the snapshot snapshot.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("csv_snapshot_file", *args, **kwargs)
 
     def csv_uploaded_file(self, *args, **kwargs):
+        """
+        Wrapper function to uploaded upload.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("csv_uploaded_file", *args, **kwargs)
 
     def download_atp_rule_update(self, *args, **kwargs):
+        """
+        Download rule atp_rule.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("download_atp_rule_update", *args, **kwargs)
 
     def download_pool_status(self, *args, **kwargs):
+        """
+        Download a pool s pool.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("download_pool_status", *args, **kwargs)
 
     def downloadcertificate(self, *args, **kwargs):
+        """
+        Downloads a certificate
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("downloadcertificate", *args, **kwargs)
 
     def downloadcomplete(self, *args, **kwargs):
+        """
+        Downloads a call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("downloadcomplete", *args, **kwargs)
 
     def generatecsr(self, *args, **kwargs):
+        """
+        Generate a csr.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("generatecsr", *args, **kwargs)
 
     def generatedxlendpointcerts(self, *args, **kwargs):
+        """
+        Deprecated **
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("generatedxlendpointcerts", *args, **kwargs)
 
     def generatesafenetclientcert(self, *args, **kwargs):
+        """
+        Generate a client certificate.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("generatesafenetclientcert", *args, **kwargs)
 
     def generateselfsignedcert(self, *args, **kwargs):
+        """
+        Generate a signed certificate.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("generateselfsignedcert", *args, **kwargs)
 
     def get_file_url(self, *args, **kwargs):
+        """
+        Return a get request.
+
+        Args:
+            self: (str): write your description
+        """
         return self._call_func("get_file_url", *args, **kwargs)
 
     def get_last_uploaded_atp_ruleset(self, *args, **kwargs):
+        """
+        Gets last last last last last last call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("get_last_uploaded_atp_ruleset", *args,
                                **kwargs)
 
     def get_log_files(self, *args, **kwargs):
+        """
+        Call : py : class. log_files.
+
+        Args:
+            self: (str): write your description
+        """
         return self._call_func("get_log_files", *args, **kwargs)
 
     def get_support_bundle(self, *args, **kwargs):
+        """
+        Get a list of all available bundles.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("get_support_bundle", *args, **kwargs)
 
     def getgriddata(self, *args, **kwargs):
+        """
+        See : func : getgriddata.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("getgriddata", *args, **kwargs)
 
     def getleasehistoryfiles(self, *args, **kwargs):
+        """
+        Return a list of all the lease.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("getleasehistoryfiles", *args, **kwargs)
 
     def getmemberdata(self, *args, **kwargs):
+        """
+        Call getmember function.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("getmemberdata", *args, **kwargs)
 
     def getsafenetclientcert(self, *args, **kwargs):
+        """
+        Returns a certificate.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("getsafenetclientcert", *args, **kwargs)
 
     def read(self, *args, **kwargs):
+        """
+        Call this call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("read", *args, **kwargs)
 
     def restapi_template_export(self, *args, **kwargs):
+        """
+        Export a restapi template string
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("restapi_template_export", *args, **kwargs)
 
     def restapi_template_export_schema(self, *args, **kwargs):
+        """
+        Export a restclapi rest api restful call
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("restapi_template_export_schema", *args,
                                **kwargs)
 
     def restapi_template_import(self, *args, **kwargs):
+        """
+        Import a restapi call
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("restapi_template_import", *args, **kwargs)
 
     def restoredatabase(self, *args, **kwargs):
+        """
+        Restored the call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("restoredatabase", *args, **kwargs)
 
     def restoredtcconfig(self, *args, **kwargs):
+        """
+        Restoredtcconfigfig () on the call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("restoredtcconfig", *args, **kwargs)
 
     def set_captive_portal_file(self, *args, **kwargs):
+        """
+        Sets the durational_port -al_port ).
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("set_captive_portal_file", *args, **kwargs)
 
     def set_dhcp_leases(self, *args, **kwargs):
+        """
+        Sets a : ref : set_leasescp_leases <stellar
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("set_dhcp_leases", *args, **kwargs)
 
     def set_downgrade_file(self, *args, **kwargs):
+        """
+        Sets the file at the given location.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("set_downgrade_file", *args, **kwargs)
 
     def set_last_uploaded_atp_ruleset(self, *args, **kwargs):
+        """
+        See : func : set_uploaded_atp_ruleset_ruleset.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("set_last_uploaded_atp_ruleset", *args,
                                **kwargs)
 
     def set_upgrade_file(self, *args, **kwargs):
+        """
+        Sets the upgrade upgrade upgrade_file.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("set_upgrade_file", *args, **kwargs)
 
     def setdiscoverycsv(self, *args, **kwargs):
+        """
+        See : func : setdiscoverycsvcsv
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("setdiscoverycsv", *args, **kwargs)
 
     def setfiledest(self, *args, **kwargs):
+        """
+        See : func : py : class : func <. call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("setfiledest", *args, **kwargs)
 
     def setleasehistoryfiles(self, *args, **kwargs):
+        """
+        Sets the contents of this queue.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("setleasehistoryfiles", *args, **kwargs)
 
     def setmemberdata(self, *args, **kwargs):
+        """
+        Call the data for the given member.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("setmemberdata", *args, **kwargs)
 
     def update_atp_ruleset(self, *args, **kwargs):
+        """
+        Call the update ruleset.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("update_atp_ruleset", *args, **kwargs)
 
     def update_licenses(self, *args, **kwargs):
+        """
+        Update all callbacks.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("update_licenses", *args, **kwargs)
 
     def uploadcertificate(self, *args, **kwargs):
+        """
+        Uploads a certificate to the certificate.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("uploadcertificate", *args, **kwargs)
 
     def uploadinit(self, *args, **kwargs):
+        """
+        Uploads a new upload.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("uploadinit", *args, **kwargs)
 
     def uploadserviceaccount(self, *args, **kwargs):
+        """
+        Upload an account.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("uploadserviceaccount", *args, **kwargs)
 
 
@@ -4559,10 +5311,22 @@ class Fingerprint(InfobloxObject):
 class FixedAddress(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        : return : class :.
+
+        Args:
+            cls: (callable): write your description
+        """
         return FixedAddressV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Return the v6v6 class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return FixedAddressV6
 
 
@@ -4733,6 +5497,12 @@ class FixedAddressV4(FixedAddress):
 
     @property
     def ip(self):
+        """
+        Returns the ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         if hasattr(self, '_ip'):
             return str(self._ip)
 
@@ -4741,6 +5511,13 @@ class FixedAddressV4(FixedAddress):
     # to setting shadow field 'ip' itself.
     @ip.setter
     def ip(self, ip):
+        """
+        Add ip : ip address
+
+        Args:
+            self: (todo): write your description
+            ip: (todo): write your description
+        """
         self._ip = ip
 
     _custom_field_processing = {
@@ -4871,10 +5648,23 @@ class FixedAddressV6(FixedAddress):
     """
     @property
     def mac(self):
+        """
+        The mac address.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._mac
 
     @mac.setter
     def mac(self, mac):
+        """
+        Generate mac address.
+
+        Args:
+            self: (todo): write your description
+            mac: (array): write your description
+        """
         self._mac = mac
         if mac:
             self.duid = ib_utils.generate_duid(mac)
@@ -4883,6 +5673,12 @@ class FixedAddressV6(FixedAddress):
 
     @property
     def ip(self):
+        """
+        Returns the ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         if hasattr(self, '_ip'):
             return str(self._ip)
 
@@ -4891,6 +5687,13 @@ class FixedAddressV6(FixedAddress):
     # to setting shadow field 'ip' itself.
     @ip.setter
     def ip(self, ip):
+        """
+        Add ip : ip address
+
+        Args:
+            self: (todo): write your description
+            ip: (todo): write your description
+        """
         self._ip = ip
 
     _custom_field_processing = {
@@ -4902,10 +5705,22 @@ class FixedAddressV6(FixedAddress):
 class FixedAddressTemplate(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the class associated with the v4 class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return FixedAddressTemplateV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Returns the v6 class associated with this class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return FixedAddressTemplateV6
 
 
@@ -5230,70 +6045,202 @@ class Grid(InfobloxObject):
     }
 
     def control_ip_address(self, *args, **kwargs):
+        """
+        Send a control ip address
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("control_ip_address", *args, **kwargs)
 
     def empty_recycle_bin(self, *args, **kwargs):
+        """
+        A wrapper around : func.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("empty_recycle_bin", *args, **kwargs)
 
     def generate_tsig_key(self, *args, **kwargs):
+        """
+        Generate a redis key.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("generate_tsig_key", *args, **kwargs)
 
     def get_all_template_vendor_id(self, *args, **kwargs):
+        """
+        Returns a list of all templates.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("get_all_template_vendor_id", *args, **kwargs)
 
     def get_grid_revert_status(self, *args, **kwargs):
+        """
+        R returns the gridrevert ) of the grid.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("get_grid_revert_status", *args, **kwargs)
 
     def get_rpz_threat_details(self, *args, **kwargs):
+        """
+        Gets details of details about the details.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("get_rpz_threat_details", *args, **kwargs)
 
     def get_template_schema_versions(self, *args, **kwargs):
+        """
+        Returns a list of versions of the versions available schema.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("get_template_schema_versions", *args, **kwargs)
 
     def join(self, *args, **kwargs):
+        """
+        Join a function call on the given arguments.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("join", *args, **kwargs)
 
     def join_mgm(self, *args, **kwargs):
+        """
+        Call func with_mgm.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("join_mgm", *args, **kwargs)
 
     def leave_mgm(self, *args, **kwargs):
+        """
+        Calls the function.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("leave_mgm", *args, **kwargs)
 
     def member_upgrade(self, *args, **kwargs):
+        """
+        Parameters : - use update_member instead.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("member_upgrade", *args, **kwargs)
 
     def publish_changes(self, *args, **kwargs):
+        """
+        Publish a call to all changes made.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("publish_changes", *args, **kwargs)
 
     def query_fqdn_on_member(self, *args, **kwargs):
+        """
+        See : func : fqdnmember.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("query_fqdn_on_member", *args, **kwargs)
 
     def requestrestartservicestatus(self, *args, **kwargs):
+        """
+        Request an rpc request.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("requestrestartservicestatus", *args, **kwargs)
 
     def restartservices(self, *args, **kwargs):
+        """
+        Restart a service.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("restartservices", *args, **kwargs)
 
     def skip_member_upgrade(self, *args, **kwargs):
+        """
+        See : func : redis.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("skip_member_upgrade", *args, **kwargs)
 
     def start_discovery(self, *args, **kwargs):
+        """
+        Starts a discovery discovery.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("start_discovery", *args, **kwargs)
 
     def test_syslog_backup_server_connection(self, *args, **kwargs):
+        """
+        Test if the syslogconnection.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_syslog_backup_server_connection", *args,
                                **kwargs)
 
     def test_syslog_connection(self, *args, **kwargs):
+        """
+        Return a sysloglog connection.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_syslog_connection", *args, **kwargs)
 
     def upgrade(self, *args, **kwargs):
+        """
+        Call the latest upgrade.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("upgrade", *args, **kwargs)
 
     def upgrade_group_now(self, *args, **kwargs):
+        """
+        Executes a function that group and return the last call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("upgrade_group_now", *args, **kwargs)
 
     def upload_keytab(self, *args, **kwargs):
+        """
+        Uploads a keytab to the couchbase.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("upload_keytab", *args, **kwargs)
 
 
@@ -6349,6 +7296,12 @@ class GridDns(InfobloxObject):
     }
 
     def run_scavenging(self, *args, **kwargs):
+        """
+        See : meth : run_scavenging.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("run_scavenging", *args, **kwargs)
 
 
@@ -6449,6 +7402,12 @@ class GridLicensePoolContainer(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def allocate_licenses(self, *args, **kwargs):
+        """
+        Allocate all licenses.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("allocate_licenses", *args, **kwargs)
 
 
@@ -6729,22 +7688,52 @@ class GridThreatanalytics(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def download_threat_analytics_moduleset_update(self, *args, **kwargs):
+        """
+        Pass through all modules modules.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("download_threat_analytics_moduleset_update",
                                *args, **kwargs)
 
     def move_blacklist_rpz_to_white_list(self, *args, **kwargs):
+        """
+        Move the blacklist to a set of blacklist.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("move_blacklist_rpz_to_white_list", *args,
                                **kwargs)
 
     def set_last_uploaded_threat_analytics_moduleset(self, *args, **kwargs):
+        """
+        Sets the uploaded_uploadtics.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("set_last_uploaded_threat_analytics_moduleset",
                                *args, **kwargs)
 
     def test_threat_analytics_server_connectivity(self, *args, **kwargs):
+        """
+        This function returns a server has a simple_server.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_threat_analytics_server_connectivity",
                                *args, **kwargs)
 
     def update_threat_analytics_moduleset(self, *args, **kwargs):
+        """
+        Update modules modules.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("update_threat_analytics_moduleset", *args,
                                **kwargs)
 
@@ -6803,9 +7792,21 @@ class GridThreatprotection(InfobloxObject):
     }
 
     def atp_object_reset(self, *args, **kwargs):
+        """
+        Reset the object atp index.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("atp_object_reset", *args, **kwargs)
 
     def test_atp_server_connectivity(self, *args, **kwargs):
+        """
+        Performivity atp_server_connectivity.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_atp_server_connectivity", *args, **kwargs)
 
 
@@ -6930,9 +7931,21 @@ class HsmSafenetgroup(InfobloxObject):
     }
 
     def refresh_hsm(self, *args, **kwargs):
+        """
+        Refresh the hsm.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("refresh_hsm", *args, **kwargs)
 
     def test_hsm_status(self, *args, **kwargs):
+        """
+        Decorator for test test.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_hsm_status", *args, **kwargs)
 
 
@@ -6982,9 +7995,21 @@ class HsmThalesgroup(InfobloxObject):
     }
 
     def refresh_hsm(self, *args, **kwargs):
+        """
+        Refresh the hsm.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("refresh_hsm", *args, **kwargs)
 
     def test_hsm_status(self, *args, **kwargs):
+        """
+        Decorator for test test.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_hsm_status", *args, **kwargs)
 
 
@@ -7026,10 +8051,22 @@ class IpamStatistics(InfobloxObject):
 class IPAddress(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        : return : class :.
+
+        Args:
+            cls: (callable): write your description
+        """
         return IPv4Address
 
     @classmethod
     def get_v6_class(cls):
+        """
+        : return : class :. v6 class
+
+        Args:
+            cls: (callable): write your description
+        """
         return IPv6Address
 
 
@@ -7164,10 +8201,22 @@ class IPv6Address(IPAddress):
 class Network(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Returns the class associated with the network.
+
+        Args:
+            cls: (callable): write your description
+        """
         return NetworkV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Returns the network class associated with the network.
+
+        Args:
+            cls: (callable): write your description
+        """
         return NetworkV6
 
 
@@ -7517,21 +8566,57 @@ class NetworkV4(Network):
     }
 
     def expand_network(self, *args, **kwargs):
+        """
+        Expand a network.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("expand_network", *args, **kwargs)
 
     def next_available_ip(self, *args, **kwargs):
+        """
+        Returns the next available ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_ip", *args, **kwargs)
 
     def next_available_network(self, *args, **kwargs):
+        """
+        Returns a list of next network next available.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_network", *args, **kwargs)
 
     def next_available_vlan(self, *args, **kwargs):
+        """
+        Returns the next available next available vlan calls.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_vlan", *args, **kwargs)
 
     def resize(self, *args, **kwargs):
+        """
+        Resize the call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("resize", *args, **kwargs)
 
     def split_network(self, *args, **kwargs):
+        """
+        Splits the network into multiple networks.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("split_network", *args, **kwargs)
 
 
@@ -7770,28 +8855,70 @@ class NetworkV6(Network):
     }
 
     def expand_network(self, *args, **kwargs):
+        """
+        Expand a network.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("expand_network", *args, **kwargs)
 
     def next_available_ip(self, *args, **kwargs):
+        """
+        Returns the next available ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_ip", *args, **kwargs)
 
     def next_available_network(self, *args, **kwargs):
+        """
+        Returns a list of next network next available.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_network", *args, **kwargs)
 
     def next_available_vlan(self, *args, **kwargs):
+        """
+        Returns the next available next available vlan calls.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_vlan", *args, **kwargs)
 
     def split_network(self, *args, **kwargs):
+        """
+        Splits the network into multiple networks.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("split_network", *args, **kwargs)
 
 
 class NetworkContainer(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Returns the network class associated v4 class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return NetworkContainerV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Return the network class associated with the correct network class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return NetworkContainerV6
 
 
@@ -8077,9 +9204,21 @@ class NetworkContainerV4(NetworkContainer):
     }
 
     def next_available_network(self, *args, **kwargs):
+        """
+        Returns a list of next network next available.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_network", *args, **kwargs)
 
     def resize(self, *args, **kwargs):
+        """
+        Resize the call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("resize", *args, **kwargs)
 
 
@@ -8265,16 +9404,34 @@ class NetworkContainerV6(NetworkContainer):
     }
 
     def next_available_network(self, *args, **kwargs):
+        """
+        Returns a list of next network next available.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_network", *args, **kwargs)
 
 
 class NetworkTemplate(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the class associated with the given class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return NetworkTemplateV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Returns the class associated with the network.
+
+        Args:
+            cls: (callable): write your description
+        """
         return NetworkTemplateV6
 
 
@@ -8642,10 +9799,22 @@ class NetworkTemplateV6(NetworkTemplate):
 class IPRange(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the class
+
+        Args:
+            cls: (callable): write your description
+        """
         return IPRangeV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        : return the class
+
+        Args:
+            cls: (callable): write your description
+        """
         return IPRangeV6
 
 
@@ -8962,6 +10131,12 @@ class IPRangeV4(IPRange):
     }
 
     def next_available_ip(self, *args, **kwargs):
+        """
+        Returns the next available ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_ip", *args, **kwargs)
 
 
@@ -9091,16 +10266,34 @@ class IPRangeV6(IPRange):
     }
 
     def next_available_ip(self, *args, **kwargs):
+        """
+        Returns the next available ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_ip", *args, **kwargs)
 
 
 class RangeTemplate(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the class associated with this class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return RangeTemplateV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Return a class : ~ / etc.
+
+        Args:
+            cls: (callable): write your description
+        """
         return RangeTemplateV6
 
 
@@ -9386,10 +10579,22 @@ class RangeTemplateV6(RangeTemplate):
 class SharedNetwork(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the class associated with the default : class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return SharedNetworkV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        : return : class :.
+
+        Args:
+            cls: (callable): write your description
+        """
         return SharedNetworkV6
 
 
@@ -9754,6 +10959,12 @@ class LdapAuthService(InfobloxObject):
     }
 
     def check_ldap_server_settings(self, *args, **kwargs):
+        """
+        Checks ldap server settings.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("check_ldap_server_settings", *args, **kwargs)
 
 
@@ -10285,24 +11496,66 @@ class Member(InfobloxObject):
     }
 
     def capture_traffic_control(self, *args, **kwargs):
+        """
+        Call the capture control control_travers.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("capture_traffic_control", *args, **kwargs)
 
     def capture_traffic_status(self, *args, **kwargs):
+        """
+        Deprecated a capture capture capture status.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("capture_traffic_status", *args, **kwargs)
 
     def create_token(self, *args, **kwargs):
+        """
+        Create a new token.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("create_token", *args, **kwargs)
 
     def member_admin_operation(self, *args, **kwargs):
+        """
+        Execute a custom operation.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("member_admin_operation", *args, **kwargs)
 
     def read_token(self, *args, **kwargs):
+        """
+        Reads the token.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("read_token", *args, **kwargs)
 
     def requestrestartservicestatus(self, *args, **kwargs):
+        """
+        Request an rpc request.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("requestrestartservicestatus", *args, **kwargs)
 
     def restartservices(self, *args, **kwargs):
+        """
+        Restart a service.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("restartservices", *args, **kwargs)
 
 
@@ -10698,6 +11951,12 @@ class MemberDhcpproperties(InfobloxObject):
 
     @property
     def ip(self):
+        """
+        Returns the ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         if hasattr(self, '_ip'):
             return str(self._ip)
 
@@ -10706,6 +11965,13 @@ class MemberDhcpproperties(InfobloxObject):
     # to setting shadow field 'ip' itself.
     @ip.setter
     def ip(self, ip):
+        """
+        Get ip address.
+
+        Args:
+            self: (todo): write your description
+            ip: (todo): write your description
+        """
         self._ip = ip
         if ib_utils.determine_ip_version(ip) == 6:
             if 'ipv6addr' not in self._fields:
@@ -10725,9 +11991,21 @@ class MemberDhcpproperties(InfobloxObject):
     }
 
     def clear_nac_auth_cache(self, *args, **kwargs):
+        """
+        Clears the nac cache.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("clear_nac_auth_cache", *args, **kwargs)
 
     def purge_ifmap_data(self, *args, **kwargs):
+        """
+        Purge a function call.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("purge_ifmap_data", *args, **kwargs)
 
 
@@ -11259,6 +12537,12 @@ class MemberDns(InfobloxObject):
 
     @property
     def ip(self):
+        """
+        Returns the ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         if hasattr(self, '_ip'):
             return str(self._ip)
 
@@ -11267,6 +12551,13 @@ class MemberDns(InfobloxObject):
     # to setting shadow field 'ip' itself.
     @ip.setter
     def ip(self, ip):
+        """
+        Get ip address.
+
+        Args:
+            self: (todo): write your description
+            ip: (todo): write your description
+        """
         self._ip = ip
         if ib_utils.determine_ip_version(ip) == 6:
             if 'ipv6addr' not in self._fields:
@@ -11295,6 +12586,12 @@ class MemberDns(InfobloxObject):
     }
 
     def clear_dns_cache(self, *args, **kwargs):
+        """
+        Clears the dns cache.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("clear_dns_cache", *args, **kwargs)
 
 
@@ -11589,6 +12886,12 @@ class MsserverAdsitesSite(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def move_subnets(self, *args, **kwargs):
+        """
+        See : func : move_subnets
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("move_subnets", *args, **kwargs)
 
 
@@ -11755,6 +13058,12 @@ class Namedacl(InfobloxObject):
     }
 
     def validate_acl_items(self, *args, **kwargs):
+        """
+        Validate a list of acls.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("validate_acl_items", *args, **kwargs)
 
 
@@ -11802,6 +13111,12 @@ class NetworkDiscovery(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def clear_discovery_data(self, *args, **kwargs):
+        """
+        Clears discovery data.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("clear_discovery_data", *args, **kwargs)
 
 
@@ -11971,9 +13286,21 @@ class NotificationRestEndpoint(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def clear_outbound_worker_log(self, *args, **kwargs):
+        """
+        Clear outbound worker handlers.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("clear_outbound_worker_log", *args, **kwargs)
 
     def test_connection(self, *args, **kwargs):
+        """
+        Executes a test connection.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_connection", *args, **kwargs)
 
 
@@ -12078,6 +13405,12 @@ class NotificationRule(InfobloxObject):
     }
 
     def trigger_outbound(self, *args, **kwargs):
+        """
+        Calls the callbound.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("trigger_outbound", *args, **kwargs)
 
 
@@ -12652,16 +13985,34 @@ class RadiusAuthservice(InfobloxObject):
     }
 
     def check_radius_server_settings(self, *args, **kwargs):
+        """
+        Checks if the radius check settings are available.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("check_radius_server_settings", *args, **kwargs)
 
 
 class ARecordBase(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the class associated with class
+
+        Args:
+            cls: (callable): write your description
+        """
         return ARecord
 
     @classmethod
     def get_v6_class(cls):
+        """
+        : return : class :.
+
+        Args:
+            cls: (callable): write your description
+        """
         return AAAARecord
 
 
@@ -13262,10 +14613,22 @@ class DtclbdnRecord(InfobloxObject):
 class HostRecord(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Returns the class associated v4 class
+
+        Args:
+            cls: (callable): write your description
+        """
         return HostRecordV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        : return : class : ~v6. basev6. v6.
+
+        Args:
+            cls: (callable): write your description
+        """
         return HostRecordV6
 
 
@@ -13396,6 +14759,12 @@ class HostRecordV4(HostRecord):
 
     @property
     def ipv4addrs(self):
+        """
+        The ipv4 addresses. ipv4 addresses.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._ipv4addrs
 
     @ipv4addrs.setter
@@ -13405,6 +14774,12 @@ class HostRecordV4(HostRecord):
 
     @staticmethod
     def _build_ip(ips):
+        """
+        Build an ip address from a given ip address.
+
+        Args:
+            ips: (str): write your description
+        """
         if not ips:
             raise ib_ex.HostRecordNotPresent()
         ip = ips[0]['ipv4addr']
@@ -13545,6 +14920,12 @@ class HostRecordV6(HostRecord):
 
     @property
     def ipv6addrs(self):
+        """
+        The ipv6 addresses.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._ipv6addrs
 
     @ipv6addrs.setter
@@ -13554,6 +14935,12 @@ class HostRecordV6(HostRecord):
 
     @staticmethod
     def _build_ip(ips):
+        """
+        Build an ip address from a given ip address.
+
+        Args:
+            ips: (str): write your description
+        """
         if not ips:
             raise ib_ex.HostRecordNotPresent()
         ip = ips[0]['ipv6addr']
@@ -14181,10 +15568,22 @@ class Nsec3ParamRecord(InfobloxObject):
 class PtrRecord(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Returns the class
+
+        Args:
+            cls: (callable): write your description
+        """
         return PtrRecordV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        : return : class : v6class
+
+        Args:
+            cls: (callable): write your description
+        """
         return PtrRecordV6
 
 
@@ -14947,10 +16346,22 @@ class RpzNaptrRecord(InfobloxObject):
 class RpzPtrRecord(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        Return the v4 class : rpz4class
+
+        Args:
+            cls: (callable): write your description
+        """
         return RpzPtrRecordV4
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Return the rpz6class
+
+        Args:
+            cls: (callable): write your description
+        """
         return RpzPtrRecordV6
 
 
@@ -15975,10 +17386,22 @@ class Search(InfobloxObject):
 class ASharedRecordBase(InfobloxObject):
     @classmethod
     def get_v4_class(cls):
+        """
+        : return : class :.
+
+        Args:
+            cls: (callable): write your description
+        """
         return ASharedRecord
 
     @classmethod
     def get_v6_class(cls):
+        """
+        Returns the v6v6 class.
+
+        Args:
+            cls: (callable): write your description
+        """
         return AAAASharedRecord
 
 
@@ -16341,6 +17764,12 @@ class SmartfolderGlobal(InfobloxObject):
     }
 
     def save_as(self, *args, **kwargs):
+        """
+        Saves the object asynchronously.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("save_as", *args, **kwargs)
 
 
@@ -16380,6 +17809,12 @@ class SmartfolderPersonal(InfobloxObject):
     }
 
     def save_as(self, *args, **kwargs):
+        """
+        Saves the object asynchronously.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("save_as", *args, **kwargs)
 
 
@@ -16536,6 +17971,12 @@ class SyslogEndpoint(InfobloxObject):
     }
 
     def test_syslog_connection(self, *args, **kwargs):
+        """
+        Return a sysloglog connection.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("test_syslog_connection", *args, **kwargs)
 
 
@@ -16576,6 +18017,12 @@ class TacacsplusAuthservice(InfobloxObject):
     }
 
     def check_tacacsplus_server_settings(self, *args, **kwargs):
+        """
+        Checks if a tacacs server is enabled.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("check_tacacsplus_server_settings", *args,
                                **kwargs)
 
@@ -16608,6 +18055,12 @@ class Taxii(InfobloxObject):
 
     @property
     def ip(self):
+        """
+        Returns the ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         if hasattr(self, '_ip'):
             return str(self._ip)
 
@@ -16616,6 +18069,13 @@ class Taxii(InfobloxObject):
     # to setting shadow field 'ip' itself.
     @ip.setter
     def ip(self, ip):
+        """
+        Get ip address.
+
+        Args:
+            self: (todo): write your description
+            ip: (todo): write your description
+        """
         self._ip = ip
         if ib_utils.determine_ip_version(ip) == 6:
             if 'ipv6addr' not in self._fields:
@@ -17346,6 +18806,12 @@ class Vdiscoverytask(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def vdiscovery_control(self, *args, **kwargs):
+        """
+        An action to the control control control.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("vdiscovery_control", *args, **kwargs)
 
 
@@ -17610,6 +19076,12 @@ class DNSView(InfobloxObject):
     }
 
     def run_scavenging(self, *args, **kwargs):
+        """
+        See : meth : run_scavenging.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("run_scavenging", *args, **kwargs)
 
 
@@ -17683,6 +19155,12 @@ class Vlanrange(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def next_available_vlan_id(self, *args, **kwargs):
+        """
+        Returns the next available vlan id.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_vlan_id", *args, **kwargs)
 
 
@@ -17717,6 +19195,12 @@ class Vlanview(InfobloxObject):
     _shadow_fields = ['_ref']
 
     def next_available_vlan_id(self, *args, **kwargs):
+        """
+        Returns the next available vlan id.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("next_available_vlan_id", *args, **kwargs)
 
 
@@ -18096,30 +19580,84 @@ class DNSZone(InfobloxObject):
     }
 
     def copyzonerecords(self, *args, **kwargs):
+        """
+        Returns a list of zonerecords.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("copyzonerecords", *args, **kwargs)
 
     def dnssec_export(self, *args, **kwargs):
+        """
+        Call dnssec s dnssec
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("dnssec_export", *args, **kwargs)
 
     def dnssec_get_zone_keys(self, *args, **kwargs):
+        """
+        Get a zone keys associated with the given zone.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("dnssec_get_zone_keys", *args, **kwargs)
 
     def dnssec_operation(self, *args, **kwargs):
+        """
+        Call a dnssec operation.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("dnssec_operation", *args, **kwargs)
 
     def dnssec_set_zone_keys(self, *args, **kwargs):
+        """
+        Sets the dns zone keys for this zone.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("dnssec_set_zone_keys", *args, **kwargs)
 
     def dnssecgetkskrollover(self, *args, **kwargs):
+        """
+        Return the rolloveroverks
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("dnssecgetkskrollover", *args, **kwargs)
 
     def execute_dns_parent_check(self, *args, **kwargs):
+        """
+        Executes the dns command.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("execute_dns_parent_check", *args, **kwargs)
 
     def lock_unlock_zone(self, *args, **kwargs):
+        """
+        Unlock a zone.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("lock_unlock_zone", *args, **kwargs)
 
     def run_scavenging(self, *args, **kwargs):
+        """
+        See : meth : run_scavenging.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("run_scavenging", *args, **kwargs)
 
 
@@ -18264,6 +19802,12 @@ class DNSZoneDelegated(InfobloxObject):
     }
 
     def lock_unlock_zone(self, *args, **kwargs):
+        """
+        Unlock a zone.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("lock_unlock_zone", *args, **kwargs)
 
 
@@ -18376,6 +19920,12 @@ class DNSZoneForward(InfobloxObject):
     }
 
     def lock_unlock_zone(self, *args, **kwargs):
+        """
+        Unlock a zone.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("lock_unlock_zone", *args, **kwargs)
 
 
@@ -18532,9 +20082,21 @@ class ZoneRp(InfobloxObject):
     }
 
     def copy_rpz_records(self, *args, **kwargs):
+        """
+        Returns a copy of this record.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("copy_rpz_records", *args, **kwargs)
 
     def lock_unlock_zone(self, *args, **kwargs):
+        """
+        Unlock a zone.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("lock_unlock_zone", *args, **kwargs)
 
 
@@ -18703,4 +20265,10 @@ class ZoneStub(InfobloxObject):
     }
 
     def lock_unlock_zone(self, *args, **kwargs):
+        """
+        Unlock a zone.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._call_func("lock_unlock_zone", *args, **kwargs)

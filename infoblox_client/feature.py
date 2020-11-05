@@ -36,6 +36,14 @@ class Feature(object):
     """
 
     def __init__(self, version, feature_versions=None):
+        """
+        Initialize a wapi instance.
+
+        Args:
+            self: (todo): write your description
+            version: (todo): write your description
+            feature_versions: (dict): write your description
+        """
         self._wapi_version = None
 
         if feature_versions is None:
@@ -64,25 +72,63 @@ class WapiVersionUtil(object):
     """
 
     def __init__(self, version):
+        """
+        Initialize the wapi version.
+
+        Args:
+            self: (todo): write your description
+            version: (todo): write your description
+        """
         self._version_parts = self._get_wapi_version_parts(version)
 
     @property
     def version_parts(self):
+        """
+        : class : ~zhmcclient. models.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._version_parts
 
     @property
     def major_version(self):
+        """
+        Return the major major major version.
+
+        Args:
+            self: (todo): write your description
+        """
         return self.version_parts[0]
 
     @property
     def minor_version(self):
+        """
+        Return the minimum version of the file.
+
+        Args:
+            self: (todo): write your description
+        """
         return self.version_parts[1]
 
     @property
     def patch_version(self):
+        """
+        Returns the version number of the given version.
+
+        Args:
+            self: (todo): write your description
+        """
         return self.version_parts[2]
 
     def is_version_supported(self, req_ver):
+        """
+        Return true if the version is supported version is supported.
+
+        Args:
+            self: (todo): write your description
+            req_ver: (str): write your description
+        """
         req_parts = WapiVersionUtil(req_ver).version_parts
 
         for a, b in zip(self.version_parts, req_parts):
@@ -96,6 +142,12 @@ class WapiVersionUtil(object):
 
     @staticmethod
     def _get_wapi_version_parts(version):
+        """
+        Get the wapi parts.
+
+        Args:
+            version: (str): write your description
+        """
         parts = version.split('.')
         if not parts or len(parts) > 3 or len(parts) < 2:
             raise ValueError("Invalid argument was passed")

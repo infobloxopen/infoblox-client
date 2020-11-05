@@ -26,9 +26,23 @@ class PayloadMatcher(object):
     ANYKEY = 'MATCH_ANY_KEY'
 
     def __init__(self, expected_values):
+        """
+        Initialize the expected values.
+
+        Args:
+            self: (todo): write your description
+            expected_values: (str): write your description
+        """
         self.args = expected_values
 
     def __eq__(self, actual):
+        """
+        Return true if all expected arguments are equal.
+
+        Args:
+            self: (todo): write your description
+            actual: (list): write your description
+        """
         expected = []
 
         for key, expected_value in six.iteritems(self.args):
@@ -38,9 +52,24 @@ class PayloadMatcher(object):
         return all(expected)
 
     def __repr__(self):
+        """
+        Return a human - like representation.
+
+        Args:
+            self: (todo): write your description
+        """
         return "Expected args: %s" % self.args
 
     def _verify_value_is_expected(self, d, key, expected_value):
+        """
+        Checks if the expected dict is expected
+
+        Args:
+            self: (todo): write your description
+            d: (todo): write your description
+            key: (str): write your description
+            expected_value: (str): write your description
+        """
         found = False
         if not isinstance(d, dict):
             return False
@@ -67,6 +96,12 @@ class ObjectManagerTestCase(unittest.TestCase):
     EXT_ATTRS = {'Tenant ID': {'value': '40501209848593'}}
 
     def test_create_net_view_creates_network_view_object(self):
+        """
+        Create a mock net_create_net_view_creates
+
+        Args:
+            self: (todo): write your description
+        """
         connector = mock.Mock()
         connector.get_object.return_value = None
         connector.create_object.return_value = None
@@ -85,6 +120,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             'networkview', create_matcher, mock.ANY)
 
     def test_create_host_record_creates_host_record_object(self):
+        """
+        Create a dynamoblobloxox object.
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'test_dns_view_name'
         zone_auth = 'test.dns.zone.com'
         hostname = 'test_hostname'
@@ -118,6 +159,12 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                         mock.ANY)
 
     def test_create_host_record_range_create_host_record_object(self):
+        """
+        Create a new host hostrecord.
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'test_dns_view_name'
         zone_auth = 'test.dns.zone.com'
         hostname = 'test_hostname'
@@ -155,6 +202,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             'record:host', exp_payload, mock.ANY)
 
     def test_delete_host_record_deletes_host_record_object(self):
+        """
+        Delete a connection record.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = mock.Mock()
         connector.get_object.return_value = mock.MagicMock()
 
@@ -173,6 +226,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_get_network_gets_network_object(self):
+        """
+        Get network interfaces.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = mock.Mock()
         connector.get_object.return_value = mock.MagicMock()
 
@@ -190,6 +249,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             force_proxy=mock.ANY, return_fields=mock.ANY)
 
     def test_object_is_not_created_if_already_exists(self):
+        """
+        Return true if the object is not locked.
+
+        Args:
+            self: (todo): write your description
+        """
         net_view_name = 'test_dns_view_name'
         connector = mock.Mock()
         connector.create_object.return_value = mock.MagicMock()
@@ -206,6 +271,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         assert not connector.create_object.called
 
     def test_get_member_gets_member_object(self):
+        """
+        Respond object for a given member.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = mock.Mock()
         connector.get_object.return_value = None
         ibom = om.InfobloxObjectManager(connector)
@@ -218,6 +289,12 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                      return_fields=mock.ANY)
 
     def test_restart_services_calls_infoblox_function(self):
+        """
+        Restart the state of the infobloxox.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = mock.Mock()
         connector.get_object.return_value = mock.MagicMock()
         ibom = om.InfobloxObjectManager(connector)
@@ -229,6 +306,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             'restartservices', mock.ANY, mock.ANY)
 
     def test_update_network_updates_object(self):
+        """
+        .. version of updatenetwork.
+
+        Args:
+            self: (todo): write your description
+        """
         ref = 'infoblox_object_id'
         opts = 'infoblox_options'
 
@@ -242,6 +325,15 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                         mock.ANY)
 
     def _update_network_updates_eas(self, origina_ea, new_ea, merged_ea):
+        """
+        Update a network interface.
+
+        Args:
+            self: (todo): write your description
+            origina_ea: (str): write your description
+            new_ea: (todo): write your description
+            merged_ea: (bool): write your description
+        """
         ref = 'infoblox_object_id'
         opts = 'infoblox_options'
         connector = mock.Mock()
@@ -259,6 +351,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             mock.ANY)
 
     def test_update_network_merges_eas(self):
+        """
+        Updates network network and update.
+
+        Args:
+            self: (todo): write your description
+        """
         original_ea = objects.EA({'User EA': 'user value',
                                   'Subnet ID': 'one'})
         new_ea = objects.EA({'Subnet ID': 'two'})
@@ -267,12 +365,24 @@ class ObjectManagerTestCase(unittest.TestCase):
         self._update_network_updates_eas(original_ea, new_ea, merged_ea)
 
     def test_update_network_updates_eas(self):
+        """
+        Updates updates of the network updates.
+
+        Args:
+            self: (todo): write your description
+        """
         original_ea = None
         new_ea = objects.EA({'Subnet ID': 'two'})
         merged_ea = new_ea.to_dict()
         self._update_network_updates_eas(original_ea, new_ea, merged_ea)
 
     def test_create_ip_range_creates_range_object(self):
+        """
+        Create a dynamobloxoxox object.
+
+        Args:
+            self: (todo): write your description
+        """
         net_view = 'net-view-name'
         start_ip = '192.168.1.1'
         end_ip = '192.168.1.123'
@@ -296,6 +406,12 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                         mock.ANY)
 
     def test_delete_ip_range_deletes_infoblox_object(self):
+        """
+        Delete ip address ip address
+
+        Args:
+            self: (todo): write your description
+        """
         net_view = 'net-view-name'
         start_ip = '192.168.1.1'
         end_ip = '192.168.1.123'
@@ -315,6 +431,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_delete_network_deletes_infoblox_network(self):
+        """
+        Delete all infoblox.
+
+        Args:
+            self: (todo): write your description
+        """
         net_view = 'net-view-name'
         cidr = '192.168.1.0/24'
 
@@ -333,6 +455,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_delete_network_view_deletes_infoblox_object(self):
+        """
+        Delete infobloxoxoxoxox.
+
+        Args:
+            self: (todo): write your description
+        """
         net_view = 'net-view-name'
 
         connector = mock.Mock()
@@ -349,6 +477,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_find_hostname(self):
+        """
+        Find the global hostname of the current network
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'dns-view-name'
         network_view_name = 'network-view-name'
         fqdn = 'host.global.com'
@@ -368,6 +502,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             max_results=None)
 
     def test_find_host_records_by_mac(self):
+        """
+        .. version of a dict of a dns dns dns record
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'dns-view-name'
         network_view_name = 'network-view-name'
         mac = '11:22:33:44:55:66'
@@ -398,6 +538,14 @@ class ObjectManagerTestCase(unittest.TestCase):
                       return_fields=mock.ANY, max_results=None)]
 
     def _check_bind_names_calls(self, args, expected_get, expected_update):
+        """
+        Check if the mock connection callable.
+
+        Args:
+            self: (todo): write your description
+            expected_get: (todo): write your description
+            expected_update: (todo): write your description
+        """
         connector = mock.Mock()
         connector.get_object.return_value = mock.MagicMock()
 
@@ -412,6 +560,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             mock.ANY, expected_update, mock.ANY)
 
     def test_bind_names_updates_host_record(self):
+        """
+        Test if there is notifies the database.
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'dns-view-name'
         fqdn = 'host.global.com'
         ip = '192.168.1.1'
@@ -422,6 +576,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             {'name': fqdn})
 
     def test_bind_names_updates_host_record_network_view(self):
+        """
+        Test if the network has been created glances
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'dns-view-name'
         network_view_name = 'network-view-name'
         fqdn = 'host.global.com'
@@ -435,6 +595,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             {'name': fqdn})
 
     def test_bind_names_with_a_record(self):
+        """
+        Display a list of record names
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'dns-view-name'
         name = 'host1'
         ip = '192.168.1.1'
@@ -463,6 +629,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.create_object.assert_has_calls(create_calls)
 
     def test_unbind_names_with_a_record(self):
+        """
+        Returns a list of unbinds
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'dns-view-name'
         name = 'host1'
         ip = '192.168.1.1'
@@ -470,6 +642,17 @@ class ObjectManagerTestCase(unittest.TestCase):
 
         def get_object(obj_type, payload=None, return_fields=None,
                        extattrs=None, force_proxy=False, max_results=None):
+            """
+            Get an object
+
+            Args:
+                obj_type: (str): write your description
+                payload: (array): write your description
+                return_fields: (bool): write your description
+                extattrs: (str): write your description
+                force_proxy: (bool): write your description
+                max_results: (int): write your description
+            """
             data_dict = payload.copy()
             data_dict['_ref'] = 'some-ref/' + obj_type
             return [data_dict]
@@ -485,6 +668,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.delete_object.assert_has_calls(delete_calls)
 
     def test_create_dns_view_creates_view_object(self):
+        """
+        Create a dns dns dns object.
+
+        Args:
+            self: (todo): write your description
+        """
         net_view_name = 'net-view-name'
         dns_view_name = 'dns-view-name'
 
@@ -503,6 +692,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             'view', matcher, mock.ANY)
 
     def test_default_net_view_is_never_deleted(self):
+        """
+        Set the mock net_default.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = mock.Mock()
 
         ibom = om.InfobloxObjectManager(connector)
@@ -512,6 +707,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         assert not connector.delete_object.called
 
     def test_has_networks(self):
+        """
+        Return a network :: 2019.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = mock.Mock()
         connector.get_object.return_value = None
         ibom = om.InfobloxObjectManager(connector)
@@ -526,6 +727,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         self.assertEqual(False, result)
 
     def test_create_fixed_address_for_given_ip(self):
+        """
+        .. versionadded interface ip address
+
+        Args:
+            self: (todo): write your description
+        """
         network_view = 'test_network_view'
         ip = '192.168.0.1'
         mac = 'aa:bb:cc:dd:ee:ff'
@@ -547,6 +754,12 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                         mock.ANY)
 
     def test_create_fixed_address_from_range(self):
+        """
+        .. version of fixed - length.
+
+        Args:
+            self: (todo): write your description
+        """
         network_view = 'test_network_view'
         first_ip = '192.168.0.2'
         last_ip = '192.168.0.20'
@@ -574,6 +787,12 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                         mock.ANY)
 
     def test_create_fixed_address_from_cidr(self):
+        """
+        .. version of fixed address
+
+        Args:
+            self: (todo): write your description
+        """
         network_view = 'test_network_view'
         cidr = '192.168.0.0/24'
         mac = 'aa:bb:cc:dd:ee:ff'
@@ -599,6 +818,12 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                         mock.ANY)
 
     def test_delete_fixed_address(self):
+        """
+        Delete fixed address.
+
+        Args:
+            self: (todo): write your description
+        """
         network_view = 'test_network_view'
         ip = '192.168.0.25'
 
@@ -616,6 +841,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_delete_fixed_address_not_found(self):
+        """
+        .. versionadded :: 0. 0. 0
+
+        Args:
+            self: (todo): write your description
+        """
         network_view = 'test_network_view'
         ip = '192.168.0.25'
 
@@ -634,6 +865,13 @@ class ObjectManagerTestCase(unittest.TestCase):
 
     @mock.patch('infoblox_client.objects.FixedAddress')
     def test_get_fixed_addresses_by_mac(self, fixed_address_mock):
+        """
+        .. versionadded :: 0. 17. 0
+
+        Args:
+            self: (todo): write your description
+            fixed_address_mock: (str): write your description
+        """
         network_view = 'test_network_view'
         mac = 'aa:bb:cc:dd:ee:ff'
         test_result = 'test_result'
@@ -647,6 +885,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             connector, network_view=network_view, mac=mac)
 
     def test_member_is_assigned_as_list_on_network_create(self):
+        """
+        Create a new network list.
+
+        Args:
+            self: (todo): write your description
+        """
         net_view = 'net-view-name'
         cidr = '192.168.1.0/24'
         nameservers = []
@@ -681,6 +925,12 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                         mock.ANY)
 
     def test_create_dns_zone_with_grid_secondaries(self):
+        """
+        Create dns dns for a zone * dns *.
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'dns-view-name'
         fqdn = 'host.global.com'
         primary_dns_members = [objects.AnyMember(name='member_primary',
@@ -717,6 +967,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         self.assertIsInstance(zone, objects.DNSZone)
 
     def test_create_dns_zone_creates_zone_auth_object(self):
+        """
+        Create a dns zone zone.
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'dns-view-name'
         fqdn = 'host.global.com'
         member = objects.AnyMember(name='member_name', ip='192.168.1.2',
@@ -744,6 +1000,12 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                         mock.ANY)
 
     def test_update_dns_zone_attrs(self):
+        """
+        Update dns zone zone on this zone.
+
+        Args:
+            self: (todo): write your description
+        """
         dns_view_name = 'dns-view-name'
         fqdn = 'host.global.com'
         zone_ref = 'zone_ref'
@@ -778,13 +1040,32 @@ class ObjectManagerTestCase(unittest.TestCase):
             return_fields)
 
     def _mock_for_get_connector(self, reply_map):
+        """
+        Return a reference to the given reply.
+
+        Args:
+            self: (todo): write your description
+            reply_map: (str): write your description
+        """
         def get_object(ref, *args, **kwargs):
+            """
+            Return a reference object
+
+            Args:
+                ref: (str): write your description
+            """
             if ref in reply_map:
                 return reply_map[ref]
 
         return get_object
 
     def test_delete_objects_associated_with_a_record(self):
+        """
+        Post - to - related calls.
+
+        Args:
+            self: (todo): write your description
+        """
         name = 'name.my_zone.com'
         view = 'my_dns_view'
         delete_list = ['record:cname', 'record:txt']
@@ -830,6 +1111,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.delete_object.assert_called_once_with(ref)
 
     def test_get_all_ea_defintions(self):
+        """
+        Get all vim. fields.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = mock.Mock()
         connector.get_object.return_value = []
 
@@ -844,6 +1131,12 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                      max_results=None)
 
     def test_create_ea_definition(self):
+        """
+        Create a mock - based on - disk.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = mock.Mock()
         connector.create_object.return_value = {}
         ea_def = {'name': 'EA Test', 'type': 'ENUM',
@@ -858,6 +1151,13 @@ class ObjectManagerTestCase(unittest.TestCase):
             mock.ANY)
 
     def _prepare_ibom_with_exception(self, exception):
+        """
+        Prepare a connection to an exception.
+
+        Args:
+            self: (todo): write your description
+            exception: (todo): write your description
+        """
         connector = mock.Mock()
         connector.create_object.side_effect = exception(
             response='',
@@ -869,6 +1169,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         return ibom, connector
 
     def test_create_ea_definition_exception_reraise(self):
+        """
+        Creates an exception handler for creating it.
+
+        Args:
+            self: (todo): write your description
+        """
         create_exc = exceptions.InfobloxCannotCreateObject
         ibom, conn = self._prepare_ibom_with_exception(create_exc)
         ea_def = {'name': 'EA Test', 'type': 'ENUM',
@@ -882,6 +1188,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             mock.ANY)
 
     def test_create_ea_definition_exception_silenced(self):
+        """
+        Creates an exception definition. create_definition.
+
+        Args:
+            self: (todo): write your description
+        """
         create_exc = exceptions.InfobloxCannotCreateObject
         ibom, conn = self._prepare_ibom_with_exception(create_exc)
         ea_def = {'name': 'EA Test', 'type': 'ENUM',
@@ -894,6 +1206,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             mock.ANY)
 
     def test_create_required_ea_definitions(self):
+        """
+        Create a dict of - to - existing object definitions.
+
+        Args:
+            self: (todo): write your description
+        """
         existing_ea_defs = [{'name': 'One'},
                             {'name': 'Two'}]
         additional_ea_defs = [{'name': 'Three'}]
@@ -913,6 +1231,12 @@ class ObjectManagerTestCase(unittest.TestCase):
             mock.ANY)
 
     def test_create_required_ea_definitions_with_exception(self):
+        """
+        Helper method todo_ea_definitions ().
+
+        Args:
+            self: (todo): write your description
+        """
         allowed_eas = ['One', 'Three']
         required_ea_defs = [{'name': 'One'},
                             {'name': 'Two'},
@@ -922,6 +1246,14 @@ class ObjectManagerTestCase(unittest.TestCase):
                            {'name': 'Three'}]
 
         def create_object_mock(obj_type, payload, return_fields=None):
+            """
+            Create a new object.
+
+            Args:
+                obj_type: (str): write your description
+                payload: (todo): write your description
+                return_fields: (bool): write your description
+            """
             if payload['name'] in allowed_eas:
                 return payload
             else:

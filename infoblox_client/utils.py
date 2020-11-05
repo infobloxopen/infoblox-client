@@ -30,6 +30,12 @@ LOG = logging.getLogger(__name__)
 
 
 def is_valid_ip(ip):
+    """
+    Check if an ip address is a valid.
+
+    Args:
+        ip: (array): write your description
+    """
     try:
         netaddr.IPAddress(ip)
     except netaddr.core.AddrFormatError:
@@ -49,6 +55,12 @@ def generate_duid(mac):
 
 
 def determine_ip_version(ip_in):
+    """
+    Determine the network.
+
+    Args:
+        ip_in: (todo): write your description
+    """
     ip_ver = 4
     if isinstance(ip_in, (list, tuple)):
         ip_in = ip_in[0]
@@ -75,6 +87,12 @@ def determine_ip_version(ip_in):
 
 
 def safe_json_load(data):
+    """
+    Safely load a json data structure. json.
+
+    Args:
+        data: (str): write your description
+    """
     try:
         return jsonutils.loads(data)
     except ValueError:

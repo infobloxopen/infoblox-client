@@ -21,6 +21,12 @@ from infoblox_client import feature
 class TestFeature(unittest.TestCase):
 
     def test_wapi_version_util(self):
+        """
+        Test if the wapi version is supported.
+
+        Args:
+            self: (todo): write your description
+        """
         wapi1 = feature.WapiVersionUtil('2.3')
         self.assertEqual(2, wapi1.major_version)
         self.assertEqual(3, wapi1.minor_version)
@@ -56,6 +62,12 @@ class TestFeature(unittest.TestCase):
         self.assertRaises(ValueError, feature.WapiVersionUtil, '1.2.3.4')
 
     def test_features(self):
+        """
+        This method to see the features.
+
+        Args:
+            self: (todo): write your description
+        """
         feature_versions = {
             'ea_def_creation': '2.2',
             'cloud_api': '2.0',
@@ -92,10 +104,23 @@ class TestFeature(unittest.TestCase):
         self.assertEqual(True, my_feature6.enable_member_dns)
 
     def _mock_connector(self, wapi_version):
+        """
+        Return a socket.
+
+        Args:
+            self: (todo): write your description
+            wapi_version: (str): write your description
+        """
         connector = mock.Mock(wapi_version=wapi_version)
         return connector
 
     def test_features_with_connector(self):
+        """
+        This method to connect to the network.
+
+        Args:
+            self: (todo): write your description
+        """
         feature_versions = {
             'ea_def_creation': '2.2',
             'cloud_api': '2.0',

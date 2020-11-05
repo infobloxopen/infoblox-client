@@ -44,8 +44,19 @@ CLOUD_WAPI_MAJOR_VERSION = 2
 
 
 def reraise_neutron_exception(func):
+    """
+    Decorator for making a function.
+
+    Args:
+        func: (todo): write your description
+    """
     @functools.wraps(func)
     def callee(*args, **kwargs):
+        """
+        Decorator to catch exceptions.
+
+        Args:
+        """
         try:
             return func(*args, **kwargs)
         except req_exc.Timeout as e:
@@ -76,6 +87,13 @@ class Connector(object):
                        'paging': False}
 
     def __init__(self, options):
+        """
+        Sets the url.
+
+        Args:
+            self: (todo): write your description
+            options: (dict): write your description
+        """
         self._parse_options(options)
         self._configure_session()
         # urllib has different interface for py27 and py34
@@ -118,6 +136,12 @@ class Connector(object):
             self.wapi_version)
 
     def _configure_session(self):
+        """
+        Configure a connection.
+
+        Args:
+            self: (todo): write your description
+        """
         self.session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(
             pool_connections=self.http_pool_connections,
@@ -134,6 +158,16 @@ class Connector(object):
 
     def _construct_url(self, relative_path, query_params=None,
                        extattrs=None, force_proxy=False):
+        """
+        Constructs the url for the given relative path.
+
+        Args:
+            self: (todo): write your description
+            relative_path: (str): write your description
+            query_params: (dict): write your description
+            extattrs: (dict): write your description
+            force_proxy: (bool): write your description
+        """
         if query_params is None:
             query_params = {}
         if extattrs is None:
@@ -169,6 +203,13 @@ class Connector(object):
 
     @staticmethod
     def _validate_obj_type_or_die(obj_type, obj_type_expected=True):
+        """
+        Validate that obj_typeerror if obj_type is not a type.
+
+        Args:
+            obj_type: (str): write your description
+            obj_type_expected: (str): write your description
+        """
         if not obj_type:
             raise ValueError('NIOS object type cannot be empty.')
         if obj_type_expected and '/' in obj_type:
@@ -176,12 +217,27 @@ class Connector(object):
 
     @staticmethod
     def _validate_authorized(response):
+        """
+        Validate the authorization code.
+
+        Args:
+            response: (todo): write your description
+        """
         if response.status_code == requests.codes.UNAUTHORIZED:
             raise ib_ex.InfobloxBadWAPICredential(response='')
 
     @staticmethod
     def _build_query_params(payload=None, return_fields=None,
                             max_results=None, paging=False):
+        """
+        Builds query params dictionary.
+
+        Args:
+            payload: (todo): write your description
+            return_fields: (bool): write your description
+            max_results: (int): write your description
+            paging: (str): write your description
+        """
         if payload:
             query_params = payload
         else:
@@ -204,6 +260,13 @@ class Connector(object):
         return query_params
 
     def _get_request_options(self, data=None):
+        """
+        Returns the options.
+
+        Args:
+            self: (todo): write your description
+            data: (str): write your description
+        """
         opts = dict(timeout=self.http_request_timeout,
                     headers=self.DEFAULT_HEADER,
                     verify=self.session.verify)
@@ -223,6 +286,15 @@ class Connector(object):
             raise ib_ex.InfobloxConnectionError(reason=request.content)
 
     def _log_request(self, type, url, opts):
+        """
+        Log a request to the log.
+
+        Args:
+            self: (todo): write your description
+            type: (str): write your description
+            url: (str): write your description
+            opts: (todo): write your description
+        """
         message = ("Sending %s request to %s with parameters %s",
                    type, url, opts)
         if self.log_api_calls_as_info:
@@ -297,6 +369,16 @@ class Connector(object):
 
     def _handle_get_object(self, obj_type, query_params, extattrs,
                            proxy_flag=False):
+        """
+        Handle an object get request.
+
+        Args:
+            self: (todo): write your description
+            obj_type: (str): write your description
+            query_params: (dict): write your description
+            extattrs: (str): write your description
+            proxy_flag: (str): write your description
+        """
         if '_paging' in query_params:
 
             if not ('_max_results' in query_params):
@@ -328,6 +410,14 @@ class Connector(object):
             return self._get_object(obj_type, url)
 
     def _get_object(self, obj_type, url):
+        """
+        Get an object for the given object.
+
+        Args:
+            self: (todo): write your description
+            obj_type: (str): write your description
+            url: (str): write your description
+        """
         opts = self._get_request_options()
         self._log_request('get', url, opts)
         if self.session.cookies:
@@ -390,6 +480,15 @@ class Connector(object):
         return self._parse_reply(r)
 
     def _check_service_availability(self, operation, resp, ref):
+        """
+        Checks if the given a service availability.
+
+        Args:
+            self: (todo): write your description
+            operation: (str): write your description
+            resp: (todo): write your description
+            ref: (str): write your description
+        """
         if resp.status_code == requests.codes.SERVICE_UNAVAILABLE:
             raise ib_ex.InfobloxGridTemporaryUnavailable(
                 response=resp.content,
@@ -400,6 +499,16 @@ class Connector(object):
 
     @reraise_neutron_exception
     def call_func(self, func_name, ref, payload, return_fields=None):
+        """
+        Make a call to the api.
+
+        Args:
+            self: (todo): write your description
+            func_name: (str): write your description
+            ref: (str): write your description
+            payload: (todo): write your description
+            return_fields: (bool): write your description
+        """
         query_params = self._build_query_params(return_fields=return_fields)
         query_params['_function'] = func_name
 
