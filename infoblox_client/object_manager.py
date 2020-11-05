@@ -28,14 +28,36 @@ LOG = logging.getLogger(__name__)
 class InfobloxObjectManager(object):
 
     def __init__(self, connector):
+        """
+        Initialize the connection.
+
+        Args:
+            self: (todo): write your description
+            connector: (todo): write your description
+        """
         self.connector = connector
 
     def create_network_view(self, network_view, extattrs):
+        """
+        Creates a network view.
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            extattrs: (dict): write your description
+        """
         return obj.NetworkView.create(self.connector,
                                       name=network_view,
                                       extattrs=extattrs)
 
     def delete_network_view(self, network_view):
+        """
+        Deletes the network view.
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+        """
         # never delete default network view
         if network_view == 'default':
             return
@@ -45,11 +67,26 @@ class InfobloxObjectManager(object):
             nview.delete()
 
     def create_dns_view(self, network_view, dns_view):
+        """
+        Create a new dns view
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            dns_view: (str): write your description
+        """
         return obj.DNSView.create(self.connector,
                                   name=dns_view,
                                   network_view=network_view)
 
     def delete_dns_view(self, dns_view):
+        """
+        Delete the dns view.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+        """
         dns_view = obj.DNSView.search(self.connector,
                                       name=dns_view)
         if dns_view:
@@ -96,6 +133,14 @@ class InfobloxObjectManager(object):
                                   check_if_exists=False)
 
     def get_network(self, network_view, cidr):
+        """
+        Return a network object.
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            cidr: (str): write your description
+        """
         return obj.Network.search(self.connector,
                                   network_view=network_view,
                                   cidr=cidr)
@@ -113,6 +158,15 @@ class InfobloxObjectManager(object):
                                   check_if_exists=False)
 
     def delete_ip_range(self, network_view, start_ip, end_ip):
+        """
+        Delete the ip range
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            start_ip: (int): write your description
+            end_ip: (todo): write your description
+        """
         range = obj.IPRange.search(self.connector,
                                    network_view=network_view,
                                    start_addr=start_ip,
@@ -121,6 +175,13 @@ class InfobloxObjectManager(object):
             range.delete()
 
     def has_networks(self, network_view_name):
+        """
+        Returns true if the given network has the given network.
+
+        Args:
+            self: (todo): write your description
+            network_view_name: (str): write your description
+        """
         networks = obj.Network.search_all(self.connector,
                                           network_view=network_view_name)
         return bool(networks)
@@ -137,6 +198,14 @@ class InfobloxObjectManager(object):
         return network is not None
 
     def delete_network(self, network_view, cidr):
+        """
+        Delete a network.
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            cidr: (str): write your description
+        """
         network = obj.Network.search(self.connector,
                                      network_view=network_view,
                                      cidr=cidr)
@@ -145,6 +214,16 @@ class InfobloxObjectManager(object):
 
     def create_network_from_template(self, network_view, cidr, template,
                                      extattrs):
+        """
+        Create a network from a network.
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            cidr: (str): write your description
+            template: (str): write your description
+            extattrs: (dict): write your description
+        """
         return obj.Network.create(self.connector,
                                   network_view=network_view,
                                   cidr=cidr,
@@ -153,6 +232,14 @@ class InfobloxObjectManager(object):
                                   check_if_exists=False)
 
     def update_network_options(self, ib_network, extattrs=None):
+        """
+        Updates network options
+
+        Args:
+            self: (todo): write your description
+            ib_network: (todo): write your description
+            extattrs: (dict): write your description
+        """
         if extattrs:
             if ib_network.extattrs:
                 # Merge EA values as dicts
@@ -165,12 +252,31 @@ class InfobloxObjectManager(object):
         return ib_network.update()
 
     def get_host_record(self, dns_view, ip, network_view=None):
+        """
+        Get the ip record for the given ip address
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            ip: (todo): write your description
+            network_view: (todo): write your description
+        """
         return obj.HostRecord.search(self.connector,
                                      view=dns_view,
                                      ip=ip,
                                      network_view=network_view)
 
     def find_hostname(self, dns_view, hostname, ip, network_view=None):
+        """
+        Find the hostname in the given dns_view.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            hostname: (str): write your description
+            ip: (str): write your description
+            network_view: (todo): write your description
+        """
         return obj.HostRecord.search(self.connector,
                                      name=hostname,
                                      view=dns_view,
@@ -178,6 +284,15 @@ class InfobloxObjectManager(object):
                                      network_view=network_view)
 
     def find_host_records_by_mac(self, dns_view, mac, network_view=None):
+        """
+        .. versionadded ::
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            mac: (todo): write your description
+            network_view: (todo): write your description
+        """
         host_records = []
         host_records.extend(obj.HostRecord.search_all(
             self.connector, view=dns_view, mac=mac, network_view=network_view))
@@ -199,6 +314,20 @@ class InfobloxObjectManager(object):
     def create_host_record_for_given_ip(self, dns_view, zone_auth,
                                         hostname, mac, ip, extattrs,
                                         use_dhcp, use_dns=True):
+        """
+        Create a host record.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            zone_auth: (todo): write your description
+            hostname: (str): write your description
+            mac: (todo): write your description
+            ip: (todo): write your description
+            extattrs: (dict): write your description
+            use_dhcp: (bool): write your description
+            use_dns: (bool): write your description
+        """
         name = '.'.join([hostname, zone_auth])
         ip_obj = obj.IP.create(ip=ip, mac=mac, configure_for_dhcp=use_dhcp)
         return obj.HostRecord.create(self.connector,
@@ -213,6 +342,22 @@ class InfobloxObjectManager(object):
                                       zone_auth, hostname, mac, first_ip,
                                       last_ip, extattrs, use_dhcp,
                                       use_dns=True):
+        """
+        Create a hostrecord.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            network_view_name: (str): write your description
+            zone_auth: (todo): write your description
+            hostname: (str): write your description
+            mac: (todo): write your description
+            first_ip: (str): write your description
+            last_ip: (str): write your description
+            extattrs: (dict): write your description
+            use_dhcp: (bool): write your description
+            use_dns: (bool): write your description
+        """
         name = '.'.join([hostname, zone_auth])
         ip_alloc = obj.IPAllocation.next_available_ip_from_range(
             network_view_name, first_ip, last_ip)
@@ -227,6 +372,15 @@ class InfobloxObjectManager(object):
                                      check_if_exists=False)
 
     def delete_host_record(self, dns_view, ip_address, network_view=None):
+        """
+        Delete a dns record
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            ip_address: (str): write your description
+            network_view: (todo): write your description
+        """
         host_record = obj.HostRecord.search(self.connector,
                                             view=dns_view, ip=ip_address,
                                             network_view=network_view)
@@ -235,6 +389,16 @@ class InfobloxObjectManager(object):
 
     def create_fixed_address_for_given_ip(self, network_view, mac, ip,
                                           extattrs):
+        """
+        Create a new ip address
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            mac: (array): write your description
+            ip: (todo): write your description
+            extattrs: (dict): write your description
+        """
         return obj.FixedAddress.create(self.connector,
                                        network_view=network_view,
                                        mac=mac,
@@ -244,6 +408,17 @@ class InfobloxObjectManager(object):
 
     def create_fixed_address_from_range(self, network_view, mac, first_ip,
                                         last_ip, extattrs):
+        """
+        Create a new network address.
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            mac: (str): write your description
+            first_ip: (str): write your description
+            last_ip: (str): write your description
+            extattrs: (str): write your description
+        """
         ip = obj.IPAllocation.next_available_ip_from_range(
             network_view, first_ip, last_ip)
         return obj.FixedAddress.create(self.connector,
@@ -254,6 +429,16 @@ class InfobloxObjectManager(object):
                                        check_if_exists=False)
 
     def create_fixed_address_from_cidr(self, netview, mac, cidr, extattrs):
+        """
+        Create a network address ::
+
+        Args:
+            self: (todo): write your description
+            netview: (todo): write your description
+            mac: (array): write your description
+            cidr: (str): write your description
+            extattrs: (dict): write your description
+        """
         ip = obj.IPAllocation.next_available_ip_from_cidr(netview, cidr)
         return obj.FixedAddress.create(self.connector,
                                        network_view=netview,
@@ -263,6 +448,14 @@ class InfobloxObjectManager(object):
                                        check_if_exists=False)
 
     def delete_fixed_address(self, network_view, ip_address):
+        """
+        Delete fixed address
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            ip_address: (str): write your description
+        """
         fixed_address = obj.FixedAddress.search(self.connector,
                                                 network_view=network_view,
                                                 ip=ip_address)
@@ -270,10 +463,28 @@ class InfobloxObjectManager(object):
             fixed_address.delete()
 
     def get_fixed_addresses_by_mac(self, network_view, mac):
+        """
+        Returns a fixed address for a fixed address
+
+        Args:
+            self: (todo): write your description
+            network_view: (str): write your description
+            mac: (todo): write your description
+        """
         return obj.FixedAddress.search_all(
             self.connector, network_view=network_view, mac=mac)
 
     def add_ip_to_record(self, host_record, ip, mac, use_dhcp=True):
+        """
+        Add a host record.
+
+        Args:
+            self: (todo): write your description
+            host_record: (todo): write your description
+            ip: (str): write your description
+            mac: (str): write your description
+            use_dhcp: (bool): write your description
+        """
         ip_obj = obj.IP.create(ip=ip, mac=mac, configure_for_dhcp=use_dhcp)
         host_record.ip.append(ip_obj)
         return host_record.update()
@@ -281,6 +492,18 @@ class InfobloxObjectManager(object):
     def add_ip_to_host_record_from_range(self, host_record, network_view,
                                          mac, first_ip, last_ip,
                                          use_dhcp=True):
+        """
+        Add a host to the network.
+
+        Args:
+            self: (todo): write your description
+            host_record: (todo): write your description
+            network_view: (todo): write your description
+            mac: (str): write your description
+            first_ip: (str): write your description
+            last_ip: (str): write your description
+            use_dhcp: (bool): write your description
+        """
         ip_alloc = obj.IPAllocation.next_available_ip_from_range(
             network_view, first_ip, last_ip)
         ip_obj = obj.IP.create(ip=ip_alloc, mac=mac,
@@ -289,10 +512,25 @@ class InfobloxObjectManager(object):
         return host_record.update()
 
     def delete_ip_from_host_record(self, host_record, ip):
+        """
+        Delete an ip address from a host
+
+        Args:
+            self: (todo): write your description
+            host_record: (todo): write your description
+            ip: (todo): write your description
+        """
         host_record.ip.remove(ip)
         return host_record.update()
 
     def has_dns_zones(self, dns_view):
+        """
+        Returns true if dns_view has a dns zones.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+        """
         zones = obj.DNSZone.search_all(self.connector, view=dns_view)
         return bool(zones)
 
@@ -300,6 +538,20 @@ class InfobloxObjectManager(object):
                         grid_primary=None, grid_secondaries=None,
                         zone_format=None, ns_group=None, prefix=None,
                         extattrs=None):
+        """
+        Create a dns zone.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            dns_zone: (todo): write your description
+            grid_primary: (todo): write your description
+            grid_secondaries: (str): write your description
+            zone_format: (str): write your description
+            ns_group: (todo): write your description
+            prefix: (str): write your description
+            extattrs: (dict): write your description
+        """
         return obj.DNSZone.create(self.connector,
                                   fqdn=dns_zone,
                                   view=dns_view,
@@ -311,6 +563,14 @@ class InfobloxObjectManager(object):
                                   grid_secondaries=grid_secondaries)
 
     def delete_dns_zone(self, dns_view, dns_zone_fqdn):
+        """
+        Delete dns zone.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            dns_zone_fqdn: (todo): write your description
+        """
         dns_zone = obj.DNSZone.search(self.connector,
                                       fqdn=dns_zone_fqdn,
                                       view=dns_view)
@@ -318,6 +578,15 @@ class InfobloxObjectManager(object):
             dns_zone.delete()
 
     def update_dns_zone_attrs(self, dns_view, dns_zone_fqdn, extattrs):
+        """
+        Update dns dns zone.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            dns_zone_fqdn: (todo): write your description
+            extattrs: (dict): write your description
+        """
         if not extattrs:
             return
         dns_zone = obj.DNSZone.search(self.connector,
@@ -328,6 +597,15 @@ class InfobloxObjectManager(object):
             dns_zone.update()
 
     def update_host_record_eas(self, dns_view, ip, extattrs):
+        """
+        Update the dns record to the dns record.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            ip: (todo): write your description
+            extattrs: (todo): write your description
+        """
         host_record = obj.HostRecord.search(self.connector,
                                             view=dns_view,
                                             ip=ip)
@@ -336,6 +614,15 @@ class InfobloxObjectManager(object):
             host_record.update()
 
     def update_fixed_address_eas(self, network_view, ip, extattrs):
+        """
+        Update the fixed address
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            ip: (todo): write your description
+            extattrs: (todo): write your description
+        """
         fixed_address = obj.FixedAddress.search(self.connector,
                                                 network_view=network_view,
                                                 ip=ip)
@@ -344,6 +631,15 @@ class InfobloxObjectManager(object):
             fixed_address.update()
 
     def update_dns_record_eas(self, dns_view, ip, extattrs):
+        """
+        Updates the dns record.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            ip: (todo): write your description
+            extattrs: (dict): write your description
+        """
         a_record = obj.ARecordBase.search(self.connector,
                                           ip=ip,
                                           view=dns_view)
@@ -360,6 +656,17 @@ class InfobloxObjectManager(object):
 
     def bind_name_with_host_record(self, dns_view, ip, name, extattrs,
                                    network_view=None):
+        """
+        Bind a dns record to the given ip address.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            ip: (todo): write your description
+            name: (str): write your description
+            extattrs: (str): write your description
+            network_view: (todo): write your description
+        """
         host_record = obj.HostRecord.search(self.connector,
                                             view=dns_view,
                                             ip=ip,
@@ -371,6 +678,17 @@ class InfobloxObjectManager(object):
 
     def bind_name_with_record_a(self, dns_view, ip, name, bind_list,
                                 extattrs):
+        """
+        Bind a dns record to a dns record.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (str): write your description
+            ip: (str): write your description
+            name: (str): write your description
+            bind_list: (list): write your description
+            extattrs: (str): write your description
+        """
         is_ipv4 = ib_utils.determine_ip_version(ip) == 4
         if ((is_ipv4 and 'record:a' in bind_list) or
                 (not is_ipv4 and 'record:aaaa' in bind_list)):
@@ -390,6 +708,16 @@ class InfobloxObjectManager(object):
                                  update_if_exists=True)
 
     def unbind_name_from_record_a(self, dns_view, ip, name, unbind_list):
+        """
+        Unbind a dns dns record from a dns dns.
+
+        Args:
+            self: (todo): write your description
+            dns_view: (todo): write your description
+            ip: (todo): write your description
+            name: (str): write your description
+            unbind_list: (list): write your description
+        """
         is_ipv4 = ib_utils.determine_ip_version(ip) == 4
         if ((is_ipv4 and 'record:a' in unbind_list) or
                 (not is_ipv4 and 'record:aaaa' in unbind_list)):
@@ -412,13 +740,34 @@ class InfobloxObjectManager(object):
                 ptr_record.delete()
 
     def get_member(self, member):
+        """
+        Returns the member of the given member.
+
+        Args:
+            self: (todo): write your description
+            member: (todo): write your description
+        """
         member.fetch()
         return member
 
     def get_all_ea_definitions(self):
+        """
+        Returns all definitions.
+
+        Args:
+            self: (todo): write your description
+        """
         return obj.EADefinition.search_all(self.connector)
 
     def create_ea_definition(self, ea_def, reraise=False):
+        """
+        Create a new : param : : class.
+
+        Args:
+            self: (todo): write your description
+            ea_def: (todo): write your description
+            reraise: (todo): write your description
+        """
         try:
             return obj.EADefinition.create(self.connector,
                                            check_if_exists=False,
@@ -430,6 +779,14 @@ class InfobloxObjectManager(object):
                 raise
 
     def create_required_ea_definitions(self, required_ea_defs, reraise=False):
+        """
+        Given a list of the required definitions.
+
+        Args:
+            self: (todo): write your description
+            required_ea_defs: (str): write your description
+            reraise: (todo): write your description
+        """
         existing_ea_defs = self.get_all_ea_definitions()
         missing_ea_defs = []
         for req_def in required_ea_defs:
@@ -444,6 +801,13 @@ class InfobloxObjectManager(object):
         return created_ea_defs
 
     def restart_all_services(self, member):
+        """
+        Restart all services
+
+        Args:
+            self: (todo): write your description
+            member: (todo): write your description
+        """
         if not member._ref:
             member.fetch(only_ref=True)
         self.connector.call_func('restartservices', member._ref,
@@ -470,12 +834,28 @@ class InfobloxObjectManager(object):
                     self.delete_object_by_ref(ib_obj['_ref'])
 
     def delete_all_associated_objects(self, network_view, ip, delete_list):
+        """
+        Delete all ips
+
+        Args:
+            self: (todo): write your description
+            network_view: (todo): write your description
+            ip: (todo): write your description
+            delete_list: (list): write your description
+        """
         LOG.warning(
             "DEPRECATION WARNING! Using delete_all_associated_objects() "
             "is deprecated and to be removed in next releases. "
             "Use unbind_name_from_record_a() instead.")
 
     def delete_object_by_ref(self, ref):
+        """
+        Delete an existing reference.
+
+        Args:
+            self: (todo): write your description
+            ref: (str): write your description
+        """
         try:
             self.connector.delete_object(ref)
         except ib_ex.InfobloxCannotDeleteObject:

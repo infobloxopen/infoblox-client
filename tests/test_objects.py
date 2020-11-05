@@ -62,6 +62,15 @@ class TestObjects(unittest.TestCase):
 
     def _mock_connector(self, get_object=None, create_object=None,
                         delete_object=None):
+        """
+        Return a connection. connection.
+
+        Args:
+            self: (todo): write your description
+            get_object: (todo): write your description
+            create_object: (bool): write your description
+            delete_object: (bool): write your description
+        """
         connector = mock.Mock()
         connector.get_object.return_value = get_object
         connector.create_object.return_value = create_object
@@ -69,6 +78,12 @@ class TestObjects(unittest.TestCase):
         return connector
 
     def test_search_network(self):
+        """
+        Search for network.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = self._mock_connector()
 
         objects.Network.search(connector,
@@ -81,6 +96,12 @@ class TestObjects(unittest.TestCase):
             max_results=None)
 
     def test_search_network_v6(self):
+        """
+        Test for network search.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = self._mock_connector()
 
         objects.Network.search(connector,
@@ -93,6 +114,12 @@ class TestObjects(unittest.TestCase):
             max_results=None)
 
     def test_search_network_v6_using_network_field(self):
+        """
+        Perform network search.
+
+        Args:
+            self: (todo): write your description
+        """
         connector = self._mock_connector()
 
         objects.Network.search(connector,
@@ -105,6 +132,12 @@ class TestObjects(unittest.TestCase):
             max_results=None)
 
     def test_search_network_with_results(self):
+        """
+        Search network search results
+
+        Args:
+            self: (todo): write your description
+        """
         found = {"_ref": "network/ZG5zLm5ldHdvcmskMTAuMzkuMTEuMC8yNC8w"
                          ":10.39.11.0/24/default",
                  "network_view": 'some-view',
@@ -125,6 +158,12 @@ class TestObjects(unittest.TestCase):
         self.assertEqual('192.68.1.0/20', network.cidr)
 
     def test_create_IP(self):
+        """
+        Create ip address.
+
+        Args:
+            self: (todo): write your description
+        """
         ip = objects.IP.create(ip='192.168.1.12', mac='4a:ac:de:12:34:45')
         self.assertIsInstance(ip, objects.IPv4)
         self.assertEqual('192.168.1.12', ip.ip)
@@ -134,6 +173,12 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(None, ip.host)
 
     def test_Create_MX_Record(self):
+        """
+        Creates a mock mapping.
+
+        Args:
+            self: (todo): write your description
+        """
         mock_record = DEFAULT_MX_RECORD
         mx_record_copy = copy.deepcopy(mock_record)
         connector = self._mock_connector(create_object=mx_record_copy)
@@ -150,6 +195,12 @@ class TestObjects(unittest.TestCase):
             }, ['extattrs', 'mail_exchanger','name', 'preference', 'view'])
 
     def test_update_MX_Record(self):
+        """
+        Test for update of organization.
+
+        Args:
+            self: (todo): write your description
+        """
         mx_record_copy = [
             {'_ref': 'record:mx/%s' % REC,
              'name': 'mx.demo.my_zone.com',
@@ -169,6 +220,12 @@ class TestObjects(unittest.TestCase):
              ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
 
     def test_search_and_delete_MX_Record(self):
+        """
+        Responds to search for search.
+
+        Args:
+            self: (todo): write your description
+        """
         mx_record_copy = copy.deepcopy(DEFAULT_MX_RECORD)
         connector = self._mock_connector(get_object=[mx_record_copy])
 
@@ -186,6 +243,12 @@ class TestObjects(unittest.TestCase):
 
 
     def test_create_host_record_with_ttl(self):
+        """
+        Create a new host with the given ip.
+
+        Args:
+            self: (todo): write your description
+        """
         mock_record = DEFAULT_HOST_RECORD
         host_record_copy = copy.deepcopy(mock_record)
         connector = self._mock_connector(create_object=host_record_copy)
@@ -208,6 +271,12 @@ class TestObjects(unittest.TestCase):
             ['extattrs', 'ipv4addrs', 'name', 'view', 'aliases'])
 
     def test_create_host_record_with_ip(self):
+        """
+        Create a new ip with a ip
+
+        Args:
+            self: (todo): write your description
+        """
         mock_record = DEFAULT_HOST_RECORD
         host_record_copy = copy.deepcopy(mock_record)
         connector = self._mock_connector(create_object=host_record_copy)
@@ -256,6 +325,12 @@ class TestObjects(unittest.TestCase):
              'extattrs': {}}, mock.ANY)
 
     def test_search_and_delete_host_record(self):
+        """
+        Respond search is_and_delete_delete_host_host_host_copy
+
+        Args:
+            self: (todo): write your description
+        """
         host_record_copy = copy.deepcopy(DEFAULT_HOST_RECORD)
         connector = self._mock_connector(get_object=[host_record_copy])
 
@@ -278,6 +353,12 @@ class TestObjects(unittest.TestCase):
             DEFAULT_HOST_RECORD['_ref'])
 
     def test_create_fixed_address(self):
+        """
+        Create fixed address
+
+        Args:
+            self: (todo): write your description
+        """
         mock_fixed_address = {
             '_ref': 'fixedaddress/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYWw2NA',
             'ipv4addr': '192.168.1.15',
@@ -307,6 +388,12 @@ class TestObjects(unittest.TestCase):
                            'ipv4addr': '192.168.1.0'}}, mock.ANY)
 
     def test_create_fixed_address_v6(self):
+        """
+        Create fixed fixed fixed address.
+
+        Args:
+            self: (todo): write your description
+        """
         mock_fixed_address = {
             '_ref': 'ipv6fixedaddress/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYA',
             'ipv6addr': 'fffe:1234:1234::1',
@@ -337,6 +424,13 @@ class TestObjects(unittest.TestCase):
 
     @mock.patch('infoblox_client.utils.generate_duid')
     def test_fixed_address_v6(self, generate):
+        """
+        Configure v6 address for the fixed address.
+
+        Args:
+            self: (todo): write your description
+            generate: (todo): write your description
+        """
         mac = 'aa:ac:cd:11:22:33'
         duid = '00:0a:d3:9b:aa:ac:cd:11:22:33'
         generate.return_value = duid
@@ -352,6 +446,12 @@ class TestObjects(unittest.TestCase):
         generate.assert_called_once_with(mac)
 
     def test_search_ipaddress(self):
+        """
+        Test for ip address
+
+        Args:
+            self: (todo): write your description
+        """
         ip_mock = [{'_ref': ('ipv4address/Li5pcHY0X2FkZHJlc3MkMTky'
                              'LjE2OC4xLjEwLzE:192.168.1.10/my_view'),
                     'objects': ['ref_1', 'ref_2']}]
@@ -367,6 +467,12 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(ip_mock[0]['objects'], ip.objects)
 
     def test__process_value(self):
+        """
+        Convert a test value
+
+        Args:
+            self: (todo): write your description
+        """
         data = (([1, 2, 3], ['1', '2', '3']),
                 ((1, 2), ['1', '2']),
                 (1, '1'),
@@ -375,6 +481,12 @@ class TestObjects(unittest.TestCase):
             self.assertEqual(output, objects.EA._process_value(str, input))
 
     def test_ea_parse_generate(self):
+        """
+        Generate meta data
+
+        Args:
+            self: (todo): write your description
+        """
         eas = {'Subnet ID': {'value': 'some-id'},
                'Tenant Name': {'value': 'tenant-name'},
                'Cloud API Owned': {'value': 'True'},
@@ -389,6 +501,12 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(eas, ea.to_dict())
 
     def test_ea_to_dict(self):
+        """
+        Convert to a dictionary.
+
+        Args:
+            self: (todo): write your description
+        """
         ea = {'Subnet ID': 'some-id',
               'Tenant Name':  'tenant-name',
               'Cloud API Owned': 'True',
@@ -432,10 +550,22 @@ class TestObjects(unittest.TestCase):
             self.assertEqual(processed_ea[key], ea_dict.get(key).get('value'))
 
     def test_ea_returns_none(self):
+        """
+        : return : class : dict of : class :.
+
+        Args:
+            self: (todo): write your description
+        """
         for ea in (None, '', 0):
             self.assertEqual(None, objects.EA.from_dict(ea))
 
     def test_ea_set_get(self):
+        """
+        Set the test set of test set.
+
+        Args:
+            self: (todo): write your description
+        """
         ea = objects.EA()
         ea_name = 'Subnet ID'
         id = 'subnet-id'
@@ -445,6 +575,12 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(generated_eas, ea.to_dict())
 
     def test_ea_returns_ea_dict(self):
+        """
+        Return a dict representation of dicts that object.
+
+        Args:
+            self: (todo): write your description
+        """
         ea_dict = {'Subnet ID': 'some-id'}
         ea = objects.EA(ea_dict)
         ea_dict_from_EA_object = ea.ea_dict
@@ -455,6 +591,12 @@ class TestObjects(unittest.TestCase):
         self.assertEqual('some-id', ea.get('Subnet ID'))
 
     def test_update_from_dict(self):
+        """
+        Update the update of a update
+
+        Args:
+            self: (todo): write your description
+        """
         net = objects.Network(mock.Mock(), network='192.168.1.0/24')
         self.assertEqual(None, net._ref)
 
@@ -467,6 +609,12 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(None, net.network_view)
 
     def test_update_fields_on_create(self):
+        """
+        Update fields of update fields on the update
+
+        Args:
+            self: (todo): write your description
+        """
         a_record = [{'_ref': 'record:a/Awsdrefsasdwqoijvoriibtrni',
                      'ip': '192.168.1.52',
                      'name': 'other_name'}]
@@ -486,6 +634,12 @@ class TestObjects(unittest.TestCase):
             mock.ANY)
 
     def test_update_fields_on_create_v6(self):
+        """
+        Respond to update fields on a contact
+
+        Args:
+            self: (todo): write your description
+        """
         aaaa_record = [{'_ref': 'record:aaaa/Awsdrefsasdwqoijvoriibtrni',
                         'ip': '2001:610:240:22::c100:68b',
                         'name': 'other_name'}]
@@ -505,6 +659,12 @@ class TestObjects(unittest.TestCase):
             mock.ANY)
 
     def test_ip_version(self):
+        """
+        Test the ip version.
+
+        Args:
+            self: (todo): write your description
+        """
         conn = mock.Mock()
         net_v4 = objects.Network(conn, network='192.168.1.0/24')
         self.assertEqual(4, net_v4.ip_version)
@@ -512,6 +672,12 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(6, net_v6.ip_version)
 
     def test_get_tenant(self):
+        """
+        Get a tenant details.
+
+        Args:
+            self: (todo): write your description
+        """
         id = 'tenant_id'
         fake_tenant = {
             '_ref': 'grid:cloudapi:tenant/ZG5zLm5ldHdvcmskMTAuMzk',
@@ -529,11 +695,23 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(fake_tenant['comment'], tenant.comment)
 
     def test__remap_fields_support_unknown_fields(self):
+        """
+        Determine fields of fields of the fields of the fields of the fields.
+
+        Args:
+            self: (todo): write your description
+        """
         data = {'host_name': 'cp.com',
                 'unknown_field': 'some_data'}
         self.assertEqual(data, objects.Member._remap_fields(data))
 
     def test_TXT_Record(self):
+        """
+        Test for tests the database.
+
+        Args:
+            self: (todo): write your description
+        """
         mock_record = DEFAULT_TXT_RECORD
         txt_record_copy = copy.deepcopy(mock_record)
         connector = self._mock_connector(create_object=txt_record_copy)
