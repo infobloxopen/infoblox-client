@@ -12744,6 +12744,16 @@ class ARecord(ARecordBase):
     _shadow_fields = ['_ref', 'ip']
     _ip_version = 4
 
+    @property
+    def ipv4addr(self):
+        # Convert IPAllocation objects to string
+        if hasattr(self, '_ipv4addr'):
+            return str(self._ipv4addr)
+
+    @ipv4addr.setter
+    def ipv4addr(self, ipv4addr):
+        self._ipv4addr = ipv4addr
+
 
 class AAAARecord(ARecordBase):
     """ AAAARecord: DNS AAAA record object.
@@ -12818,6 +12828,16 @@ class AAAARecord(ARecordBase):
     _remap = {'ip': 'ipv6addr'}
     _shadow_fields = ['_ref', 'ip']
     _ip_version = 6
+
+    @property
+    def ipv6addr(self):
+        # Convert IPAllocation objects to string
+        if hasattr(self, '_ipv6addr'):
+            return str(self._ipv6addr)
+
+    @ipv6addr.setter
+    def ipv6addr(self, ipv6addr):
+        self._ipv6addr = ipv6addr
 
 
 class AliasRecord(InfobloxObject):
