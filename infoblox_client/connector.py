@@ -363,8 +363,7 @@ class Connector(object):
             raise ib_ex.InfobloxFileUploadFailed(
                 url=url
             )
-        else:
-            LOG.info(r)
+
         return r
 
     @reraise_neutron_exception
