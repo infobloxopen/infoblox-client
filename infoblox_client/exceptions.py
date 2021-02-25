@@ -40,6 +40,10 @@ class InfobloxSearchError(InfobloxException):
                "%(content)s [code %(code)s]")
 
 
+class InfobloxFileUploadFailed(InfobloxException):
+    message = "Unable to upload file to '%(url)s'"
+
+
 class InfobloxCannotCreateObject(InfobloxException):
     message = ("Cannot create '%(obj_type)s' object(s): "
                "%(content)s [code %(code)s]")

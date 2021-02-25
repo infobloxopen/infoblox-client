@@ -345,6 +345,25 @@ class Connector(object):
         return self._parse_reply(r)
 
     @reraise_neutron_exception
+    def fileop_upload_file(self, url, files):
+        if self.session.cookies:
+            self.session.auth = None
+        r = self.session.post(url, files=files)
+        if r.status_code != requests.codes.ok:
+            response = utils.safe_json_load(r.content)
+            exception = ib_ex.InfobloxFileUploadFailed
+            raise exception(
+                response=response,
+                object='fileop',
+                content=r.content,
+                args=files,
+                code=r.status_code
+            )
+        else:
+            LOG.info(r)
+        return r
+
+    @reraise_neutron_exception
     def create_object(self, obj_type, payload, return_fields=None):
         """Create an Infoblox object of type 'obj_type'
 
