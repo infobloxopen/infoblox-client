@@ -4286,6 +4286,12 @@ class Fileop(InfobloxObject):
     def uploadserviceaccount(self, *args, **kwargs):
         return self._call_func("uploadserviceaccount", *args, **kwargs)
 
+    def upload_file(self, *args, **kwargs):
+        return self.connector.upload_file(*args, **kwargs)
+
+    def download_file(self, *args, **kwargs):
+        return self.connector.download_file(*args, **kwargs)
+
 
 class Filterfingerprint(InfobloxObject):
     """ Filterfingerprint: DHCP Fingerprint Filter object.
