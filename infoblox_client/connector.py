@@ -15,11 +15,13 @@
 
 import functools
 import re
-import requests
-from requests import exceptions as req_exc
-import six
 import urllib
+
+import requests
+import six
 import urllib3
+from requests import exceptions as req_exc
+
 try:
     import urlparse
 except ImportError:
@@ -51,6 +53,7 @@ def reraise_neutron_exception(func):
             raise ib_ex.InfobloxTimeoutError(e)
         except req_exc.RequestException as e:
             raise ib_ex.InfobloxConnectionError(reason=e)
+
     return callee
 
 
@@ -219,9 +222,9 @@ class Connector(object):
         except ValueError:
             raise ib_ex.InfobloxConnectionError(reason=request.content)
 
-    def _log_request(self, type, url, opts):
+    def _log_request(self, verb, url, opts):
         message = ("Sending %s request to %s with parameters %s",
-                   type, url, opts)
+                   verb, url, opts)
         if self.log_api_calls_as_info:
             LOG.info(*message)
         else:
@@ -327,7 +330,7 @@ class Connector(object):
     def _get_object(self, obj_type, url):
         opts = self._get_request_options()
         self._log_request('get', url, opts)
-        if(self.session.cookies):
+        if self.session.cookies:
             # the first 'get' or 'post' action will generate a cookie
             # after that, we don't need to re-authenticate
             self.session.auth = None
@@ -362,7 +365,7 @@ class Connector(object):
         url = self._construct_url(obj_type, query_params)
         opts = self._get_request_options(data=payload)
         self._log_request('post', url, opts)
-        if(self.session.cookies):
+        if self.session.cookies:
             # the first 'get' or 'post' action will generate a cookie
             # after that, we don't need to re-authenticate
             self.session.auth = None
@@ -386,7 +389,8 @@ class Connector(object):
 
         return self._parse_reply(r)
 
-    def _check_service_availability(self, operation, resp, ref):
+    @staticmethod
+    def _check_service_availability(operation, resp, ref):
         if resp.status_code == requests.codes.SERVICE_UNAVAILABLE:
             raise ib_ex.InfobloxGridTemporaryUnavailable(
                 response=resp.content,
@@ -427,6 +431,7 @@ class Connector(object):
         Args:
             ref      (str): Infoblox object reference
             payload (dict): Payload with data to send
+            return_fields (list): List of fields to return
         Returns:
             The object reference of the updated object
         Raises:
@@ -491,7 +496,6 @@ class Connector(object):
             raise ValueError("Invalid argument was passed")
         version_match = re.search(r'(\d+)\.(\d+)', wapi_version)
         if version_match:
-            if int(version_match.group(1)) >= \
-                    CLOUD_WAPI_MAJOR_VERSION:
+            if int(version_match.group(1)) >= CLOUD_WAPI_MAJOR_VERSION:
                 return True
         return False
