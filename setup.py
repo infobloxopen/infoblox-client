@@ -23,9 +23,10 @@ with open('testing_requirements.txt') as requirements_file:
 
 setup(
     name='infoblox-client',
-    version='0.4.22',
+    version='0.5.0',
     description="Client for interacting with Infoblox NIOS over WAPI",
     long_description=readme + '\n\n' + history,
+    long_description_content_type='text/markdown',
     author="John Belamaric",
     author_email='jbelamaric@infoblox.com',
     url='https://github.com/infobloxopen/infoblox-client',
@@ -47,9 +48,10 @@ setup(
         "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     test_suite='tests',
     tests_require=testing_requirements

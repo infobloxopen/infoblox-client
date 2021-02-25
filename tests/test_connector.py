@@ -13,10 +13,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import unittest
+
 import mock
 import requests
 from mock import patch
 from requests import exceptions as req_exc
+
 
 try:
     from oslo_serialization import jsonutils
@@ -73,7 +75,8 @@ class TestInfobloxConnector(unittest.TestCase):
 
     def test_create_object_with_extattrs(self):
         objtype = 'network'
-        payload = {'extattrs': {'Subnet ID': {'value': 'fake_subnet_id'}},
+        payload = {'extattrs':
+                   {'Subnet ID': {'value': 'fake_subnet_id'}},
                    'ip': '0.0.0.0'}
         with patch.object(requests.Session, 'post',
                           return_value=mock.Mock()) as patched_create:
@@ -132,8 +135,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.return_value.content = '{}'
             self.connector.get_object(objtype, payload, extattrs=extattrs)
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/'
-                'v1.1/network?%2ASubnet+ID=fake_subnet_id&ip=0.0.0.0',
+                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&ip=0.0.0.0',  # noqa: E501
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
@@ -154,9 +156,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 return_fields=return_fields
             )
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/'
-                'network?%2ASubnet+ID=fake_subnet_id'
-                '&_return_fields%2B=extattrs',
+                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields%2B=extattrs',  # noqa: E501
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
@@ -177,14 +177,11 @@ class TestInfobloxConnector(unittest.TestCase):
                 return_fields=return_fields
             )
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/'
-                'network?%2ASubnet+ID=fake_subnet_id'
-                '&_return_fields=extattrs',
+                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields=extattrs',  # noqa: E501
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
             )
-
 
     def test_get_objects_with_max_results(self):
         objtype = 'network'
@@ -194,8 +191,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.return_value.content = '{}'
             self.connector.get_object(objtype, {}, max_results=20)
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/'
-                'v1.1/network?_max_results=20',
+                'https://infoblox.example.org/wapi/v1.1/network?_max_results=20',  # noqa: E501
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
@@ -234,8 +230,7 @@ class TestInfobloxConnector(unittest.TestCase):
             # over max_results connector option
             conn.get_object(objtype, {}, max_results=-20)
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/'
-                'v1.1/network?_max_results=-20',
+                'https://infoblox.example.org/wapi/v1.1/network?_max_results=-20',  # noqa: E501
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
@@ -324,8 +319,7 @@ class TestInfobloxConnector(unittest.TestCase):
         url = self.connector._construct_url('network',
                                             query_params=query_params,
                                             extattrs=ext_attrs)
-        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?'
-                         '%2ASubnet+ID=fake_subnet_id&some_option=some_value',
+        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&some_option=some_value',  # noqa: E501
                          url)
 
     def test_construct_url_with_force_proxy(self):
@@ -333,8 +327,7 @@ class TestInfobloxConnector(unittest.TestCase):
         url = self.connector._construct_url('network',
                                             extattrs=ext_attrs,
                                             force_proxy=True)
-        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?'
-                         '%2ASubnet+ID=fake_subnet_id&_proxy_search=GM',
+        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_proxy_search=GM',  # noqa: E501
                          url)
 
     def test_get_object_with_proxy_flag(self):
@@ -345,8 +338,10 @@ class TestInfobloxConnector(unittest.TestCase):
         result = self.connector.get_object('network', force_proxy=True)
 
         self.assertEqual(None, result)
-        self.connector._construct_url.assert_called_with('network', {},
-                                                         None, force_proxy=True)
+        self.connector._construct_url.assert_called_with('network',
+                                                         {},
+                                                         None,
+                                                         force_proxy=True)
         self.connector._get_object.called_with('network',
                                                self.connector._construct_url)
 
@@ -373,15 +368,14 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(None, self.connector._get_object('network', url))
 
     def test_get_object_with_pagination_with_no_result(self):
-         self.connector._get_object = mock.MagicMock(return_value=None)
-         result = self.connector.get_object('network', paging=True)
-         self.assertEqual(None, result)
+        self.connector._get_object = mock.MagicMock(return_value=None)
+        result = self.connector.get_object('network', paging=True)
+        self.assertEqual(None, result)
 
     def test_get_object_with_pagination_with_result(self):
-         self.connector._get_object = mock.MagicMock(
-                                          return_value={"result": ["data"]})
-         result = self.connector.get_object('network', paging=True)
-         self.assertEqual(["data"], result)
+        self.connector._get_object = mock.MagicMock(return_value={"result": ["data"]})  # noqa: E501
+        result = self.connector.get_object('network', paging=True)
+        self.assertEqual(["data"], result)
 
     def test__handle_get_object_with_pagination_with_no_record(self):
         query_params = {"_paging": 1,
@@ -392,7 +386,7 @@ class TestInfobloxConnector(unittest.TestCase):
                                                    None, False)
         self.assertEqual(None, result)
 
-    def test__handle_get_object_with_max_results_nigative(self):
+    def test__handle_get_object_with_max_results_negative(self):
         query_params = {"_paging": 1,
                         "_return_as_object": 1,
                         "_max_results": -100}
@@ -405,8 +399,7 @@ class TestInfobloxConnector(unittest.TestCase):
         query_params = {"_paging": 1,
                         "_return_as_object": 1,
                         "_max_results": 100}
-        self.connector._get_object = mock.MagicMock(
-                                         return_value={"result": ["data"]})
+        self.connector._get_object = mock.MagicMock(return_value={"result": ["data"]})  # noqa: E501
         result = self.connector._handle_get_object("network", query_params,
                                                    None, False)
         self.assertEqual(["data"], result)
@@ -415,10 +408,9 @@ class TestInfobloxConnector(unittest.TestCase):
         resp = requests.Response
         resp.status_code = 200
         if "_page_id" in url:
-            resp.content = jsonutils.dumps({"result": [6,7,8,9,10]})
+            resp.content = jsonutils.dumps({"result": [6, 7, 8, 9, 10]})
         else:
-            resp.content = jsonutils.dumps(
-                               {"result": [1,2,3,4,5], "next_page_id": 1})
+            resp.content = jsonutils.dumps({"result": [1, 2, 3, 4, 5], "next_page_id": 1})  # noqa: E501
         return resp
 
     def test__handle_get_object_with_record_more_than_max_results_paging(self):
@@ -429,7 +421,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.side_effect = self._get_object
             result = self.connector._handle_get_object("network", query_params,
                                                        None, False)
-        self.assertEqual([1,2,3,4,5,6,7,8,9,10], result)
+        self.assertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], result)
 
     def test__handle_get_object_without_pagination(self):
         query_params = {"_max_results": 100}
@@ -455,7 +447,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_call_func.return_value.content = '{}'
             self.connector.call_func(objtype, "_ref", payload)
             patched_call_func.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/_ref?_function=network',
+                'https://infoblox.example.org/wapi/v1.1/_ref?_function=network',  # noqa: E501
                 data=jsonutils.dumps(payload),
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
@@ -471,7 +463,10 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_call_func.return_value.status_code = 400
             patched_call_func.return_value.content = '{}'
             self.assertRaises(exceptions.InfobloxFuncException,
-                              self.connector.call_func, objtype, "_ref", payload)
+                              self.connector.call_func,
+                              objtype,
+                              "_ref",
+                              payload)
 
     def test_call_func_with_http_error_503(self):
         objtype = 'network'
@@ -482,17 +477,20 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_call_func.return_value.status_code = 503
             patched_call_func.return_value.content = 'Temporary Unavailable'
             self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
-                              self.connector.call_func, objtype, "_ref", payload)
+                              self.connector.call_func,
+                              objtype,
+                              "_ref",
+                              payload)
 
     def test__check_service_availability(self):
-        objtype = 'network'
-        payload = {'ip': '0.0.0.0'}
         resp = requests.Response
         resp.status_code = 503
         resp.content = 'Temporary Unavailable'
         self.assertRaises(exceptions.InfobloxGridTemporaryUnavailable,
-                          self.connector._check_service_availability, "delete",
-                          resp, '_ref')
+                          self.connector._check_service_availability,
+                          "delete",
+                          resp,
+                          '_ref')
 
     def test_get_object_with_cookies(self):
         objtype = 'network'
@@ -503,6 +501,7 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.return_value.content = '{}'
             self.connector.get_object(objtype, {})
             self.assertEqual(None, self.connector.session.auth)
+
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
@@ -545,13 +544,15 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_non_cloud_api_detection(self):
         wapi_not_cloud = ('1.4.1', '1.9/', '1.99', 'asd', 'v1.4')
         for url in wapi_not_cloud:
-            self.assertFalse(connector.Connector.is_cloud_wapi(url))
+            self.assertFalse(
+                connector.Connector.is_cloud_wapi(url))
 
     def test_cloud_api_detection(self):
         wapi_cloud = ('2.1/', '/2.0/', '2.0.1',
                       '3.0/', '11.0.1/', 'v2.1', 'v2.0')
         for url in wapi_cloud:
-            self.assertTrue(connector.Connector.is_cloud_wapi(url))
+            self.assertTrue(
+                connector.Connector.is_cloud_wapi(url))
 
     def test_allow_options_as_dict(self):
         opts = dict(host='infoblox.example.org',
@@ -597,7 +598,7 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
         self.assertEqual(10, conn.http_pool_connections)
         self.assertEqual(10, conn.http_pool_maxsize)
         self.assertEqual(3, conn.max_retries)
-        self.assertEqual('2.1', conn.wapi_version)
+        self.assertEqual('2.7', conn.wapi_version)
         self.assertEqual(None, conn.max_results)
 
     def test_blank_values_not_allowed(self):

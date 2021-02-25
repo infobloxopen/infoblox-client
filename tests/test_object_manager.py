@@ -209,7 +209,7 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector = mock.Mock()
         connector.get_object.return_value = None
         ibom = om.InfobloxObjectManager(connector)
-        member = objects.Member(connector, name='member1', ip='some-ip')
+        member = objects.Member(connector, name='member1', ip="10.0.0.0")
 
         ibom.get_member(member)
 
@@ -221,7 +221,7 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector = mock.Mock()
         connector.get_object.return_value = mock.MagicMock()
         ibom = om.InfobloxObjectManager(connector)
-        member = objects.Member(connector, name='member1', ip='some-ip')
+        member = objects.Member(connector, name='member1', ip='10.0.0.0')
 
         ibom.restart_all_services(member)
 
@@ -260,7 +260,7 @@ class ObjectManagerTestCase(unittest.TestCase):
 
     def test_update_network_merges_eas(self):
         original_ea = objects.EA({'User EA': 'user value',
-                                 'Subnet ID': 'one'})
+                                  'Subnet ID': 'one'})
         new_ea = objects.EA({'Subnet ID': 'two'})
         merged_ea = objects.EA({'User EA': 'user value',
                                 'Subnet ID': 'two'}).to_dict()
@@ -448,9 +448,8 @@ class ObjectManagerTestCase(unittest.TestCase):
         ibom.bind_name_with_record_a(dns_view_name, ip, name,
                                      bind_list, extattrs)
 
-        exp_for_a = {'view': dns_view_name,
-                     'ipv4addr': ip}
-        exp_for_ptr = {'view': dns_view_name,
+        exp_for_a = {'ipv4addr': ip, 'view': dns_view_name}
+        exp_for_ptr = {'ptrdname': name, 'view': dns_view_name,
                        'ipv4addr': ip}
         calls = [mock.call('record:a', exp_for_a, return_fields=mock.ANY),
                  mock.call('record:ptr', exp_for_ptr, return_fields=mock.ANY)]
@@ -757,24 +756,25 @@ class ObjectManagerTestCase(unittest.TestCase):
             'zone_format': 'FORWARD',
             'ns_group': 'test_group',
             'extattrs': old_attrs
-            }
+        }
 
         connector = mock.Mock()
         connector.get_object.return_value = [zone]
 
         return_fields = [
-            'fqdn', 'view', 'extattrs', 'zone_format', 'ns_group', 'prefix',
+            'extattrs', 'fqdn', 'view', 'zone_format', 'ns_group', 'prefix',
             'grid_primary', 'grid_secondaries']
         ibom = om.InfobloxObjectManager(connector)
         ibom.update_dns_zone_attrs(dns_view_name, fqdn, new_attrs)
         connector.get_object.assert_called_once_with(
             'zone_auth',
             {'fqdn': 'host.global.com', 'view': 'dns-view-name'},
-            extattrs=None, force_proxy=False, max_results=None,
-            return_fields=return_fields)
+            return_fields=return_fields,
+            extattrs=None, force_proxy=False, max_results=None)
         connector.update_object.assert_called_once_with(
             zone_ref,
-            {'extattrs': new_attrs},
+            {'extattrs': new_attrs,'ns_group': 'test_group',
+             'view': 'dns-view-name', 'zone_format': 'FORWARD'},
             return_fields)
 
     def _mock_for_get_connector(self, reply_map):

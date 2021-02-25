@@ -3,6 +3,29 @@
 History
 -------
 
+0.5.0 (2020-05-14)
+------------------
+* Majorly Updated objects with around 380+ NIOS object calls supported now.(Find the infoblox_client/objects.py file to list the supported objects and its descriptions)
+* Bug Fixes
+* python-six dependency set to >=1.11.0 
+
+0.4.25 (2020-03-12)
+___________________
+* Bug Fixes
+
+0.4.24 (2020-02-25)
+___________________
+* Added some extra fields(ms_server) for Fixed Address
+* Supporting MX record
+* Bug Fixes - PTR records now return an IP
+
+0.4.23 (2019-09-10)
+___________________
+
+* Added some extra fields for network class
+* Fixed update option for A Record
+* Adding fields for fixed address
+
 0.4.22 (2019-02-21)
 ___________________
 

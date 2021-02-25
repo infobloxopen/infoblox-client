@@ -18,6 +18,7 @@ import copy
 import mock
 
 from infoblox_client import objects
+REC = 'ZG5zLmJpbmRfbXgkLjQuY29tLm15X3pvbmUuZGVtby5teC5kZW1vLm15X3pvbmUuY29tLjE'
 
 DEFAULT_HOST_RECORD = {
     '_ref': 'record:host/ZG5zLmhvc3QkLl9kZWZhdWx0LmNvbS5nbG9iYWwuY22NA'
@@ -37,6 +38,23 @@ DEFAULT_HOST_RECORD = {
         'CMP Type': {'value': 'OpenStack'},
         'Port ID': {'value': '136ef9ad-9c88-41ea-9fa6-bd48d8ec789a'},
         'Tenant ID': {'value': '00fd80791dee4112bb538c872b206d4c'}}
+}
+
+DEFAULT_MX_RECORD = {
+    '_ref': 'record:mx/%s'
+            'mx.demo.my_zone.com/my_dns_view' % REC,
+    'view': 'my_dns_view',
+    'name': 'mx.demo.my_zone.com',
+    'preference': '1',
+    'mail_exchanger': 'demo.my_zone.com'
+}
+
+DEFAULT_TXT_RECORD = {
+    '_ref': 'record:txt/%s'
+            'text_test.my_zone.com/my_dns_view' % REC,
+    'view': 'my_dns_view',
+    'name': 'text_test.my_zone.com',
+    'text': 'hello_test'
 }
 
 
@@ -115,6 +133,58 @@ class TestObjects(unittest.TestCase):
         self.assertEqual(None, ip.configure_for_dhcp)
         self.assertEqual(None, ip.host)
 
+    def test_Create_MX_Record(self):
+        mock_record = DEFAULT_MX_RECORD
+        mx_record_copy = copy.deepcopy(mock_record)
+        connector = self._mock_connector(create_object=mx_record_copy)
+        mx = objects.MXRecord.create(connector, name='mx.demo.my_zone.com',
+                                     mail_exchanger='demo.my_zone.com',
+                                     view='my_dns_view', preference=1)
+        self.assertIsInstance(mx, objects.MXRecord)
+        connector.create_object.assert_called_once_with(
+            'record:mx',
+            {'mail_exchanger': 'demo.my_zone.com',
+             'name': 'mx.demo.my_zone.com',
+             'preference': 1,
+             'view': 'my_dns_view'
+            }, ['extattrs', 'mail_exchanger','name', 'preference', 'view'])
+
+    def test_update_MX_Record(self):
+        mx_record_copy = [
+            {'_ref': 'record:mx/%s' % REC,
+             'name': 'mx.demo.my_zone.com',
+             'preference': 1,
+             'mail_exchanger': 'demo.my_zone.com'}]
+
+        connector = self._mock_connector(get_object=mx_record_copy)
+        mx = objects.MXRecord.create(
+            connector, name='mx1.demo.my_zone.com',
+            mail_exchanger='demo2.my_zone.com',
+            preference=1,
+            update_if_exists=True)
+        connector.update_object.assert_called_once_with(
+            mx_record_copy[0]['_ref'],
+            {'mail_exchanger': 'demo2.my_zone.com',
+              'name': 'mx1.demo.my_zone.com', 'preference': 1},
+             ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
+
+    def test_search_and_delete_MX_Record(self):
+        mx_record_copy = copy.deepcopy(DEFAULT_MX_RECORD)
+        connector = self._mock_connector(get_object=[mx_record_copy])
+
+        mx_record = objects.MXRecord.search(connector,
+                                            view='some_view',
+                                            name='some_name')
+        connector.get_object.assert_called_once_with(
+            'record:mx', {'view': 'some_view',
+                          'name': 'some_name'},
+            extattrs=None, force_proxy=False, max_results=None,
+            return_fields=['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
+        mx_record.delete()
+        connector.delete_object.assert_called_once_with(
+            DEFAULT_MX_RECORD['_ref'])
+
+
     def test_create_host_record_with_ttl(self):
         mock_record = DEFAULT_HOST_RECORD
         host_record_copy = copy.deepcopy(mock_record)
@@ -132,10 +202,10 @@ class TestObjects(unittest.TestCase):
             'record:host',
             {'ttl': 42,
              'ipv4addrs': [
-                {'mac': 'fa:16:3e:29:87:70',
-                 'ipv4addr': '22.0.0.2'}],
+                 {'mac': 'fa:16:3e:29:87:70',
+                  'ipv4addr': '22.0.0.2'}],
              'view': 'some-dns-view'},
-            ['ipv4addrs', 'extattrs', 'aliases'])
+            ['extattrs', 'ipv4addrs', 'name', 'view', 'aliases'])
 
     def test_create_host_record_with_ip(self):
         mock_record = DEFAULT_HOST_RECORD
@@ -215,10 +285,13 @@ class TestObjects(unittest.TestCase):
         }
         connector = self._mock_connector(create_object=mock_fixed_address)
 
-        fixed_addr = objects.FixedAddress.create(connector,
-                                                 ip='192.168.1.15',
-                                                 network_view='some-view',
-                                                 mac='aa:ac:cd:11:22:33')
+        fixed_addr = objects.FixedAddress.create(
+            connector,
+            ip='192.168.1.15',
+            network_view='some-view',
+            mac='aa:ac:cd:11:22:33',
+            ms_server={'_struct': 'msdhcpserver',
+                       'ipv4addr': '192.168.1.0'})
         connector.get_object.assert_called_once_with(
             'fixedaddress',
             {'network_view': 'some-view', 'ipv4addr': '192.168.1.15',
@@ -227,8 +300,11 @@ class TestObjects(unittest.TestCase):
         self.assertIsInstance(fixed_addr, objects.FixedAddressV4)
         connector.create_object.assert_called_once_with(
             'fixedaddress',
-            {'network_view': 'some-view', 'ipv4addr': '192.168.1.15',
-             'mac': 'aa:ac:cd:11:22:33'}, mock.ANY)
+            {'network_view': 'some-view',
+             'ipv4addr': '192.168.1.15',
+             'mac': 'aa:ac:cd:11:22:33',
+             'ms_server': {'_struct': 'msdhcpserver',
+                           'ipv4addr': '192.168.1.0'}}, mock.ANY)
 
     def test_create_fixed_address_v6(self):
         mock_fixed_address = {
@@ -238,22 +314,26 @@ class TestObjects(unittest.TestCase):
         }
         connector = self._mock_connector(create_object=mock_fixed_address)
 
-        fixed_addr = objects.FixedAddress.create(connector,
-                                                 ip='fffe:1234:1234::1',
-                                                 network_view='some-view',
-                                                 mac='aa:ac:cd:11:22:33')
+        fixed_addr = objects.FixedAddress.create(
+            connector,
+            ip='fffe:1234:1234::1',
+            network_view='some-view',
+            mac='aa:ac:cd:11:22:33',
+            ms_server={'_struct': 'msdhcpserver',
+                       'ipv4addr': '192.168.1.0'})
+
         self.assertIsInstance(fixed_addr, objects.FixedAddressV6)
         self.assertEqual(mock_fixed_address['duid'], fixed_addr.duid)
 
         connector.get_object.assert_called_once_with(
             'ipv6fixedaddress',
-            {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',
-             'duid': mock.ANY},
+            {'duid': mock.ANY, 'ipv6addr': 'fffe:1234:1234::1',
+             'network_view': 'some-view' },
             return_fields=mock.ANY)
         connector.create_object.assert_called_once_with(
             'ipv6fixedaddress',
-            {'network_view': 'some-view', 'ipv6addr': 'fffe:1234:1234::1',
-             'duid': mock.ANY}, mock.ANY)
+            {'duid': mock.ANY, 'ipv6addr': 'fffe:1234:1234::1',
+             'network_view': 'some-view' }, mock.ANY)
 
     @mock.patch('infoblox_client.utils.generate_duid')
     def test_fixed_address_v6(self, generate):
@@ -261,10 +341,11 @@ class TestObjects(unittest.TestCase):
         duid = '00:0a:d3:9b:aa:ac:cd:11:22:33'
         generate.return_value = duid
         connector = self._mock_connector()
-        fixed_addr = objects.FixedAddress(connector,
-                                          ip='fffe:1234:1234::1',
-                                          network_view='some-view',
-                                          mac=mac)
+        fixed_addr = objects.FixedAddress(
+            connector,
+            ip='fffe:1234:1234::1',
+            network_view='some-view',
+            mac=mac)
         self.assertIsInstance(fixed_addr, objects.FixedAddressV6)
         self.assertEqual(mac, fixed_addr.mac)
         self.assertEqual(duid, fixed_addr.duid)
@@ -401,6 +482,25 @@ class TestObjects(unittest.TestCase):
             return_fields=[])
         connector.update_object.assert_called_once_with(
             a_record[0]['_ref'],
+            {'name': 'some-new_name', 'ipv4addr': '192.168.1.52'},
+            mock.ANY)
+
+    def test_update_fields_on_create_v6(self):
+        aaaa_record = [{'_ref': 'record:aaaa/Awsdrefsasdwqoijvoriibtrni',
+                        'ip': '2001:610:240:22::c100:68b',
+                        'name': 'other_name'}]
+        connector = self._mock_connector(get_object=aaaa_record)
+        objects.ARecordBase.create(connector,
+                                   ip='2001:610:240:22::c100:68b',
+                                   name='some-new_name',
+                                   view='view',
+                                   update_if_exists=True)
+        connector.get_object.assert_called_once_with(
+            'record:aaaa',
+            {'view': 'view', 'ipv6addr': '2001:610:240:22::c100:68b'},
+            return_fields=[])
+        connector.update_object.assert_called_once_with(
+            aaaa_record[0]['_ref'],
             {'name': 'some-new_name'},
             mock.ANY)
 
@@ -432,3 +532,18 @@ class TestObjects(unittest.TestCase):
         data = {'host_name': 'cp.com',
                 'unknown_field': 'some_data'}
         self.assertEqual(data, objects.Member._remap_fields(data))
+
+    def test_TXT_Record(self):
+        mock_record = DEFAULT_TXT_RECORD
+        txt_record_copy = copy.deepcopy(mock_record)
+        connector = self._mock_connector(create_object=txt_record_copy)
+        txt = objects.TXTRecord.create(connector, name='text_test.my_zone.com',
+                                     text='hello_text',
+                                     view='my_dns_view')
+        self.assertIsInstance(txt, objects.TXTRecord)
+        connector.create_object.assert_called_once_with(
+            'record:txt',
+            {'name': 'text_test.my_zone.com',
+             'text': 'hello_text',
+             'view': 'my_dns_view',
+            }, ['extattrs', 'name', 'text', 'view'])

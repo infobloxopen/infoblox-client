@@ -16,7 +16,6 @@
 import functools
 import re
 import urllib
-
 import requests
 import six
 import urllib3
@@ -71,7 +70,7 @@ class Connector(object):
                        'http_pool_connections': 10,
                        'http_pool_maxsize': 10,
                        'max_retries': 3,
-                       'wapi_version': '2.1',
+                       'wapi_version': '2.7',
                        'max_results': None,
                        'log_api_calls_as_info': False,
                        'paging': False}
@@ -115,7 +114,8 @@ class Connector(object):
 
         self.wapi_url = "https://%s/wapi/v%s/" % (self.host,
                                                   self.wapi_version)
-        self.cloud_api_enabled = self.is_cloud_wapi(self.wapi_version)
+        self.cloud_api_enabled = self.is_cloud_wapi(
+            self.wapi_version)
 
     def _configure_session(self):
         self.session = requests.Session()
@@ -513,6 +513,18 @@ class Connector(object):
 
     @staticmethod
     def is_cloud_wapi(wapi_version):
+        """Validate that a WAPI semantic version is valid.
+
+        Args:
+            wapi_version (str): WAPI semantic version
+
+        Returns:
+            True if the major version is higher than a given threshold,
+            False otherwise.
+
+        Raises:
+            ValueError if an invalid version is passed
+        """
         valid = wapi_version and isinstance(wapi_version, six.string_types)
         if not valid:
             raise ValueError("Invalid argument was passed")
