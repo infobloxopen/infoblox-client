@@ -345,7 +345,22 @@ class Connector(object):
         return self._parse_reply(r)
 
     @reraise_neutron_exception
-    def fileop_upload_file(self, url, files):
+    def download_file(self, url):
+        if self.session.cookies:
+            self.session.auth = None
+        headers = {'content-type': 'application/force-download'}
+        r = self.session.get(url, headers=headers)
+        if r.status_code != requests.codes.ok:
+            response = utils.safe_json_load(r.content)
+            raise ib_ex.InfobloxFileDownloadFailed(
+                response=response,
+                url=url
+            )
+
+        return r
+
+    @reraise_neutron_exception
+    def upload_file(self, url, files):
         """Upload file to fully-qualified upload url
 
         Args:

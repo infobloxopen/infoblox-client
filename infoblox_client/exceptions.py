@@ -42,6 +42,10 @@ class InfobloxSearchError(InfobloxException):
               "%(content)s [code %(code)s]"
 
 
+class InfobloxFileDownloadFailed(InfobloxException):
+    message = "Unable to download file from '%(url)s'"
+
+
 class InfobloxFileUploadFailed(InfobloxException):
     message = "Unable to upload file to '%(url)s'"
 
