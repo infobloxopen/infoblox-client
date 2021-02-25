@@ -346,18 +346,22 @@ class Connector(object):
 
     @reraise_neutron_exception
     def fileop_upload_file(self, url, files):
+        """Upload file to fully-qualified upload url
+
+        Args:
+            url (str): upload url provided by infoblox fileop uploadinit
+            files (dict): file contents payload
+        Returns:
+            The requests response
+        Raises:
+            InfobloxException
+        """
         if self.session.cookies:
             self.session.auth = None
         r = self.session.post(url, files=files)
         if r.status_code != requests.codes.ok:
-            response = utils.safe_json_load(r.content)
-            exception = ib_ex.InfobloxFileUploadFailed
-            raise exception(
-                response=response,
-                object='fileop',
-                content=r.content,
-                args=files,
-                code=r.status_code
+            raise ib_ex.InfobloxFileUploadFailed(
+                url=url
             )
         else:
             LOG.info(r)
