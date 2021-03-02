@@ -482,6 +482,17 @@ class TestInfobloxConnector(unittest.TestCase):
             if os.path.exists('tests/ibx_networks.csv'):
                 os.unlink('tests/ibx_networks.csv')
 
+    def test_call_download_file(self):
+        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'
+        download_url = 'https://infoblox.example.org' + download_file_path
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            self.connector.session.cookies = ['cookies']
+            patched_get.return_value.status_code = 200
+            patched_get.return_value.content = '{}'
+            self.connector.download_file(download_url)
+            self.assertEqual(None, self.connector.session.auth)
+
     def test_call_func_with_http_error(self):
         objtype = 'network'
         payload = {'ip': '0.0.0.0'}
