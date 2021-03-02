@@ -14,6 +14,7 @@
 #    under the License.
 
 import unittest
+import os
 import copy
 import mock
 
@@ -547,3 +548,30 @@ class TestObjects(unittest.TestCase):
              'text': 'hello_text',
              'view': 'my_dns_view',
             }, ['extattrs', 'name', 'text', 'view'])
+
+    def test_call_upload_file(self):
+        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_url = 'https://infoblox.example.org' + upload_file_path
+        file_data = [
+            'header-network,address,netmask,comment\n'
+            'network,10.10.10.0,255.255.255.0,test1\n',
+            'network,10.10.11.0,255.255.255.0,test2\n'
+        ]
+        with open('tests/ibx_networks.csv', 'w') as fh:
+            for item in file_data:
+                fh.write(item)
+            fh.close()
+
+        with open('tests/ibx_networks.csv', 'r') as fh:
+            data = fh.read()
+            fh.close()
+        payload = dict(file=data)
+        connector = self._mock_connector()
+        fo = objects.Fileop(connector)
+        result = fo.upload_file(upload_url, payload)
+        self.assertIsInstance(fo, objects.Fileop)
+        self.assertTrue(result)
+
+        if os.path.exists('tests/ibx_networks.csv'):
+            os.unlink('tests/ibx_networks.csv')
+
