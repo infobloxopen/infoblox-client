@@ -14,6 +14,7 @@
 #    under the License.
 import unittest
 
+import os
 import mock
 import requests
 from mock import patch
@@ -453,6 +454,33 @@ class TestInfobloxConnector(unittest.TestCase):
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
             )
+
+    def test_call_upload_file(self):
+        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_url = 'https://192.168.40.10' + upload_file_path
+        file_data = [
+            'header-network,address,netmask,comment\n'
+            'network,10.10.10.0,255.255.255.0,test1\n',
+            'network,10.10.11.0,255.255.255.0,test2\n'
+        ]
+        with open('tests/ibx_networks.csv', 'w') as fh:
+            for item in file_data:
+                fh.write(item)
+            fh.close()
+
+        with open('tests/ibx_networks.csv', 'r') as fh:
+            data = fh.read()
+            fh.close()
+        payload = dict(file=data)
+        with patch.object(requests.Session, 'post',
+                          return_value=mock.Mock()) as patched_get:
+            self.connector.session.cookies = ['cookies']
+            patched_get.return_value.status_code = 200
+            patched_get.return_value.content = '{}'
+            self.connector.upload_file(upload_url, payload)
+            self.assertEqual(None, self.connector.session.auth)
+            if os.path.exists('tests/ibx_networks.csv'):
+                os.unlink('tests/ibx_networks.csv')
 
     def test_call_func_with_http_error(self):
         objtype = 'network'
