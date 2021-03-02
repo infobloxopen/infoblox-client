@@ -457,7 +457,7 @@ class TestInfobloxConnector(unittest.TestCase):
 
     def test_call_upload_file(self):
         upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
-        upload_url = 'https://192.168.40.10' + upload_file_path
+        upload_url = 'https://infoblox.example.org' + upload_file_path
         file_data = [
             'header-network,address,netmask,comment\n'
             'network,10.10.10.0,255.255.255.0,test1\n',
