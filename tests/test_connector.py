@@ -473,10 +473,10 @@ class TestInfobloxConnector(unittest.TestCase):
             fh.close()
         payload = dict(file=data)
         with patch.object(requests.Session, 'post',
-                          return_value=mock.Mock()) as patched_get:
+                          return_value=mock.Mock()) as patched_post:
             self.connector.session.cookies = ['cookies']
-            patched_get.return_value.status_code = 200
-            patched_get.return_value.content = '{}'
+            patched_post.return_value.status_code = 200
+            patched_post.return_value.content = '{}'
             self.connector.upload_file(upload_url, payload)
             self.assertEqual(None, self.connector.session.auth)
             if os.path.exists('tests/ibx_networks.csv'):
