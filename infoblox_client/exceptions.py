@@ -47,7 +47,7 @@ class InfobloxFileDownloadFailed(InfobloxException):
 
 
 class InfobloxFileUploadFailed(InfobloxException):
-    message = "Unable to upload file to '%(url)s'"
+    message = "Unable to upload file to '%(url)s '%(content)s' '%(code)s'"
 
 
 class InfobloxCannotCreateObject(InfobloxException):
