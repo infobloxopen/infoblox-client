@@ -430,8 +430,7 @@ class Connector(object):
 
         return self._parse_reply(r)
 
-    @staticmethod
-    def _check_service_availability(operation, resp, ref):
+    def _check_service_availability(self, operation, resp, ref):
         if resp.status_code == requests.codes.SERVICE_UNAVAILABLE:
             raise ib_ex.InfobloxGridTemporaryUnavailable(
                 response=resp.content,
