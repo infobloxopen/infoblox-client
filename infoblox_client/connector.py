@@ -375,8 +375,12 @@ class Connector(object):
             self.session.auth = None
         r = self.session.post(url, files=files)
         if r.status_code != requests.codes.ok:
+            response = utils.safe_json_load(r.content)
             raise ib_ex.InfobloxFileUploadFailed(
-                url=url
+                response=response,
+                url=url,
+                content=response,
+                code=r.status_code,
             )
 
         return r
