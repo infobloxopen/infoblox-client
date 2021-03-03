@@ -60,6 +60,21 @@ DEFAULT_TXT_RECORD = {
 
 
 class TestObjects(unittest.TestCase):
+    @staticmethod
+    def _create_infoblox_csv():
+        file_data = [
+            'header-network,address,netmask,comment'
+            'network,10.10.10.0,255.255.255.0,test1',
+            'network,10.10.11.0,255.255.255.0,test2'
+        ]
+        with open('tests/ibx_networks.csv', 'w') as fh:
+            fh.write('\n'.join(file_data))
+            fh.close()
+
+    @staticmethod
+    def _delete_infoblox_csv():
+        if os.path.exists('tests/ibx_networks.csv'):
+            os.unlink('tests/ibx_networks.csv')
 
     def _mock_connector(self, get_object=None, create_object=None,
                         delete_object=None):
@@ -552,16 +567,7 @@ class TestObjects(unittest.TestCase):
     def test_call_upload_file(self):
         upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
         upload_url = 'https://infoblox.example.org' + upload_file_path
-        file_data = [
-            'header-network,address,netmask,comment\n'
-            'network,10.10.10.0,255.255.255.0,test1\n',
-            'network,10.10.11.0,255.255.255.0,test2\n'
-        ]
-        with open('tests/ibx_networks.csv', 'w') as fh:
-            for item in file_data:
-                fh.write(item)
-            fh.close()
-
+        self._create_infoblox_csv()
         with open('tests/ibx_networks.csv', 'r') as fh:
             data = fh.read()
             fh.close()
@@ -571,7 +577,7 @@ class TestObjects(unittest.TestCase):
         result = fo.upload_file(upload_url, payload)
         self.assertIsInstance(fo, objects.Fileop)
         self.assertTrue(result)
+        # clean up and remove csv file
+        self._delete_infoblox_csv()
 
-        if os.path.exists('tests/ibx_networks.csv'):
-            os.unlink('tests/ibx_networks.csv')
 
