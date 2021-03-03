@@ -37,6 +37,20 @@ class TestInfobloxConnector(unittest.TestCase):
         self.default_opts = self._prepare_options()
         self.connector = connector.Connector(self.default_opts)
 
+        # build data file for file upload test
+        file_data = [
+            'header-network,address,netmask,comment'
+            'network,10.10.10.0,255.255.255.0,test1',
+            'network,10.10.11.0,255.255.255.0,test2'
+        ]
+        with open('tests/ibx_networks.csv', 'w') as fh:
+            fh.write('\n'.join(file_data))
+            fh.close()
+
+    def tearDown(self):
+        if os.path.exists('tests/ibx_networks.csv'):
+            os.unlink('tests/ibx_networks.csv')
+
     @staticmethod
     def _prepare_options():
         opts = mock.Mock()
@@ -458,16 +472,6 @@ class TestInfobloxConnector(unittest.TestCase):
     def test_call_upload_file(self):
         upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
         upload_url = 'https://infoblox.example.org' + upload_file_path
-        file_data = [
-            'header-network,address,netmask,comment\n'
-            'network,10.10.10.0,255.255.255.0,test1\n',
-            'network,10.10.11.0,255.255.255.0,test2\n'
-        ]
-        with open('tests/ibx_networks.csv', 'w') as fh:
-            for item in file_data:
-                fh.write(item)
-            fh.close()
-
         with open('tests/ibx_networks.csv', 'r') as fh:
             data = fh.read()
             fh.close()
@@ -479,8 +483,22 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_post.return_value.content = '{}'
             self.connector.upload_file(upload_url, payload)
             self.assertEqual(None, self.connector.session.auth)
-            if os.path.exists('tests/ibx_networks.csv'):
-                os.unlink('tests/ibx_networks.csv')
+
+    def test_call_upload_file_with_error_403(self):
+        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_url = 'https://infoblox.example.org' + upload_file_path
+        with open('tests/ibx_networks.csv', 'r') as fh:
+            data = fh.read()
+            fh.close()
+        payload = dict(file=data)
+        with patch.object(requests.Session, 'post',
+                          return_value=mock.Mock()) as patched_post:
+            patched_post.return_value.status_code = 403
+            patched_post.return_value.content = '{}'
+            self.assertRaises(exceptions.InfobloxFileUploadFailed,
+                              self.connector.upload_file,
+                              upload_url,
+                              payload)
 
     def test_call_download_file(self):
         download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'
@@ -492,6 +510,17 @@ class TestInfobloxConnector(unittest.TestCase):
             patched_get.return_value.content = '{}'
             self.connector.download_file(download_url)
             self.assertEqual(None, self.connector.session.auth)
+
+    def test_call_download_file_with_error_403(self):
+        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'
+        download_url = 'https://infoblox.example.org' + download_file_path
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            patched_get.return_value.status_code = 403
+            patched_get.return_value.content = '{}'
+            self.assertRaises(exceptions.InfobloxFileDownloadFailed,
+                              self.connector.download_file,
+                              download_url)
 
     def test_call_func_with_http_error(self):
         objtype = 'network'
