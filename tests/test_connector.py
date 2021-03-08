@@ -14,6 +14,7 @@
 #    under the License.
 import unittest
 
+import os
 import mock
 import requests
 from mock import patch
@@ -35,6 +36,23 @@ class TestInfobloxConnector(unittest.TestCase):
 
         self.default_opts = self._prepare_options()
         self.connector = connector.Connector(self.default_opts)
+
+    @staticmethod
+    def _create_infoblox_csv():
+        # build data file for file upload test
+        file_data = [
+            'header-network,address,netmask,comment'
+            'network,10.10.10.0,255.255.255.0,test1',
+            'network,10.10.11.0,255.255.255.0,test2'
+        ]
+        with open('tests/ibx_networks.csv', 'w') as fh:
+            fh.write('\n'.join(file_data))
+            fh.close()
+
+    @staticmethod
+    def _delete_infoblox_csv():
+        if os.path.exists('tests/ibx_networks.csv'):
+            os.unlink('tests/ibx_networks.csv')
 
     @staticmethod
     def _prepare_options():
@@ -453,6 +471,63 @@ class TestInfobloxConnector(unittest.TestCase):
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
             )
+
+    def test_call_upload_file(self):
+        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_url = 'https://infoblox.example.org' + upload_file_path
+        self._create_infoblox_csv()
+        with open('tests/ibx_networks.csv', 'r') as fh:
+            data = fh.read()
+            fh.close()
+        payload = dict(file=data)
+        with patch.object(requests.Session, 'post',
+                          return_value=mock.Mock()) as patched_post:
+            self.connector.session.cookies = ['cookies']
+            patched_post.return_value.status_code = 200
+            patched_post.return_value.content = '{}'
+            self.connector.upload_file(upload_url, payload)
+            self.assertEqual(None, self.connector.session.auth)
+            self._delete_infoblox_csv()
+
+    def test_call_upload_file_with_error_403(self):
+        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_url = 'https://infoblox.example.org' + upload_file_path
+        self._create_infoblox_csv()
+        with open('tests/ibx_networks.csv', 'r') as fh:
+            data = fh.read()
+            fh.close()
+        payload = dict(file=data)
+        with patch.object(requests.Session, 'post',
+                          return_value=mock.Mock()) as patched_post:
+            patched_post.return_value.status_code = 403
+            patched_post.return_value.content = '{}'
+            self.assertRaises(exceptions.InfobloxFileUploadFailed,
+                              self.connector.upload_file,
+                              upload_url,
+                              payload)
+            self._delete_infoblox_csv()
+
+    def test_call_download_file(self):
+        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'
+        download_url = 'https://infoblox.example.org' + download_file_path
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            self.connector.session.cookies = ['cookies']
+            patched_get.return_value.status_code = 200
+            patched_get.return_value.content = '{}'
+            self.connector.download_file(download_url)
+            self.assertEqual(None, self.connector.session.auth)
+
+    def test_call_download_file_with_error_403(self):
+        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'
+        download_url = 'https://infoblox.example.org' + download_file_path
+        with patch.object(requests.Session, 'get',
+                          return_value=mock.Mock()) as patched_get:
+            patched_get.return_value.status_code = 403
+            patched_get.return_value.content = '{}'
+            self.assertRaises(exceptions.InfobloxFileDownloadFailed,
+                              self.connector.download_file,
+                              download_url)
 
     def test_call_func_with_http_error(self):
         objtype = 'network'

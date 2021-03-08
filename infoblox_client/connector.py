@@ -222,9 +222,9 @@ class Connector(object):
         except ValueError:
             raise ib_ex.InfobloxConnectionError(reason=request.content)
 
-    def _log_request(self, type, url, opts):
+    def _log_request(self, verb, url, opts):
         message = ("Sending %s request to %s with parameters %s",
-                   type, url, opts)
+                   verb, url, opts)
         if self.log_api_calls_as_info:
             LOG.info(*message)
         else:
@@ -345,6 +345,47 @@ class Connector(object):
         return self._parse_reply(r)
 
     @reraise_neutron_exception
+    def download_file(self, url):
+        if self.session.cookies:
+            self.session.auth = None
+        headers = {'content-type': 'application/force-download'}
+        r = self.session.get(url, headers=headers)
+        if r.status_code != requests.codes.ok:
+            response = utils.safe_json_load(r.content)
+            raise ib_ex.InfobloxFileDownloadFailed(
+                response=response,
+                url=url
+            )
+
+        return r
+
+    @reraise_neutron_exception
+    def upload_file(self, url, files):
+        """Upload file to fully-qualified upload url
+
+        Args:
+            url (str): upload url provided by infoblox fileop uploadinit
+            files (dict): file contents payload
+        Returns:
+            The requests response
+        Raises:
+            InfobloxException
+        """
+        if self.session.cookies:
+            self.session.auth = None
+        r = self.session.post(url, files=files)
+        if r.status_code != requests.codes.ok:
+            response = utils.safe_json_load(r.content)
+            raise ib_ex.InfobloxFileUploadFailed(
+                response=response,
+                url=url,
+                content=response,
+                code=r.status_code,
+            )
+
+        return r
+
+    @reraise_neutron_exception
     def create_object(self, obj_type, payload, return_fields=None):
         """Create an Infoblox object of type 'obj_type'
 
@@ -430,6 +471,7 @@ class Connector(object):
         Args:
             ref      (str): Infoblox object reference
             payload (dict): Payload with data to send
+            return_fields (list): List of fields to return
         Returns:
             The object reference of the updated object
         Raises:

@@ -42,6 +42,14 @@ class InfobloxSearchError(InfobloxException):
               "%(content)s [code %(code)s]"
 
 
+class InfobloxFileDownloadFailed(InfobloxException):
+    message = "Unable to download file from '%(url)s'"
+
+
+class InfobloxFileUploadFailed(InfobloxException):
+    message = "Unable to upload file to '%(url)s '%(content)s' '%(code)s'"
+
+
 class InfobloxCannotCreateObject(InfobloxException):
     message = "Cannot create '%(obj_type)s' object(s): " \
               "%(content)s [code %(code)s]"
