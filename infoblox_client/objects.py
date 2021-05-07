@@ -247,13 +247,14 @@ class InfobloxObject(BaseObject):
         _global_field_processing and _custom_field_processing rules
         are checked.
         """
-        mapping = cls._global_field_processing.copy()
-        mapping.update(cls._custom_field_processing)
+        ipv_class = cls.get_class_from_args(ip_dict)
+        mapping = ipv_class._global_field_processing.copy()
+        mapping.update(ipv_class._custom_field_processing)
         # Process fields that require building themselves as objects
         for field in mapping:
             if field in ip_dict:
                 ip_dict[field] = mapping[field](ip_dict[field])
-        return cls(connector, **ip_dict)
+        return ipv_class(connector, **ip_dict)
 
     @staticmethod
     def value_to_dict(value):
