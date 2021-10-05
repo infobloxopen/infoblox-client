@@ -340,6 +340,13 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&some_option=some_value',  # noqa: E501
                          url)
 
+    def test_construct_url_with_query_params_containing_array(self):
+        query_params = {'array_option': ['value1', 'value2']}
+        url = self.connector._construct_url('network',
+                                            query_params=query_params)
+        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?array_option=value1&array_option=value2',  # noqa: E501
+                         url)
+
     def test_construct_url_with_force_proxy(self):
         ext_attrs = {'Subnet ID': {'value': 'fake_subnet_id'}}
         url = self.connector._construct_url('network',
