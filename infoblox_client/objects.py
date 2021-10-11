@@ -383,7 +383,14 @@ class InfobloxObject(BaseObject):
         """Fetch object from NIOS by _ref or searchfields
 
         Update existent object with fields returned from NIOS
-        Return True on successful object fetch
+
+        Returns:
+            True if object successfully fetched. False otherwise.
+
+        Raises:
+            InfobloxFetchGotMultipleObjects:
+                If fetch got multiple objects from the API and unable to
+                deserialize API response to a single InfobloxObject.
         """
         if self.ref:
             reply = self.connector.get_object(
@@ -398,6 +405,10 @@ class InfobloxObject(BaseObject):
                                           search_dict,
                                           return_fields=return_fields)
         if reply:
+            if len(reply) > 1:
+                LOG.debug("Fetch got multiple objects from the API. Reply: %s",
+                          reply)
+                raise ib_ex.InfobloxFetchGotMultipleObjects()
             self.update_from_dict(reply[0], only_ref=only_ref)
             return True
         return False
@@ -12740,7 +12751,7 @@ class ARecord(ARecordBase):
                'ms_ad_user_data', 'name', 'reclaimable',
                'remove_associated_ptr', 'shared_record_group', 'ttl',
                'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['ipv4addr', 'view']
+    _search_for_update_fields = ['ipv4addr', 'name', 'view']
     _updateable_search_fields = ['comment', 'creator', 'ddns_principal',
                                  'ipv4addr', 'name']
     _all_searchable_fields = ['comment', 'creator', 'ddns_principal',
@@ -12826,7 +12837,7 @@ class AAAARecord(ARecordBase):
                'ms_ad_user_data', 'name', 'reclaimable',
                'remove_associated_ptr', 'shared_record_group', 'ttl',
                'use_ttl', 'view', 'zone']
-    _search_for_update_fields = ['ipv6addr', 'view']
+    _search_for_update_fields = ['ipv6addr', 'name', 'view']
     _updateable_search_fields = ['comment', 'creator', 'ddns_principal']
     _all_searchable_fields = ['comment', 'creator', 'ddns_principal',
                               'ipv6addr', 'name', 'reclaimable', 'view',

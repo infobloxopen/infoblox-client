@@ -125,3 +125,8 @@ class InfobloxTimeoutError(InfobloxException):
 class InfobloxGridTemporaryUnavailable(InfobloxException):
     message = "Cannot perform operation %(operation)s with ref %(ref)s: " \
               "%(content)s [code %(code)s]"
+
+
+class InfobloxFetchGotMultipleObjects(BaseExc):
+    message = "Fetch got multiple objects from the API. Unable to " \
+              "deserialize multiple API objects into one InfobloxObject."
