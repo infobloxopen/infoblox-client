@@ -169,6 +169,12 @@ class Connector(object):
 
     @staticmethod
     def _validate_obj_type_or_die(obj_type, obj_type_expected=True):
+        """Validate object type
+
+        Args:
+            obj_type_expected (bool): If False, method will assume, that object
+                                      ref is passed as the first argument.
+        """
         if not obj_type:
             raise ValueError('NIOS object type cannot be empty.')
         if obj_type_expected and '/' in obj_type:

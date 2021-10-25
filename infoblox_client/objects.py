@@ -387,7 +387,7 @@ class InfobloxObject(BaseObject):
         """
         if self.ref:
             reply = self.connector.get_object(
-                self.ref, return_fields=self.return_fields)
+                self.ref, return_fields=self.return_fields, paging=False)
             if reply:
                 self.update_from_dict(reply)
                 return True
