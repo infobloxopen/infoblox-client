@@ -239,7 +239,7 @@ class Connector(object):
     @reraise_neutron_exception
     def get_object(self, obj_type, payload=None, return_fields=None,
                    extattrs=None, force_proxy=False, max_results=None,
-                   paging=False):
+                   paging=None):
         """Retrieve a list of Infoblox objects of type 'obj_type'
 
         Some get requests like 'ipv4address' should be always
@@ -278,8 +278,8 @@ class Connector(object):
         if max_results is None and self.max_results:
             max_results = self.max_results
 
-        if paging is False and self.paging:
-            paging = self.paging
+        if paging is None:
+            paging = self.paging if self.paging else False
 
         query_params = self._build_query_params(payload=payload,
                                                 return_fields=return_fields,
