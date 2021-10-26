@@ -403,40 +403,21 @@ class TestInfobloxConnector(unittest.TestCase):
         self.assertEqual(["data"], result)
 
     def test_get_object_override_paging(self):
-        test_cases = [
-            {
-                # Value passed as a argument to get_object call
-                "Paging Argument": False,
-                # Value of Connector.paging attribute
-                "Connector.paging": True,
-                # Expected result of the paging value
-                "Expected Paging": False
-            },
-            {
-                "Paging Argument": None,
-                "Connector.paging": True,
-                "Expected Paging": True},
-            {
-                "Paging Argument": None,
-                "Connector.paging": False,
-                "Expected Paging": False},
-        ]
-
-        for tc in test_cases:
-            with self.subTest(tc):
-                self.connector._get_object = mock.MagicMock()
-                self.connector._build_query_params = mock.MagicMock()
-                self.connector.paging = tc["Connector.paging"]
-                self.connector.get_object(
-                    'network',
-                    paging=tc["Paging Argument"],
-                )
-                self.connector._build_query_params.assert_called_once_with(
-                    payload=None,
-                    return_fields=None,
-                    max_results=None,
-                    paging=tc["Expected Paging"],
-                )
+        """Check if paging argument will override Connector.paging attribute
+        when calling get_object method"""
+        self.connector._get_object = mock.MagicMock()
+        self.connector._build_query_params = mock.MagicMock()
+        self.connector.paging = True
+        self.connector.get_object(
+            'network',
+            paging=False,
+        )
+        self.connector._build_query_params.assert_called_once_with(
+            payload=None,
+            return_fields=None,
+            max_results=None,
+            paging=False,
+        )
 
     def test__handle_get_object_with_pagination_with_no_record(self):
         query_params = {"_paging": 1,
