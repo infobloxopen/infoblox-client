@@ -161,7 +161,7 @@ class Connector(object):
         if query_params:
             if len(query) > 1:
                 query += '&'
-            query += self._urlencode(query_params)
+            query += self._urlencode(query_params, doseq=True)
 
         base_url = self._urljoin(self.wapi_url,
                                  self._quote(relative_path))
