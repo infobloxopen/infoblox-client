@@ -448,15 +448,12 @@ class ObjectManagerTestCase(unittest.TestCase):
         ibom.bind_name_with_record_a(dns_view_name, ip, name,
                                      bind_list, extattrs)
 
-        exp_for_a = {'ipv4addr': ip, 'view': dns_view_name}
+        exp_for_a = {'name': name, 'ipv4addr': ip, 'view': dns_view_name}
         exp_for_ptr = {'ptrdname': name, 'view': dns_view_name,
                        'ipv4addr': ip}
         calls = [mock.call('record:a', exp_for_a, return_fields=mock.ANY),
                  mock.call('record:ptr', exp_for_ptr, return_fields=mock.ANY)]
         connector.get_object.assert_has_calls(calls)
-
-        exp_for_a['name'] = name
-        exp_for_ptr['ptrdname'] = name
 
         create_calls = [mock.call('record:a', exp_for_a, mock.ANY),
                         mock.call('record:ptr', exp_for_ptr, mock.ANY)]

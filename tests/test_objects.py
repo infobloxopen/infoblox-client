@@ -19,6 +19,7 @@ import copy
 import mock
 
 from infoblox_client import objects
+import infoblox_client.exceptions as ib_ex
 REC = 'ZG5zLmJpbmRfbXgkLjQuY29tLm15X3pvbmUuZGVtby5teC5kZW1vLm15X3pvbmUuY29tLjE'
 
 DEFAULT_HOST_RECORD = {
@@ -482,15 +483,40 @@ class TestObjects(unittest.TestCase):
         self.assertEqual('192.168.1.0/24', net.network)
         self.assertEqual(None, net.network_view)
 
+    def test_create_fails_on_multiple_api_objects(self):
+        """
+        If multiple objects are returned by the API, create should raise
+        exception.
+        """
+        a_records = [{'_ref': 'record:a/Awsdrefsasdwqoijvoriibtrni',
+                      'ip': '192.168.1.52',
+                      'name': 'record1'},
+                     {'_ref': 'record:a/Awsdrefsasdwqoijvoriibtrna',
+                      'ip': '192.168.1.52',
+                      'name': 'record2'}]
+
+        connector = self._mock_connector(get_object=a_records)
+
+        with self.assertRaises(ib_ex.InfobloxFetchGotMultipleObjects):
+            objects.ARecordBase.create(connector,
+                                       ip='192.168.1.52',
+                                       view='view')
+
+        connector.get_object.assert_called_once_with(
+            'record:a',
+            {'view': 'view', 'ipv4addr': '192.168.1.52'},
+            return_fields=[])
+
     def test_update_fields_on_create(self):
         a_record = [{'_ref': 'record:a/Awsdrefsasdwqoijvoriibtrni',
                      'ip': '192.168.1.52',
-                     'name': 'other_name'}]
+                     'name': 'a_record',
+                     'comment': 'test_comment'}]
         connector = self._mock_connector(get_object=a_record)
         objects.ARecordBase.create(connector,
                                    ip='192.168.1.52',
-                                   name='some-new_name',
                                    view='view',
+                                   comment='new_test_comment',
                                    update_if_exists=True)
         connector.get_object.assert_called_once_with(
             'record:a',
@@ -498,18 +524,19 @@ class TestObjects(unittest.TestCase):
             return_fields=[])
         connector.update_object.assert_called_once_with(
             a_record[0]['_ref'],
-            {'name': 'some-new_name', 'ipv4addr': '192.168.1.52'},
+            {'ipv4addr': '192.168.1.52', 'comment': 'new_test_comment'},
             mock.ANY)
 
     def test_update_fields_on_create_v6(self):
         aaaa_record = [{'_ref': 'record:aaaa/Awsdrefsasdwqoijvoriibtrni',
                         'ip': '2001:610:240:22::c100:68b',
-                        'name': 'other_name'}]
+                        'name': 'aaaa_record',
+                        'comment': "test_comment"}]
         connector = self._mock_connector(get_object=aaaa_record)
         objects.ARecordBase.create(connector,
                                    ip='2001:610:240:22::c100:68b',
-                                   name='some-new_name',
                                    view='view',
+                                   comment='new_test_comment',
                                    update_if_exists=True)
         connector.get_object.assert_called_once_with(
             'record:aaaa',
@@ -517,7 +544,7 @@ class TestObjects(unittest.TestCase):
             return_fields=[])
         connector.update_object.assert_called_once_with(
             aaaa_record[0]['_ref'],
-            {'name': 'some-new_name'},
+            {'comment': 'new_test_comment'},
             mock.ANY)
 
     def test_ip_version(self):
