@@ -66,4 +66,18 @@ class TestObjectsE2E(unittest.TestCase):
         self.assertTrue(created)
         self.assertNotEqual(alias1._ref, alias2._ref)
 
-
+    def test_fetch_by_ref_when_paging_enabled(self):
+        """
+        Fetch should explicitly disable paging, when reading object from
+        the API by the ref
+        """
+        # Enable paging for the test connector
+        self.connector.paging = True
+        zone1 = DNSZone.create(self.connector,
+                               view='default',
+                               fqdn="e2e-test.com")
+        # Fetch DNS zone by ref
+        zone2 = DNSZone(self.connector)
+        zone2._ref = zone1._ref
+        zone2.fetch()
+        self.assertEqual(zone1.fqdn, zone2.fqdn)
