@@ -605,11 +605,6 @@ class TestInfobloxConnector(unittest.TestCase):
             self.connector.get_object(objtype, {})
             self.assertEqual(None, self.connector.session.auth)
 
-    # def test__get_object_raises_not_found(self):
-    #     self.connector.session.get = mock.MagicMock(
-    #         return_value=requests.request('GET', )
-    #     )
-
 
 class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_neutron_exception_is_raised_on_any_request_error(self):
