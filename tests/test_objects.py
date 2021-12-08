@@ -121,6 +121,64 @@ class TestObjects(unittest.TestCase):
             extattrs=None, force_proxy=False, return_fields=mock.ANY,
             max_results=None)
 
+    def test_search_network_with_grid_dhcp_members(self):
+        found = {
+            '_ref': 'network/ZG5zLm5ldHdvcmskMTAuMC4zMi4wLzI0LzA:10.0.32.0/24/default',
+            'members': [
+                {'_struct': 'dhcpmember', 'ipv4addr': '192.168.10.67', 'name': 'dhcp01.example.com'},
+                {'_struct': 'dhcpmember', 'ipv4addr': '192.168.11.67', 'name': 'dhcp02.example.com'}
+            ]
+        }
+        connector = self._mock_connector(get_object=[found])
+
+        network = objects.Network.search(
+            connector,
+            network_view='some-view',
+            network='10.0.32.0/24',
+            return_fields=['members']
+        )
+        connector.get_object.assert_called_once_with(
+            'network',
+            {'network_view': 'some-view', 'network': '10.0.32.0/24'},
+            extattrs=None, force_proxy=False, return_fields=['members'],
+            max_results=None
+        )
+        self.assertIsInstance(network.members[0], objects.Dhcpmember)
+        self.assertIsInstance(network.members[1], objects.Dhcpmember)
+        self.assertEqual('dhcpmember', network.members[0]._struct)
+        self.assertEqual('dhcpmember', network.members[1]._struct)
+        self.assertEqual('192.168.10.67', network.members[0].ipv4addr)
+        self.assertEqual('192.168.11.67', network.members[1].ipv4addr)
+
+    def test_search_network_with_ms_dhcp_members(self):
+        found = {
+            '_ref': 'network/ZG5zLm5ldHdvcmskMTAuMC4zMi4wLzI0LzA:10.0.32.0/24/default',
+            'members': [
+                {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.10.67', 'name': 'dhcp01.example.com'},
+                {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.11.67', 'name': 'dhcp02.example.com'}
+            ]
+        }
+        connector = self._mock_connector(get_object=[found])
+
+        network = objects.Network.search(
+            connector,
+            network_view='some-view',
+            network='10.0.32.0/24',
+            return_fields=['members']
+        )
+        connector.get_object.assert_called_once_with(
+            'network',
+            {'network_view': 'some-view', 'network': '10.0.32.0/24'},
+            extattrs=None, force_proxy=False, return_fields=['members'],
+            max_results=None
+        )
+        self.assertIsInstance(network.members[0], objects.Dhcpmember)
+        self.assertIsInstance(network.members[1], objects.Dhcpmember)
+        self.assertEqual('msdhcpserver', network.members[0]._struct)
+        self.assertEqual('msdhcpserver', network.members[1]._struct)
+        self.assertEqual('192.168.10.67', network.members[0].ipv4addr)
+        self.assertEqual('192.168.11.67', network.members[1].ipv4addr)
+
     def test_search_network_with_results(self):
         found = {"_ref": "network/ZG5zLm5ldHdvcmskMTAuMzkuMTEuMC8yNC8w"
                          ":10.39.11.0/24/default",

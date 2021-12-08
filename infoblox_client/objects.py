@@ -638,7 +638,7 @@ class Dhcpddns(SubObjects):
 
 
 class Dhcpmember(SubObjects):
-    _fields = ['ipv4addr', 'ipv6addr', 'name']
+    _fields = ['_struct', 'ipv4addr', 'ipv6addr', 'name']
 
 
 class Dhcpoption(SubObjects):
@@ -7532,7 +7532,7 @@ class NetworkV4(Network):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'members': Msdhcpserver.from_dict,
+        'members': Dhcpmember.from_dict,
         'options': Dhcpoption.from_dict,
         'vlans': Vlanlink.from_dict,
         'zone_associations': Zoneassociation.from_dict,
@@ -8517,7 +8517,7 @@ class NetworkTemplateV4(NetworkTemplate):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'members': Msdhcpserver.from_dict,
+        'members': Dhcpmember.from_dict,
         'options': Dhcpoption.from_dict,
     }
 
