@@ -29,13 +29,14 @@ class BaseObject(object):
     """Base class that provides minimal new object model interface
 
     This class add next features to objects:
-    - initialize public instance variables with None for fields
-     defined in '_fields' and '_shadow_fields'
-    - accept fields from '_fields' and '_shadow_fields' as a parameter on init
-    - dynamically remap one fields into another using _remap dict,
-     mapping is in effect on all stages (on init, getter and setter)
-    - provides nice object representation that contains class
-     and not None object fields (useful in python interpretter)
+      - initialize public instance variables with None for fields
+        defined in '_fields' and '_shadow_fields'
+      - accept fields from '_fields' and '_shadow_fields' as a parameter on
+        init
+      - dynamically remap one fields into another using _remap dict,
+        mapping is in effect on all stages (on init, getter and setter)
+      - provides nice object representation that contains class
+        and not None object fields (useful in python interpretter)
     """
     _fields = []
     _shadow_fields = []
@@ -176,36 +177,36 @@ class EA(object):
 class InfobloxObject(BaseObject):
     """Base class for all Infoblox related objects
 
-    _fields - fields that represents NIOS object (WAPI fields) and
-        are sent to NIOS on object creation
-    _search_for_update_fields - field/fields used to find an object during an
-        update operation. this should be the smallest number of fields that
-        uniquely identify an object
-    _all_searchable_fields - all fields that can be used to find object on NIOS
-        side
-    _updateable_search_fields - fields that can be used to find object on
-        NIOS side, but also can be changed, so has to be sent on update.
-    _shadow_fields - fields that object usually has but they should not
-        be sent to NIOS. These fields can be received from NIOS. Examples:
-        [_ref, is_default]
-    _return_fields - fields requested to be returned from NIOS side
-         if object is found/created
-    _infoblox_type - string representing wapi type of described object
-    _remap - dict that maps user faced names into internal
-         representation (_fields)
-    _custom_field_processing - dict that define rules (lambda) for building
-         objects from data returned by NIOS side.
-         Expected to be redefined in child class as needed,
-         _custom_field_processing has priority over _global_field_processing,
-         so can redefine for child class global rules
-         defined in _global_field_processing.
-    _global_field_processing - almost the same as _custom_field_processing,
-         but defines rules for building field on global level.
-         Fields defined in this dict will be processed in the same way in all
-         child classes. Is not expected to be redefined in child classes.
-    _ip_version - ip version of the object, used to mark version
-        specific classes. Value other than None indicates that
-        no versioned class lookup needed.
+    Attributes:
+        _fields: fields that represents NIOS object (WAPI fields) and are sent
+            to NIOS on object creation
+        _search_for_update_fields: field/fields used to find an object during
+            an update operation. this should be the smallest number of fields
+            that uniquely identify an object
+        _all_searchable_fields: all fields that can be used to find object on
+            NIOS side
+        _updateable_search_fields: fields that can be used to find object on
+            NIOS side, but also can be changed, so has to be sent on update.
+        _shadow_fields: fields that object usually has but they should not
+            be sent to NIOS. These fields can be received from
+            NIOS. Examples: [_ref, is_default]
+        _return_fields: fields requested to be returned from NIOS side
+            if object is found/created
+        _infoblox_type: string representing wapi type of described object
+        _remap: dict that maps user faced names into internal representation
+            (_fields)
+        _custom_field_processing: dict that define rules (lambda) for building
+            objects from data returned by NIOS side. Expected to be redefined
+            in child class as needed, _custom_field_processing has priority
+            over _global_field_processing, so can redefine for child class
+            global rules defined in _global_field_processing.
+        _global_field_processing: almost the same as _custom_field_processing,
+            but defines rules for building field on global level. Fields
+            defined in this dict will be processed in the same way in all
+            child classes. Is not expected to be redefined in child classes.
+        _ip_version: ip version of the object, used to mark version specific
+            classes. Value other than None indicates that no versioned class
+            lookup needed.
     """
     _fields = []
     _search_for_update_fields = []

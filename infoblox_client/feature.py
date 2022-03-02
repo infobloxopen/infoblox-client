@@ -32,6 +32,7 @@ class Feature(object):
     Based on the following:
       - Infoblox WAPI Version
       - Known features and corresponding WAPI version requirement
+
     the Feature class represents available NIOS features as attributes.
     """
 

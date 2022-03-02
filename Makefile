@@ -61,9 +61,7 @@ coverage:
 	$(BROWSER) htmlcov/index.html
 
 docs:
-	rm -f docs/infoblox_client.rst
-	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ infoblox_client
+	sphinx-apidoc --force -o docs/ infoblox_client
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
