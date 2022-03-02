@@ -84,18 +84,22 @@ def safe_json_load(data):
 def try_value_to_bool(value, strict_mode=True):
     """Tries to convert value into boolean.
 
-    strict_mode is True:
-    - Only string representation of str(True) and str(False)
-      are converted into booleans;
-    - Otherwise unchanged incoming value is returned;
+    Args:
+        value       (str): Value that should be converted into boolean.
 
-    strict_mode is False:
-    - Anything that looks like True or False is converted into booleans.
-    Values accepted as True:
-    - 'true', 'on', 'yes' (case independent)
-    Values accepted as False:
-    - 'false', 'off', 'no' (case independent)
-    - all other values are returned unchanged
+        strict_mode (bool):
+            - If strict_mode is True, Only string representation of str(True)
+              and str(False) are converted into booleans;
+            - If strict_mode is False, anything that looks like True or False
+              is converted into booleans:
+
+              - Values accepted as True are: 'true', 'on', 'yes' (case
+                independent)
+              - Values accepted as False are: 'false', 'off', 'no' (case
+                independent)
+
+    Returns:
+        True, False, or original value in case of failed conversion.
     """
     if strict_mode:
         true_list = ('True',)
