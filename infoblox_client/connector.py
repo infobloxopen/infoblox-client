@@ -44,6 +44,8 @@ CLOUD_WAPI_MAJOR_VERSION = 2
 
 
 def reraise_neutron_exception(func):
+    """This decorator catches third-party exceptions and replaces them with
+    Infoblox exceptions"""
     @functools.wraps(func)
     def callee(*args, **kwargs):
         try:
@@ -269,7 +271,8 @@ class Connector(object):
         Returns:
             A list of the Infoblox objects requested
         Raises:
-            InfobloxObjectNotFound
+            requests.exceptions.HTTPError: If API responded with error HTTP
+            status code.
         """
         self._validate_obj_type_or_die(obj_type, obj_type_expected=False)
 
@@ -287,19 +290,14 @@ class Connector(object):
                                                 paging=paging)
         # Clear proxy flag if wapi version is too old (non-cloud)
         proxy_flag = self.cloud_api_enabled and force_proxy
-        ib_object = self._handle_get_object(obj_type, query_params, extattrs,
-                                            proxy_flag)
-        if ib_object:
-            return ib_object
 
-        # Do second get call with force_proxy if not done yet
-        if self.cloud_api_enabled and not force_proxy:
-            ib_object = self._handle_get_object(obj_type, query_params,
-                                                extattrs, proxy_flag=True)
-            if ib_object:
-                return ib_object
-
-        return None
+        try:
+            return self._handle_get_object(obj_type, query_params, extattrs,
+                                           proxy_flag)
+        except req_exc.HTTPError:
+            # Do second get call with force_proxy if not done yet
+            return self._handle_get_object(obj_type, query_params,
+                                           extattrs, proxy_flag=True)
 
     def _handle_get_object(self, obj_type, query_params, extattrs,
                            proxy_flag=False):
@@ -347,7 +345,7 @@ class Connector(object):
         if r.status_code != requests.codes.ok:
             LOG.warning("Failed on object search with url %s: %s",
                         url, r.content)
-            return None
+            r.raise_for_status()
         return self._parse_reply(r)
 
     @reraise_neutron_exception

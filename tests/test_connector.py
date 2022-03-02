@@ -356,7 +356,7 @@ class TestInfobloxConnector(unittest.TestCase):
                          url)
 
     def test_get_object_with_proxy_flag(self):
-        self.connector._get_object = mock.MagicMock(return_value=False)
+        self.connector._get_object = mock.MagicMock(return_value=None)
         self.connector._construct_url = mock.MagicMock()
         self.connector.cloud_api_enabled = True
 
@@ -371,7 +371,9 @@ class TestInfobloxConnector(unittest.TestCase):
                                                self.connector._construct_url)
 
     def test_get_object_without_proxy_flag(self):
-        self.connector._get_object = mock.MagicMock(return_value=False)
+        self.connector._get_object = mock.MagicMock(
+            side_effect=[requests.HTTPError(), None],
+        )
         self.connector._construct_url = mock.MagicMock()
         self.connector.cloud_api_enabled = True
 
@@ -382,15 +384,17 @@ class TestInfobloxConnector(unittest.TestCase):
                            mock.call('network', {}, None, force_proxy=True)]
         self.connector._construct_url.assert_has_calls(construct_calls)
 
-    def test__get_object_search_error_return_none(self):
-        response = mock.Mock()
-        response.status_code = '404'
-        response.content = 'Object not found'
+    def test__get_object_raises_search_error(self):
+        url = 'http://some-url/'
+        response = requests.Response()
+        response.status_code = 404
+        response._content = 'Object not found'
+        response.url = url
         self.connector.session = mock.Mock()
         self.connector.session.get.return_value = response
 
-        url = 'http://some-url/'
-        self.assertEqual(None, self.connector._get_object('network', url))
+        with self.assertRaises(requests.HTTPError):
+            self.connector._get_object('network', url)
 
     def test_get_object_with_pagination_with_no_result(self):
         self.connector._get_object = mock.MagicMock(return_value=None)
