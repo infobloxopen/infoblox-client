@@ -95,7 +95,7 @@ class TestObjects(unittest.TestCase):
             'network',
             {'network_view': 'some-view', 'network': '192.68.1.0/20'},
             extattrs=None, force_proxy=False, return_fields=mock.ANY,
-            max_results=None)
+            paging=False, max_results=None)
 
     def test_search_network_v6(self):
         connector = self._mock_connector()
@@ -107,7 +107,7 @@ class TestObjects(unittest.TestCase):
             'ipv6network',
             {'network_view': 'some-view', 'network': 'fffe:2312::/64'},
             extattrs=None, force_proxy=False, return_fields=mock.ANY,
-            max_results=None)
+            paging=False, max_results=None)
 
     def test_search_network_v6_using_network_field(self):
         connector = self._mock_connector()
@@ -119,7 +119,7 @@ class TestObjects(unittest.TestCase):
             'ipv6network',
             {'network_view': 'some-view', 'network': 'fffe:2312::/64'},
             extattrs=None, force_proxy=False, return_fields=mock.ANY,
-            max_results=None)
+            paging=False, max_results=None)
 
     def test_search_network_with_grid_dhcp_members(self):
         found = {
@@ -141,7 +141,7 @@ class TestObjects(unittest.TestCase):
             'network',
             {'network_view': 'some-view', 'network': '10.0.32.0/24'},
             extattrs=None, force_proxy=False, return_fields=['members'],
-            max_results=None
+            paging=False, max_results=None
         )
         self.assertIsInstance(network.members[0], objects.Dhcpmember)
         self.assertIsInstance(network.members[1], objects.Dhcpmember)
@@ -170,7 +170,7 @@ class TestObjects(unittest.TestCase):
             'network',
             {'network_view': 'some-view', 'network': '10.0.32.0/24'},
             extattrs=None, force_proxy=False, return_fields=['members'],
-            max_results=None
+            paging=False, max_results=None
         )
         self.assertIsInstance(network.members[0], objects.Dhcpmember)
         self.assertIsInstance(network.members[1], objects.Dhcpmember)
@@ -193,7 +193,7 @@ class TestObjects(unittest.TestCase):
             'network',
             {'network_view': 'some-view', 'network': '192.68.1.0/20'},
             extattrs=None, force_proxy=False, return_fields=mock.ANY,
-            max_results=None)
+            paging=False, max_results=None)
         self.assertEqual('192.68.1.0/20', network.network)
         self.assertEqual('some-view', network.network_view)
         # verify aliased fields works too
@@ -253,7 +253,7 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'record:mx', {'view': 'some_view',
                           'name': 'some_name'},
-            extattrs=None, force_proxy=False, max_results=None,
+            extattrs=None, force_proxy=False, max_results=None,paging=False,
             return_fields=['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
         mx_record.delete()
         connector.delete_object.assert_called_once_with(
@@ -343,7 +343,7 @@ class TestObjects(unittest.TestCase):
             {'view': 'some-dns-view', 'ipv4addr': '192.168.15.20',
              'network_view': 'test-netview'},
             extattrs=None, force_proxy=False, return_fields=mock.ANY,
-            max_results=None)
+            paging=False, max_results=None)
 
         # Validate extattrs in host_record are converted to EA object
         self.assertIsInstance(host_record.extattrs, objects.EA)
@@ -437,7 +437,7 @@ class TestObjects(unittest.TestCase):
         payload = {'network_view': 'some_view', 'ip_address': '192.168.1.5'}
         connector.get_object.assert_called_once_with(
             'ipv4address', payload, return_fields=mock.ANY,
-            extattrs=None, force_proxy=mock.ANY, max_results=None)
+            paging=False, extattrs=None, force_proxy=mock.ANY, max_results=None)
         self.assertIsInstance(ip, objects.IPv4Address)
         self.assertEqual(ip_mock[0]['objects'], ip.objects)
 
@@ -624,7 +624,7 @@ class TestObjects(unittest.TestCase):
         conn.get_object.assert_called_once_with(
             'grid:cloudapi:tenant', {'id': id},
             return_fields=mock.ANY, extattrs=None, force_proxy=mock.ANY,
-            max_results=None)
+            paging=False, max_results=None)
         self.assertEqual(fake_tenant['id'], tenant.id)
         self.assertEqual(fake_tenant['name'], tenant.name)
         self.assertEqual(fake_tenant['comment'], tenant.comment)
