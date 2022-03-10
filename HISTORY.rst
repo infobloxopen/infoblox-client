@@ -3,6 +3,10 @@
 History
 -------
 
+0.5.1 (2022-03-10)
+-----------------
+* Fixed issues and pending PR
+
 0.5.0 (2020-05-14)
 ------------------
 * Majorly Updated objects with around 380+ NIOS object calls supported now.(Find the infoblox_client/objects.py file to list the supported objects and its descriptions)
