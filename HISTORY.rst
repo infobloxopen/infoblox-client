@@ -3,9 +3,12 @@
 History
 -------
 
-0.5.1 (2022-03-10)
+0.5.1 (2022-03-14)
 -----------------
-* Fixed issues and pending PR
+* Updated connector's urlencoding logic for proper array encoding #287;
+* Updated InfobloxObject's fetch method to raise `InfobloxFetchGotMultipleObjects` exception #288;
+* Fix a bug when calling abstracted class from_dict with V4 & V6 subclass #282;
+* Objects pass through the paging argument #305.
 
 0.5.0 (2020-05-14)
 ------------------

@@ -195,7 +195,7 @@ All top level objects support interface for CRUD operations. List of supported o
 
 Supported NIOS objects
 ----------------------
-All NIOS Objects are supported in the 0.5.0 verison release. check infoblox_client/objects.py for description of the objects.
+All NIOS Objects are supported in the 0.5.1 verison release. check infoblox_client/objects.py for description of the objects.
 Newly supported objects
 
 * ``AAAADtcRecord``
