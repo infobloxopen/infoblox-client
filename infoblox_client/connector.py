@@ -302,7 +302,7 @@ class Connector(object):
     def _handle_get_object(self, obj_type, query_params, extattrs,
                            proxy_flag=False):
         if '_paging' in query_params:
-
+            
             if not ('_max_results' in query_params):
                 query_params['_max_results'] = 1000
 

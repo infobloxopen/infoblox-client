@@ -75,7 +75,7 @@ Retrieve list of network from NIOS using Paging:
 
   from infoblox_client import connector, exceptions, objects
 
-  op = objects.Network.search(conn, view='default', paging=True, max_results=2, return_fields=['members'])
+  op = objects.Network.search(conn, view='default', return_fields=['members'])
   print(op)
 
   for op in objects.Network.search_all(conn, view='default', paging=True, max_results=2, return_fields=['members']):
@@ -214,7 +214,7 @@ All top level objects support interface for CRUD operations. List of supported o
     Requires connector passed as the first argument, ``check_if_exists`` and ``update_if_exists`` are optional.
     Object related fields are passed in as kwargs: ``field=value``, ``field2=value2``.
 
-- ``search(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, paging=False, max_results=None, **kwargs)``
+- ``search(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)``
     Search single object on NIOS side, returns first object that match search criteria.
     Requires connector passed as the first argument.
     ``return_fields`` can be set to retrieve particular fields from NIOS,
@@ -226,7 +226,7 @@ All top level objects support interface for CRUD operations. List of supported o
 - ``search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, paging=False, max_results=None, **kwargs)``
     Search all objects on NIOS side that match search criteria. Returns a list of objects.
     All other options are equal to ``search()``.
-    Paging can help in displaying the output with max_results value and by pressing enter next set of output is diplayed.
+    Paging can help in displaying the output with max_results value and press enter to view the next set of output.
 
 - ``update(self)``
     Update the object on NIOS side by pushing changes done in the local object.
