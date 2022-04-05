@@ -84,7 +84,7 @@ Retrieve list of network from NIOS using Paging:
   for obj in conn.get_object('network', paging=True, max_results=2):
     print(obj)
 
-For these request output will be displayed as:
+For these requests output will be displayed as:
 
 .. code:: python
 
