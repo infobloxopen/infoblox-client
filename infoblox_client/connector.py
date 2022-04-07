@@ -72,7 +72,7 @@ class Connector(object):
                        'http_pool_connections': 10,
                        'http_pool_maxsize': 10,
                        'max_retries': 3,
-                       'wapi_version': '2.7',
+                       'wapi_version': '2.11',
                        'max_results': None,
                        'log_api_calls_as_info': False,
                        'paging': False}
@@ -302,7 +302,7 @@ class Connector(object):
     def _handle_get_object(self, obj_type, query_params, extattrs,
                            proxy_flag=False):
         if '_paging' in query_params:
-            
+
             if not ('_max_results' in query_params):
                 query_params['_max_results'] = 1000
 

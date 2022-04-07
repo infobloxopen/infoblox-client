@@ -130,3 +130,6 @@ class InfobloxGridTemporaryUnavailable(InfobloxException):
 class InfobloxFetchGotMultipleObjects(BaseExc):
     message = "Fetch got multiple objects from the API. Unable to " \
               "deserialize multiple API objects into one InfobloxObject."
+
+class Infobloxmissingfield(InfobloxException):
+    message= '"Error": "AdmConProtoError: field for create missing: %(key)s "'
