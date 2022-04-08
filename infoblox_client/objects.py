@@ -339,7 +339,7 @@ class InfobloxObject(BaseObject):
                update_if_exists=False, **kwargs):
         if str(cls) == "<class 'infoblox_client.objects.DNSZone'>":
             if 'fqdn'.lower() not in kwargs:
-                raise ib_ex.InfobloxMissingField(key='fqdn')
+                raise ib_ex.InfobloxMissingField(response='', key='fqdn')
         ib_object, _ = (
             cls.create_check_exists(connector,
                                     check_if_exists=check_if_exists,
