@@ -655,7 +655,7 @@ class Dhcpmember(SubObjects):
     _fields = ['_struct', 'ipv4addr', 'ipv6addr', 'name']
 
 
-class Dhcpoption(SubObjects):
+class DhcpOption(SubObjects):
     _fields = ['name', 'num', 'use_option', 'value', 'vendor_class']
 
 
