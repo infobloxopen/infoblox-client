@@ -152,6 +152,14 @@ Create host record with Extensible Attributes (EA):
                    'Cloud API Owned': True})
   host = objects.HostRecord.create(conn, name='new_host', ip=my_ip, extattrs=ea)
 
+Create a host record with inherited Extensible Attributes (EA):
+
+.. code:: python
+
+  my_ip = objects.IP.create(ip='192.168.1.25', mac='aa:bb:cc:11:22:33', use_for_ea_inheritance=True)
+  hr = objects.HostRecord.create(conn, view='my_dns_view',
+                                 name='my_host_record.my_zone.com', ip=my_ip)
+
 Set the TTL to 30 minutes:
 
 .. code:: python
