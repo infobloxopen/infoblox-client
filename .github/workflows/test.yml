@@ -46,6 +46,7 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install -r testing_requirements.txt
-        - run: export TOXENV=${{ matrix.TOXENV }}
         - name: Test with tox
           run: tox
+          env:
+            TOXENV: ${{ matrix.TOXENV }}
