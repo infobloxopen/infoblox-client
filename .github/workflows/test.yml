@@ -11,6 +11,20 @@ on:
       - 'README.md'
       - 'docs/**'
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+        - uses: actions/checkout@v3
+        - name: Set up Python 3.6
+          uses: actions/setup-python@v3
+          with:
+            python-version: '3.6'
+        - name: Lint with tox
+          run: tox
+          env:
+            TOXENV: pep8
   test:
     name: Unit Test
     runs-on: ubuntu-latest
