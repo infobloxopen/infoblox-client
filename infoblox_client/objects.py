@@ -13,7 +13,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import six
-import types
 
 try:
     from oslo_log import log as logging
@@ -362,7 +361,7 @@ class InfobloxObject(BaseObject):
                                      return_fields=return_fields,
                                      extattrs=extattrs,
                                      force_proxy=force_proxy,
-                                     paging=paging, max_results=max_results)
+                                     paging=False, max_results=max_results)
         return reply, ib_obj_for_search
 
     @classmethod
@@ -370,28 +369,16 @@ class InfobloxObject(BaseObject):
         ib_obj, parse_class = cls._search(
             connector, **kwargs)
         if ib_obj:
-            if (isinstance(ib_obj,types.GeneratorType)):
-                for ib in ib_obj:
-                    LOG.warn("Ignoring paging argument as 'search' function returns single output")
-                    return [parse_class.from_dict(connector, ib[0])]
-            else:
-                return parse_class.from_dict(connector, ib_obj[0])
-        return []
+            return parse_class.from_dict(connector, ib_obj[0])
 
     @classmethod
     def search_all(cls, connector, **kwargs):
         ib_objects, parsing_class = cls._search(
             connector, **kwargs)
         if ib_objects:
-            if not (isinstance(ib_objects,types.GeneratorType)):
-                return [parsing_class.from_dict(connector, obj) for obj in ib_objects]
-            if (isinstance(ib_objects,types.GeneratorType)):
-                return cls._search_all(connector, ib_objects, parsing_class)
+            return [parsing_class.from_dict(connector, obj)
+                    for obj in ib_objects]
         return []
-
-    def _search_all(  connector, ib_objects, parsing_class):
-        for ib in ib_objects:
-            yield [parsing_class.from_dict(connector, obj) for obj in list(ib)]
 
     def fetch(self, only_ref=False):
         """Fetch object from NIOS by _ref or searchfields
