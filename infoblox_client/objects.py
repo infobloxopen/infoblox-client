@@ -361,7 +361,7 @@ class InfobloxObject(BaseObject):
                                      return_fields=return_fields,
                                      extattrs=extattrs,
                                      force_proxy=force_proxy,
-                                     paging=False, max_results=max_results)
+                                     paging=paging, max_results=max_results)
         return reply, ib_obj_for_search
 
     @classmethod
