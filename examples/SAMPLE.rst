@@ -2,7 +2,7 @@
 Examples
 =========
 
-Retrieve list of all networks from NIOS page by page
+Retrieve a list of all networks from NIOS page by page
 -----------------------------------------------------
 
 .. code:: python
@@ -16,7 +16,7 @@ Retrieve list of all networks from NIOS page by page
                 return conn
         
             def paging(conn, max_results):
-                # search all networks in default view 
+                # search all networks in the default view 
                 response= objects.Network.search_all(conn, view='default', paging=True, return_fields=['members'])
                 i=0
                 while i<len(response):
@@ -39,7 +39,7 @@ Retrieve list of all networks from NIOS page by page
             print("No more records")
 
 
-For above example request output will be displayed as:
+For the above example request output will be displayed as:
 
 .. code:: python
     
