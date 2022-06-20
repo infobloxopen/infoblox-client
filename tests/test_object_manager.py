@@ -169,7 +169,7 @@ class ObjectManagerTestCase(unittest.TestCase):
                                   PayloadMatcher.ANYKEY: ip_address})
         connector.get_object.assert_called_once_with(
             'record:host', matcher, extattrs=None, max_results=None,
-            force_proxy=mock.ANY, return_fields=mock.ANY)
+            force_proxy=mock.ANY, return_fields=mock.ANY, paging=False)
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_get_network_gets_network_object(self):
@@ -187,7 +187,7 @@ class ObjectManagerTestCase(unittest.TestCase):
                                   'network': cidr})
         connector.get_object.assert_called_once_with(
             'network', matcher, extattrs=None, max_results=None,
-            force_proxy=mock.ANY, return_fields=mock.ANY)
+            force_proxy=mock.ANY, return_fields=mock.ANY, paging=False)
 
     def test_object_is_not_created_if_already_exists(self):
         net_view_name = 'test_dns_view_name'
@@ -311,7 +311,7 @@ class ObjectManagerTestCase(unittest.TestCase):
                                   'network_view': net_view})
         connector.get_object.assert_called_once_with(
             'range', matcher, extattrs=None, max_results=None,
-            force_proxy=mock.ANY, return_fields=mock.ANY)
+            force_proxy=mock.ANY, return_fields=mock.ANY, paging=False)
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_delete_network_deletes_infoblox_network(self):
@@ -329,7 +329,7 @@ class ObjectManagerTestCase(unittest.TestCase):
                                   'network': cidr})
         connector.get_object.assert_called_once_with(
             'network', matcher, extattrs=None, max_results=None,
-            force_proxy=mock.ANY, return_fields=mock.ANY)
+            force_proxy=mock.ANY, return_fields=mock.ANY, paging=False)
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_delete_network_view_deletes_infoblox_object(self):
@@ -345,7 +345,7 @@ class ObjectManagerTestCase(unittest.TestCase):
         matcher = PayloadMatcher({'name': net_view})
         connector.get_object.assert_called_once_with(
             'networkview', matcher, extattrs=None, max_results=None,
-            force_proxy=mock.ANY, return_fields=mock.ANY)
+            force_proxy=mock.ANY, return_fields=mock.ANY, paging=False)
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_find_hostname(self):
@@ -365,7 +365,7 @@ class ObjectManagerTestCase(unittest.TestCase):
             {'view': dns_view_name, 'name': fqdn, 'ipv4addr': ip,
              'network_view': network_view_name},
             extattrs=None, force_proxy=mock.ANY, return_fields=mock.ANY,
-            max_results=None)
+            max_results=None, paging=False)
 
     def test_find_host_records_by_mac(self):
         dns_view_name = 'dns-view-name'
@@ -384,18 +384,18 @@ class ObjectManagerTestCase(unittest.TestCase):
                       {'view': dns_view_name, 'mac': mac,
                        'network_view': network_view_name},
                       extattrs=None, force_proxy=mock.ANY,
-                      return_fields=mock.ANY, max_results=None),
+                      return_fields=mock.ANY, max_results=None, paging=False),
             mock.call('record:host_ipv6addr',
                       {'network_view': 'network-view-name',
                        'duid': '11:22:33:44:55:66'},
                       extattrs=None, force_proxy=mock.ANY,
-                      return_fields=mock.ANY, max_results=None),
+                      return_fields=mock.ANY, max_results=None, paging=False),
             mock.call('record:host',
                       {'name': 'test_host_name',
                        'network_view': 'network-view-name',
                        'view': 'dns-view-name'},
                       extattrs=None, force_proxy=mock.ANY,
-                      return_fields=mock.ANY, max_results=None)]
+                      return_fields=mock.ANY, max_results=None, paging=False)]
 
     def _check_bind_names_calls(self, args, expected_get, expected_update):
         connector = mock.Mock()
@@ -407,7 +407,7 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'record:host', expected_get,
             extattrs=None, max_results=None,
-            force_proxy=mock.ANY, return_fields=mock.ANY)
+            force_proxy=mock.ANY, return_fields=mock.ANY, paging=False)
         connector.update_object.assert_called_once_with(
             mock.ANY, expected_update, mock.ANY)
 
@@ -465,8 +465,8 @@ class ObjectManagerTestCase(unittest.TestCase):
         ip = '192.168.1.1'
         bind_list = ['record:a', 'record:aaaa', 'record:ptr']
 
-        def get_object(obj_type, payload=None, return_fields=None,
-                       extattrs=None, force_proxy=False, max_results=None):
+        def get_object(obj_type, payload=None, return_fields=None, extattrs=None,
+                       force_proxy=False, paging=False, max_results=None):
             data_dict = payload.copy()
             data_dict['_ref'] = 'some-ref/' + obj_type
             return [data_dict]
@@ -519,7 +519,7 @@ class ObjectManagerTestCase(unittest.TestCase):
         matcher = PayloadMatcher({'network_view': net_view_name})
         connector.get_object.assert_called_once_with(
             'network', matcher, return_fields=mock.ANY, max_results=None,
-            force_proxy=mock.ANY, extattrs=None)
+            force_proxy=mock.ANY, extattrs=None, paging=False)
         self.assertEqual(False, result)
 
     def test_create_fixed_address_for_given_ip(self):
@@ -609,7 +609,7 @@ class ObjectManagerTestCase(unittest.TestCase):
                    'ipv4addr': ip}
         connector.get_object.assert_called_once_with(
             'fixedaddress', payload, extattrs=None, max_results=None,
-            return_fields=mock.ANY, force_proxy=mock.ANY)
+            return_fields=mock.ANY, force_proxy=mock.ANY, paging=False)
         connector.delete_object.assert_called_once_with(mock.ANY)
 
     def test_delete_fixed_address_not_found(self):
@@ -626,7 +626,7 @@ class ObjectManagerTestCase(unittest.TestCase):
                    'ipv4addr': ip}
         connector.get_object.assert_called_once_with(
             'fixedaddress', payload, extattrs=None, max_results=None,
-            return_fields=mock.ANY, force_proxy=mock.ANY)
+            return_fields=mock.ANY, force_proxy=mock.ANY, paging=False)
         self.assertFalse(connector.delete_object.called)
 
     @mock.patch('infoblox_client.objects.FixedAddress')
@@ -767,7 +767,7 @@ class ObjectManagerTestCase(unittest.TestCase):
             'zone_auth',
             {'fqdn': 'host.global.com', 'view': 'dns-view-name'},
             return_fields=return_fields,
-            extattrs=None, force_proxy=False, max_results=None)
+            extattrs=None, force_proxy=False, max_results=None, paging=False)
         connector.update_object.assert_called_once_with(
             zone_ref,
             {'extattrs': new_attrs,'ns_group': 'test_group',
@@ -838,7 +838,8 @@ class ObjectManagerTestCase(unittest.TestCase):
                                                      extattrs=None,
                                                      force_proxy=mock.ANY,
                                                      return_fields=mock.ANY,
-                                                     max_results=None)
+                                                     max_results=None,
+                                                     paging=False)
 
     def test_create_ea_definition(self):
         connector = mock.Mock()
