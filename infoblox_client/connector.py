@@ -302,7 +302,7 @@ class Connector(object):
     def _handle_get_object(self, obj_type, query_params, extattrs,
                            proxy_flag=False):
         if '_paging' in query_params:
-            
+
             if not ('_max_results' in query_params):
                 query_params['_max_results'] = 1000
 
@@ -322,8 +322,7 @@ class Connector(object):
                 if not ('next_page_id' in resp):
                     result.extend(resp['result'])
                     query_params.pop('_page_id', None)
-                    return self._paging(result,query_params['_max_results'])
-                    #return result
+                    return result
                 else:
                     query_params['_page_id'] = resp['next_page_id']
                     result.extend(resp['result'])
@@ -331,14 +330,6 @@ class Connector(object):
             url = self._construct_url(obj_type, query_params, extattrs,
                                       force_proxy=proxy_flag)
             return self._get_object(obj_type, url)
-
-    def _paging(self, response, max_results):
-        i=0
-        while i<len(response):
-            yield (response[i:i+max_results])
-            i =i+max_results
-            if i!=0 and i<len(response):
-                yield (input("Press enter to read more..."))
 
     def _get_object(self, obj_type, url):
         opts = self._get_request_options()
