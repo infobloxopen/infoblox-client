@@ -346,7 +346,7 @@ class InfobloxObject(BaseObject):
     @classmethod
     def _search(cls, connector, return_fields=None,
                 search_extattrs=None, force_proxy=False,
-                max_results=None,paging=False, **kwargs):
+                max_results=None, paging=False, **kwargs):
         ib_obj_for_search = cls(connector, **kwargs)
         search_dict = ib_obj_for_search.to_dict(search_fields='all')
         if return_fields is None and ib_obj_for_search.return_fields:

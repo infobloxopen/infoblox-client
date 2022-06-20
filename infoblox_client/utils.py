@@ -122,7 +122,8 @@ def paging(response, max_results):
 
     Args:
         response (list): WAPI response.
-        max_results (int): Maximum number of objects to be returned in one page.
+        max_results (int): Maximum number of objects to be returned
+                           in one page.
     Returns:
         Generator object with WAPI response split page by page.
     """
@@ -130,4 +131,3 @@ def paging(response, max_results):
     while i < len(response):
         yield response[i:i + max_results]
         i = i + max_results
-
