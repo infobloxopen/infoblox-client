@@ -758,10 +758,6 @@ defined as ``place_to_check`` in the code below.
       ]
     }
 
-Known issues
-------------
-1. We are not supporting page by page output when the paging argument is set to True. But if you want to implement it on your side, please refer to the sample provided in the examples folder.
-
 Features
 --------
 
