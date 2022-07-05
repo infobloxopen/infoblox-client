@@ -642,7 +642,7 @@ class Dhcpmember(SubObjects):
     _fields = ['_struct', 'ipv4addr', 'ipv6addr', 'name']
 
 
-class Dhcpoption(SubObjects):
+class DhcpOption(SubObjects):
     _fields = ['name', 'num', 'use_option', 'value', 'vendor_class']
 
 
@@ -4382,7 +4382,7 @@ class Filtermac(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -4420,7 +4420,7 @@ class Filternac(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -4474,7 +4474,7 @@ class Filteroption(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'option_list': Dhcpoption.from_dict,
+        'option_list': DhcpOption.from_dict,
     }
 
 
@@ -4770,7 +4770,7 @@ class FixedAddressV4(FixedAddress):
         'cli_credentials': DiscoveryClicredential.from_dict,
         'logic_filter_rules': Logicfilterrule.from_dict,
         'ms_options': Msdhcpoption.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -4918,7 +4918,7 @@ class FixedAddressV6(FixedAddress):
 
     _custom_field_processing = {
         'cli_credentials': DiscoveryClicredential.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -5017,7 +5017,7 @@ class FixedAddressTemplateV4(FixedAddressTemplate):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -5075,7 +5075,7 @@ class FixedAddressTemplateV6(FixedAddressTemplate):
     _ip_version = 6
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -5928,10 +5928,10 @@ class GridDhcpproperties(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'ipv6_options': Dhcpoption.from_dict,
+        'ipv6_options': DhcpOption.from_dict,
         'logic_filter_rules': Logicfilterrule.from_dict,
         'option60_match_rules': Option60Matchrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -7534,7 +7534,7 @@ class NetworkV4(Network):
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
         'members': Dhcpmember.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'vlans': Vlanlink.from_dict,
         'zone_associations': Zoneassociation.from_dict,
     }
@@ -7787,7 +7787,7 @@ class NetworkV6(Network):
 
     _custom_field_processing = {
         'members': Dhcpmember.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'vlans': Vlanlink.from_dict,
         'zone_associations': Zoneassociation.from_dict,
     }
@@ -8095,7 +8095,7 @@ class NetworkContainerV4(NetworkContainer):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'zone_associations': Zoneassociation.from_dict,
     }
 
@@ -8283,7 +8283,7 @@ class NetworkContainerV6(NetworkContainer):
     _ip_version = 6
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'zone_associations': Zoneassociation.from_dict,
     }
 
@@ -8519,7 +8519,7 @@ class NetworkTemplateV4(NetworkTemplate):
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
         'members': Dhcpmember.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -8658,7 +8658,7 @@ class NetworkTemplateV6(NetworkTemplate):
 
     _custom_field_processing = {
         'members': Dhcpmember.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -8980,7 +8980,7 @@ class IPRangeV4(IPRange):
         'ms_options': Msdhcpoption.from_dict,
         'nac_filter_rules': Filterrule.from_dict,
         'option_filter_rules': Filterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'relay_agent_filter_rules': Filterrule.from_dict,
     }
 
@@ -9342,7 +9342,7 @@ class RangeTemplateV4(RangeTemplate):
         'ms_options': Msdhcpoption.from_dict,
         'nac_filter_rules': Filterrule.from_dict,
         'option_filter_rules': Filterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'relay_agent_filter_rules': Filterrule.from_dict,
     }
 
@@ -9582,7 +9582,7 @@ class SharedNetworkV4(SharedNetwork):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -9683,7 +9683,7 @@ class SharedNetworkV6(SharedNetwork):
     _ip_version = 6
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -10741,10 +10741,10 @@ class MemberDhcpproperties(InfobloxObject):
 
     _custom_field_processing = {
         'ddns_zone_primaries': Dhcpddns.from_dict,
-        'ipv6_options': Dhcpoption.from_dict,
+        'ipv6_options': DhcpOption.from_dict,
         'logic_filter_rules': Logicfilterrule.from_dict,
         'option60_match_rules': Option60Matchrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
     def clear_nac_auth_cache(self, *args, **kwargs):
@@ -13711,7 +13711,7 @@ class IPv4HostAddress(InfobloxObject):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -13800,7 +13800,7 @@ class IPv6HostAddress(InfobloxObject):
     _shadow_fields = ['_ref', 'ip']
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -15825,8 +15825,8 @@ class DHCPRoamingHost(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'ipv6_options': Dhcpoption.from_dict,
-        'options': Dhcpoption.from_dict,
+        'ipv6_options': DhcpOption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
