@@ -75,7 +75,12 @@ class Connector(object):
                        'wapi_version': '2.7',
                        'max_results': None,
                        'log_api_calls_as_info': False,
-                       'paging': False}
+                       'paging': False,
+                       'username': None,
+                       'password': None,
+                       'cert': None,
+                       'key': None}
+
 
     def __init__(self, options):
         self._parse_options(options)
@@ -92,7 +97,7 @@ class Connector(object):
 
     def _parse_options(self, options):
         """Copy needed options to self"""
-        attributes = ('host', 'wapi_version', 'username', 'password',
+        attributes = ('host', 'wapi_version', 'username', 'password', 'cert', 'key',
                       'ssl_verify', 'http_request_timeout', 'max_retries',
                       'http_pool_connections', 'http_pool_maxsize',
                       'silent_ssl_warnings', 'log_api_calls_as_info',
@@ -109,10 +114,21 @@ class Connector(object):
                 msg = "WAPI config error. Option %s is not defined" % attr
                 raise ib_ex.InfobloxConfigException(msg=msg)
 
-        for attr in ('host', 'username', 'password'):
-            if not getattr(self, attr):
-                msg = "WAPI config error. Option %s can not be blank" % attr
-                raise ib_ex.InfobloxConfigException(msg=msg)
+        def check(credentials):
+            for attr in credentials:
+                if not getattr(self, attr):
+                    msg = "WAPI config error. Option %s can not be blank" % attr
+                    raise ib_ex.InfobloxConfigException(msg=msg)
+
+        cerds_1 = {'host', 'username', 'password'}
+        cerds_2 = {'host', 'cert', 'key'}
+        if cerds_1.issubset(options):
+            check(cerds_1)
+        elif cerds_2.issubset(options):
+            check(cerds_2)
+        else:
+            msg = "WAPI config error. Option either (host, username, password) or (host, cert, key) should be passed"
+            raise ib_ex.InfobloxConfigException(msg=msg)
 
         self.wapi_url = "https://%s/wapi/v%s/" % (self.host,
                                                   self.wapi_version)
@@ -127,7 +143,10 @@ class Connector(object):
             max_retries=self.max_retries)
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
-        self.session.auth = (self.username, self.password)
+        if self.username and self.password:
+            self.session.auth = (self.username, self.password)
+        else:
+            self.session.cert = (self.cert, self.key)
         self.session.verify = utils.try_value_to_bool(self.ssl_verify,
                                                       strict_mode=False)
 
