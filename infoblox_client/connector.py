@@ -100,6 +100,7 @@ class Connector(object):
                       'ssl_verify', 'http_request_timeout', 'max_retries',
                       'http_pool_connections', 'http_pool_maxsize',
                       'silent_ssl_warnings', 'log_api_calls_as_info',
+                      'cert', 'key',
                       'max_results', 'paging')
 
         for attr in attributes:
@@ -112,8 +113,9 @@ class Connector(object):
                 setattr(self, attr, self.DEFAULT_OPTIONS[attr])
             else:
                 msg = "WAPI config error. Option %s is not defined" % attr
-                raise ib_ex.InfobloxConfigException(msg=msg)
+                #raise ib_ex.InfobloxConfigException(msg=msg)
 
+<<<<<<< HEAD
         def check(credentials):
             for attr in credentials:
                 if not getattr(self, attr):
@@ -129,6 +131,12 @@ class Connector(object):
         else:
             msg = "WAPI config error. Option either (host, username, password) or (host, cert, key) should be passed"
             raise ib_ex.InfobloxConfigException(msg=msg)
+=======
+        for attr in ('host', 'username', 'password') or ('host', 'cert', 'key'):
+            if not getattr(self, attr):
+                msg = "WAPI config error. Option %s can not be blank" % attr
+                raise ib_ex.InfobloxConfigException(msg=msg)
+>>>>>>> 6657914982e0e990f5e997bbe3ada37cfa59efd8
 
         self.wapi_url = "https://%s/wapi/v%s/" % (self.host,
                                                   self.wapi_version)
@@ -143,10 +151,15 @@ class Connector(object):
             max_retries=self.max_retries)
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
+<<<<<<< HEAD
         if self.username and self.password:
             self.session.auth = (self.username, self.password)
         else:
             self.session.cert = (self.cert, self.key)
+=======
+        #self.session.auth = (self.username, self.password)
+        self.session.cert = (self.cert, self.key)
+>>>>>>> 6657914982e0e990f5e997bbe3ada37cfa59efd8
         self.session.verify = utils.try_value_to_bool(self.ssl_verify,
                                                       strict_mode=False)
 
@@ -204,7 +217,11 @@ class Connector(object):
     @staticmethod
     def _validate_authorized(response):
         if response.status_code == requests.codes.UNAUTHORIZED:
+<<<<<<< HEAD
             raise ib_ex.InfobloxBadWAPICredential(response='')
+=======
+            #raise ib_ex.InfobloxBadWAPICredential(response='')
+>>>>>>> 6657914982e0e990f5e997bbe3ada37cfa59efd8
             pass
 
     @staticmethod
