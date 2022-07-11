@@ -602,7 +602,7 @@ class TestObjects(unittest.TestCase):
             return_fields=[])
         connector.update_object.assert_called_once_with(
             aaaa_record[0]['_ref'],
-            {'comment': 'new_test_comment'},
+            {'comment': 'new_test_comment', 'ipv6addr': '2001:610:240:22::c100:68b'},
             mock.ANY)
 
     def test_ip_version(self):

@@ -12839,7 +12839,8 @@ class AAAARecord(ARecordBase):
                'remove_associated_ptr', 'shared_record_group', 'ttl',
                'use_ttl', 'view', 'zone']
     _search_for_update_fields = ['ipv6addr', 'name', 'view']
-    _updateable_search_fields = ['comment', 'creator', 'ddns_principal']
+    _updateable_search_fields = ['comment', 'creator', 'ddns_principal',
+                                 'ipv6addr', 'name']
     _all_searchable_fields = ['comment', 'creator', 'ddns_principal',
                               'ipv6addr', 'name', 'reclaimable', 'view',
                               'zone']
