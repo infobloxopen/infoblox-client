@@ -759,7 +759,7 @@ class ObjectManagerTestCase(unittest.TestCase):
         connector.get_object.return_value = [zone]
 
         return_fields = [
-            'extattrs', 'fqdn', 'view', 'zone_format', 'ns_group', 'prefix',
+            'extattrs', 'fqdn', 'view', 'ns_group', 'prefix',
             'grid_primary', 'grid_secondaries']
         ibom = om.InfobloxObjectManager(connector)
         ibom.update_dns_zone_attrs(dns_view_name, fqdn, new_attrs)
