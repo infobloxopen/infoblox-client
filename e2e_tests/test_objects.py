@@ -2,7 +2,7 @@ import os
 import unittest
 
 from e2e_tests.connector_facade import E2EConnectorFacade
-from infoblox_client.objects import ARecord, DNSZone, AAAARecord
+from infoblox_client.objects import ARecord, DNSZone, AAAARecord, Csvimporttask
 
 
 class TestObjectsE2E(unittest.TestCase):
@@ -81,3 +81,9 @@ class TestObjectsE2E(unittest.TestCase):
         zone2._ref = zone1._ref
         zone2.fetch()
         self.assertEqual(zone1.fqdn, zone2.fqdn)
+
+    def test_search_csvimporttask(self):
+        """
+        Test validates if client is able to read Csvimporttask
+        """
+        Csvimporttask.search(self.connector)
