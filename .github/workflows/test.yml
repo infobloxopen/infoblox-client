@@ -66,3 +66,22 @@ jobs:
         run: tox
         env:
           TOXENV: ${{ matrix.TOXENV }}
+  # This job will build the docs to validate
+  # if Sphinx doesn't return any warnings
+  sphinx:
+    name: Check Docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.6'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install sphinx
+      - name: Build documentation via Sphinx
+        run: make docs SPHINXOPTS="-W --keep-going -n"
