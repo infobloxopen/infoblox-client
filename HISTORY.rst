@@ -4,7 +4,7 @@ History
 -------
 
 0.5.1 (2022-03-14)
------------------
+------------------
 * Updated connector's urlencoding logic for proper array encoding #287;
 * Updated InfobloxObject's fetch method to raise `InfobloxFetchGotMultipleObjects` exception #288;
 * Fix a bug when calling abstracted class from_dict with V4 & V6 subclass #282;
@@ -13,7 +13,7 @@ History
 ------------------
 * Majorly Updated objects with around 380+ NIOS object calls supported now.(Find the infoblox_client/objects.py file to list the supported objects and its descriptions)
 * Bug Fixes
-* python-six dependency set to >=1.11.0 
+* python-six dependency set to >=1.11.0
 
 0.4.25 (2020-03-12)
 ___________________

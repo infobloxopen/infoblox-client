@@ -69,7 +69,7 @@ jobs:
   # This job will build the docs to validate
   # if Sphinx doesn't return any warnings
   sphinx:
-    name: Check Docs
+    name: Validate Documentation
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
