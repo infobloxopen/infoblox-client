@@ -421,7 +421,10 @@ class InfobloxObject(BaseObject):
         update_fields = self.to_dict(search_fields='exclude')
         fields = self.to_dict(search_fields='extra', update_fields=update_fields)
         for key in fields:
-            LOG.info("Field is not allowed for update: %s - ignoring" % key)
+            LOG.info(
+                "Field is not allowed for update: %s - ignoring",
+                key,
+            )
         ib_obj = self.connector.update_object(self.ref,
                                               update_fields,
                                               self.return_fields)
