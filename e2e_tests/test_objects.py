@@ -25,7 +25,7 @@ class TestObjectsE2E(unittest.TestCase):
                        view='default',
                        fqdn="e2e-test.com")
 
-        alias1, created = ARecord.create_check_exists(
+        alias1, created, response = ARecord.create_check_exists(
             self.connector,
             view='default',
             ipv4addr="192.168.1.25",
@@ -33,7 +33,7 @@ class TestObjectsE2E(unittest.TestCase):
         )
         self.assertTrue(created)
 
-        alias2, created = ARecord.create_check_exists(
+        alias2, created, response = ARecord.create_check_exists(
             self.connector,
             view='default',
             ipv4addr="192.168.1.25",
@@ -49,7 +49,7 @@ class TestObjectsE2E(unittest.TestCase):
                        view='default',
                        fqdn="e2e-test.com")
 
-        alias1, created = AAAARecord.create_check_exists(
+        alias1, created, response = AAAARecord.create_check_exists(
             self.connector,
             view='default',
             ipv6addr="aaaa:bbbb:cccc:dddd::",
@@ -57,7 +57,7 @@ class TestObjectsE2E(unittest.TestCase):
         )
         self.assertTrue(created)
 
-        alias2, created = AAAARecord.create_check_exists(
+        alias2, created, response = AAAARecord.create_check_exists(
             self.connector,
             view='default',
             ipv6addr="aaaa:bbbb:cccc:dddd::",

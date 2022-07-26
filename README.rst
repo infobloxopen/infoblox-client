@@ -140,7 +140,7 @@ Create a new fixed address, with a MS server DHCP reservation:
 
 .. code:: python
 
-  obj, created = objects.FixedAddress.create_check_exists(connector=conn,
+  obj, created, response = objects.FixedAddress.create_check_exists(connector=conn,
                                                           ip='192.168.100.100',
                                                           mac='aa:bb:cc:11:22:33',
                                                           comment='My DHCP reservation',
