@@ -282,7 +282,8 @@ class InfobloxObject(BaseObject):
                       if field in self._updateable_search_fields or
                       field not in self._search_for_update_fields]
         elif search_fields == 'extra':
-            fields = [field for field in self._fields if field not in update_fields]
+            fields = [field for field in self._fields 
+                      if field not in update_fields]
 
         return {field: self.field_to_dict(field) for field in fields
                 if getattr(self, field, None) is not None}
