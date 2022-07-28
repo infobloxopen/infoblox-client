@@ -281,8 +281,9 @@ class InfobloxObject(BaseObject):
             fields = [field for field in self._fields
                       if field in self._updateable_search_fields or
                       field not in self._search_for_update_fields]
+
         elif search_fields == 'extra':
-            fields = [field for field in self._fields 
+            fields = [field for field in self._fields
                       if field not in update_fields]
 
         return {field: self.field_to_dict(field) for field in fields
@@ -419,7 +420,8 @@ class InfobloxObject(BaseObject):
 
     def update(self):
         update_fields = self.to_dict(search_fields='exclude')
-        fields = self.to_dict(search_fields='extra', update_fields=update_fields)
+        fields = self.to_dict(search_fields='extra',
+                              update_fields=update_fields)
         for key in fields:
             LOG.info(
                 "Field is not allowed for update: %s - ignoring",
