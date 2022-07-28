@@ -757,6 +757,9 @@ defined as ``place_to_check`` in the code below.
         }
       ]
     }
+Known issues
+------------
+1. When the record is created successfully, the response parameter will raise 'AttributeError' to the call 'record.response'. 
 
 Features
 --------
