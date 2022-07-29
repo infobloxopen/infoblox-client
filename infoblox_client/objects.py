@@ -350,8 +350,9 @@ class InfobloxObject(BaseObject):
                 to update the object if one exists.
 
         Raises:
-            InfobloxFetchGotMultipleObjects: Raised only when check_if_exists is True.
-                The fetch method can raise this error when API return multiple objects.
+            InfobloxFetchGotMultipleObjects: Raised only when check_if_exists
+                is True. The fetch method can raise this error when API return
+                multiple objects.
 
         Returns: Created Infoblox object.
         """
