@@ -335,7 +335,12 @@ class InfobloxObject(BaseObject):
             response = "Infoblox Object was Updated"
 
         obj_result = cls._object_from_reply(local_obj, connector, reply)
-        obj_result.response = response
+
+        # Add response string if object is not None
+        # and properly deserialized
+        if issubclass(type(obj_result), BaseObject):
+            obj_result.response = response
+
         return obj_result, obj_created
 
     @classmethod
