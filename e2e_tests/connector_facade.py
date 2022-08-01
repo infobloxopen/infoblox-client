@@ -22,6 +22,14 @@ class E2EConnectorFacade(Connector):
         self.__delete_queue.append(resp['_ref'])
         return resp
 
+    def update_object(self, ref, payload, return_fields=None):
+        new_obj = super(E2EConnectorFacade, self).update_object(ref,
+                                                                payload,
+                                                                return_fields)
+        self.__delete_queue.remove(ref)
+        self.__delete_queue.append(new_obj["_ref"])
+        return new_obj
+
     def delete_object(self, ref, delete_arguments=None):
         self.__delete_queue.remove(ref)
         return super(E2EConnectorFacade, self).delete_object(ref,
