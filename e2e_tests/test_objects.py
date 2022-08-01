@@ -81,3 +81,18 @@ class TestObjectsE2E(unittest.TestCase):
         zone2._ref = zone1._ref
         zone2.fetch()
         self.assertEqual(zone1.fqdn, zone2.fqdn)
+
+    def test_update_dns_zone(self):
+        """
+        Validates if DNS Zone object can be updated
+
+        Related ticket: NIOS-84427
+        """
+        # Create DNS Zone
+        zone = DNSZone.create(self.connector,
+                              fqdn="e2e-test-zone.com",
+                              view="default")
+        # Update DNS zone
+        zone.Comment = "Modified"
+        zone.update()
+

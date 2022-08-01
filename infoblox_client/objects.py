@@ -18115,7 +18115,7 @@ class DNSZone(InfobloxObject):
     _all_searchable_fields = ['comment', 'dnssec_ksk_rollover_date',
                               'dnssec_zsk_rollover_date', 'fqdn', 'parent',
                               'view', 'zone_format']
-    _return_fields = ['extattrs', 'fqdn', 'view', 'zone_format', 'ns_group',
+    _return_fields = ['extattrs', 'fqdn', 'view', 'ns_group',
                       'prefix', 'grid_primary', 'grid_secondaries']
     _remap = {}
     _shadow_fields = ['_ref']
