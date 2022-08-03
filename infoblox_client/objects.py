@@ -275,6 +275,8 @@ class InfobloxObject(BaseObject):
             fields = self._search_for_update_fields
         elif search_fields == 'all':
             fields = self._all_searchable_fields
+        elif search_fields == 'search':
+            fields = self._fields
         elif search_fields == 'exclude':
             # exclude search fields for update actions,
             # but include updateable_search_fields
@@ -356,6 +358,11 @@ class InfobloxObject(BaseObject):
         extattrs = search_extattrs
         if hasattr(search_extattrs, 'to_dict'):
             extattrs = search_extattrs.to_dict()
+        search_fields = ib_obj_for_search.to_dict(search_fields='search')
+        for key in search_fields:
+            if key not in search_dict:
+                raise ib_ex.InfobloxFieldNotSearchable(
+                    field=search_fields.keys())
         reply = connector.get_object(ib_obj_for_search.infoblox_type,
                                      search_dict,
                                      return_fields=return_fields,
