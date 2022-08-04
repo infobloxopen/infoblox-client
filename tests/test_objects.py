@@ -680,4 +680,6 @@ class TestObjects(unittest.TestCase):
                 use_ttl=True,
             )
 
-        self.assertEqual("Field is not searchable: dict_keys(['use_ttl'])", str(e.exception))
+        # For Python 3.x and 2.x string repr of dict keys may differ.
+        # This regex matches both representations.
+        self.assertRegex(str(e.exception), r"Field is not searchable: (dict_keys)?(\()?\['use_ttl'\](\))?")
