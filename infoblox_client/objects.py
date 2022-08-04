@@ -307,6 +307,8 @@ class InfobloxObject(BaseObject):
         # and getting created with this function call
         obj_created = False
         local_obj = cls(connector, **kwargs)
+        response = None
+
         if check_if_exists:
             if local_obj.fetch(only_ref=True):
                 LOG.info(("Infoblox %(obj_type)s already exists: "
@@ -325,19 +327,42 @@ class InfobloxObject(BaseObject):
             LOG.info("Infoblox %(obj_type)s was created: %(ib_obj)s",
                      {'obj_type': local_obj.infoblox_type,
                       'ib_obj': local_obj})
-            local_obj.response = "Infoblox Object was Created"
+            response = "Infoblox Object was Created"
         elif update_if_exists:
             update_fields = local_obj.to_dict(search_fields='exclude')
             reply = connector.update_object(local_obj.ref,
                                             update_fields,
                                             local_obj.return_fields)
             LOG.info('Infoblox object was updated: %s', local_obj.ref)
-            local_obj.response = "Infoblox Object was Updated"
-        return cls._object_from_reply(local_obj, connector, reply), obj_created
+            response = "Infoblox Object was Updated"
+
+        obj_result = cls._object_from_reply(local_obj, connector, reply)
+
+        # Add response string if object is not None
+        # and properly deserialized
+        if issubclass(type(obj_result), BaseObject):
+            obj_result.response = response
+
+        return obj_result, obj_created
 
     @classmethod
     def create(cls, connector, check_if_exists=True,
                update_if_exists=False, **kwargs):
+        """Create the object in NIOS.
+
+        Args:
+            check_if_exists: If True, create method will attempt
+                to fetch the object to check if it exists.
+            update_if_exists: If True, create method will attempt
+                to update the object if one exists.
+
+        Raises:
+            InfobloxFetchGotMultipleObjects: Raised only when check_if_exists
+                is True. The fetch method can raise this error when API return
+                multiple objects.
+
+        Returns: Created Infoblox object.
+        """
         ib_object, _ = (
             cls.create_check_exists(connector,
                                     check_if_exists=check_if_exists,
