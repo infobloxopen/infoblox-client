@@ -362,7 +362,7 @@ class InfobloxObject(BaseObject):
         for key in search_fields:
             if key not in search_dict:
                 raise ib_ex.InfobloxFieldNotSearchable(
-                    field=search_fields.keys())
+                    fields=search_fields.keys())
         reply = connector.get_object(ib_obj_for_search.infoblox_type,
                                      search_dict,
                                      return_fields=return_fields,

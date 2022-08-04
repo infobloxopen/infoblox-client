@@ -133,4 +133,4 @@ class InfobloxFetchGotMultipleObjects(BaseExc):
 
 
 class InfobloxFieldNotSearchable(BaseExc):
-    message = "Field is not searchable: %(field)s"
+    message = "Field is not searchable: %(fields)s"
