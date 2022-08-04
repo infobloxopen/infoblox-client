@@ -12,7 +12,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
+import re
 import unittest
 import os
 import copy
@@ -680,6 +680,12 @@ class TestObjects(unittest.TestCase):
                 use_ttl=True,
             )
 
-        # For Python 3.x and 2.x string repr of dict keys may differ.
-        # This regex matches both representations.
-        self.assertRegex(str(e.exception), r"Field is not searchable: (dict_keys)?(\()?\['use_ttl'\](\))?")
+        self.assertTrue(
+            re.match(
+                # For Python 3.x and 2.x string repr of dict keys may differ.
+                # This regex matches both representations.
+                r"^Field is not searchable: (dict_keys)?(\()?\['use_ttla'\](\))?$",
+                str(e.exception),
+            ),
+            f"Exception string '{e.exception}' doesn't match test regexp"
+        )
