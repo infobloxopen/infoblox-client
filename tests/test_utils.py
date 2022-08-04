@@ -99,4 +99,3 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(2, len(page))
             self.assertEqual(resp[i:i+max_results], page)
             i = i + max_results
-

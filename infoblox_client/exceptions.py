@@ -134,3 +134,7 @@ class InfobloxFetchGotMultipleObjects(BaseExc):
 
 class InfobloxFieldNotSearchable(BaseExc):
     message = "Field is not searchable: %(field)s"
+
+
+class InfobloxMissingFields(BaseExc):
+    message = "Infoblox object can not be created. Required fields: %(field)s"

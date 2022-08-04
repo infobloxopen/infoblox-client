@@ -370,7 +370,7 @@ class InfobloxObjectManager(object):
             host_record.update()
 
     def bind_name_with_record_a(self, dns_view, ip, name, bind_list,
-                                extattrs):
+                                 extattrs):
         is_ipv4 = ib_utils.determine_ip_version(ip) == 4
         if ((is_ipv4 and 'record:a' in bind_list) or
                 (not is_ipv4 and 'record:aaaa' in bind_list)):

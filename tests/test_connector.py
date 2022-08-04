@@ -501,7 +501,8 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_call_upload_file(self):
-        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_file_path = '/http_direct_file_io/' \
+                           'req_id-UPLOAD-0302163936014609/ibx_networks.csv'
         upload_url = 'https://infoblox.example.org' + upload_file_path
         self._create_infoblox_csv()
         with open('tests/ibx_networks.csv', 'r') as fh:
@@ -518,7 +519,8 @@ class TestInfobloxConnector(unittest.TestCase):
             self._delete_infoblox_csv()
 
     def test_call_upload_file_with_error_403(self):
-        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_file_path = '/http_direct_file_io/' \
+                           'req_id-UPLOAD-0302163936014609/ibx_networks.csv'
         upload_url = 'https://infoblox.example.org' + upload_file_path
         self._create_infoblox_csv()
         with open('tests/ibx_networks.csv', 'r') as fh:
@@ -536,7 +538,9 @@ class TestInfobloxConnector(unittest.TestCase):
             self._delete_infoblox_csv()
 
     def test_call_download_file(self):
-        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'
+        download_file_path = '/http_direct_file_io/' \
+                             'req_id-DOWNLOAD-0302163936014609/' \
+                             'ibx_networks.csv'
         download_url = 'https://infoblox.example.org' + download_file_path
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:
@@ -547,7 +551,9 @@ class TestInfobloxConnector(unittest.TestCase):
             self.assertEqual(None, self.connector.session.auth)
 
     def test_call_download_file_with_error_403(self):
-        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'
+        download_file_path = '/http_direct_file_io/' \
+                             'req_id-DOWNLOAD-0302163936014609/' \
+                             'ibx_networks.csv'
         download_url = 'https://infoblox.example.org' + download_file_path
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:

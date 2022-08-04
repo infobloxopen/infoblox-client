@@ -465,8 +465,9 @@ class ObjectManagerTestCase(unittest.TestCase):
         ip = '192.168.1.1'
         bind_list = ['record:a', 'record:aaaa', 'record:ptr']
 
-        def get_object(obj_type, payload=None, return_fields=None, extattrs=None,
-                       force_proxy=False, paging=False, max_results=None):
+        def get_object(obj_type, payload=None, return_fields=None,
+                       extattrs=None, force_proxy=False,
+                       paging=False, max_results=None):
             data_dict = payload.copy()
             data_dict['_ref'] = 'some-ref/' + obj_type
             return [data_dict]
@@ -770,7 +771,7 @@ class ObjectManagerTestCase(unittest.TestCase):
             extattrs=None, force_proxy=False, max_results=None, paging=False)
         connector.update_object.assert_called_once_with(
             zone_ref,
-            {'extattrs': new_attrs,'ns_group': 'test_group',
+            {'extattrs': new_attrs, 'ns_group': 'test_group',
              'view': 'dns-view-name', 'zone_format': 'FORWARD'},
             return_fields)
 
