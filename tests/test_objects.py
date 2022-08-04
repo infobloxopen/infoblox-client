@@ -684,8 +684,8 @@ class TestObjects(unittest.TestCase):
             re.match(
                 # For Python 3.x and 2.x string repr of dict keys may differ.
                 # This regex matches both representations.
-                r"^Field is not searchable: (dict_keys)?(\()?\['use_ttla'\](\))?$",
+                r"^Field is not searchable: (dict_keys)?(\()?\['use_ttl'\](\))?$",
                 str(e.exception),
             ),
-            f"Exception string '{e.exception}' doesn't match test regexp"
+            "Exception string '%s' doesn't match test regexp" % e.exception
         )
