@@ -558,11 +558,11 @@ class TestObjects(unittest.TestCase):
         with self.assertRaises(ib_ex.InfobloxFetchGotMultipleObjects):
             objects.ARecordBase.create(connector,
                                        ip='192.168.1.52',
-                                       view='view')
+                                       view='view', name='a_record')
 
         connector.get_object.assert_called_once_with(
             'record:a',
-            {'view': 'view', 'ipv4addr': '192.168.1.52'},
+            {'view': 'view', 'ipv4addr': '192.168.1.52', 'name': 'a_record'},
             return_fields=[])
 
     def test_update_fields_on_create(self):
@@ -574,15 +574,17 @@ class TestObjects(unittest.TestCase):
         objects.ARecordBase.create(connector,
                                    ip='192.168.1.52',
                                    view='view',
+                                   name='a_record',
                                    comment='new_test_comment',
                                    update_if_exists=True)
         connector.get_object.assert_called_once_with(
             'record:a',
-            {'view': 'view', 'ipv4addr': '192.168.1.52'},
+            {'view': 'view', 'ipv4addr': '192.168.1.52', 'name': 'a_record'},
             return_fields=[])
         connector.update_object.assert_called_once_with(
             a_record[0]['_ref'],
-            {'ipv4addr': '192.168.1.52', 'comment': 'new_test_comment'},
+            {'ipv4addr': '192.168.1.52', 'comment': 'new_test_comment',
+             'name': 'a_record'},
             mock.ANY)
 
     def test_update_fields_on_create_v6(self):
@@ -594,15 +596,19 @@ class TestObjects(unittest.TestCase):
         objects.ARecordBase.create(connector,
                                    ip='2001:610:240:22::c100:68b',
                                    view='view',
+                                   name='aaaa_record',
                                    comment='new_test_comment',
                                    update_if_exists=True)
         connector.get_object.assert_called_once_with(
             'record:aaaa',
-            {'view': 'view', 'ipv6addr': '2001:610:240:22::c100:68b'},
+            {'view': 'view', 'ipv6addr': '2001:610:240:22::c100:68b',
+             'name': 'aaaa_record'},
             return_fields=[])
         connector.update_object.assert_called_once_with(
             aaaa_record[0]['_ref'],
-            {'comment': 'new_test_comment', 'ipv6addr': '2001:610:240:22::c100:68b'},
+            {'comment': 'new_test_comment',
+             'ipv6addr': '2001:610:240:22::c100:68b',
+             'name': 'aaaa_record'},
             mock.ANY)
 
     def test_ip_version(self):

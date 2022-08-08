@@ -130,3 +130,7 @@ class InfobloxGridTemporaryUnavailable(InfobloxException):
 class InfobloxFetchGotMultipleObjects(BaseExc):
     message = "Fetch got multiple objects from the API. Unable to " \
               "deserialize multiple API objects into one InfobloxObject."
+
+
+class InfobloxMissingFields(BaseExc):
+    message = "Infoblox object can not be created. Required fields: %(field)s"

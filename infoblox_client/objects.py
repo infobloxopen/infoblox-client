@@ -190,6 +190,7 @@ class InfobloxObject(BaseObject):
         _shadow_fields: fields that object usually has but they should not
             be sent to NIOS. These fields can be received from
             NIOS. Examples: [_ref, is_default]
+        _required_fields: fields that are required to create an NIOS object.
         _return_fields: fields requested to be returned from NIOS side
             if object is found/created
         _infoblox_type: string representing wapi type of described object
@@ -213,6 +214,7 @@ class InfobloxObject(BaseObject):
     _all_searchable_fields = []
     _updateable_search_fields = []
     _shadow_fields = []
+    _required_fields = []
     _infoblox_type = None
     _remap = {}
 
@@ -343,6 +345,12 @@ class InfobloxObject(BaseObject):
 
         return obj_result, obj_created
 
+    def r_fields(self, ib_objects):
+        if not set(self._required_fields).issubset(set(ib_objects.keys())):
+            LOG.debug("Infoblox object can not be created. Required fields "
+                      "%(field)s", self._required_fields)
+            raise ib_ex.InfobloxMissingFields(field=str(self._required_fields))
+
     @classmethod
     def create(cls, connector, check_if_exists=True,
                update_if_exists=False, **kwargs):
@@ -361,6 +369,8 @@ class InfobloxObject(BaseObject):
 
         Returns: Created Infoblox object.
         """
+        local_obj = cls(connector, **kwargs)
+        local_obj.r_fields(dict(**kwargs))
         ib_object, _ = (
             cls.create_check_exists(connector,
                                     check_if_exists=check_if_exists,
@@ -12786,6 +12796,7 @@ class ARecord(ARecordBase):
     _return_fields = ['extattrs', 'ipv4addr', 'name', 'view']
     _remap = {'ip': 'ipv4addr'}
     _shadow_fields = ['_ref', 'ip']
+    _required_fields = ['ip', 'name']
     _ip_version = 4
 
     @property
@@ -12872,6 +12883,7 @@ class AAAARecord(ARecordBase):
     _return_fields = ['extattrs', 'ipv6addr', 'name', 'view']
     _remap = {'ip': 'ipv6addr'}
     _shadow_fields = ['_ref', 'ip']
+    _required_fields = ['ip', 'name']
     _ip_version = 6
 
     @property
@@ -13073,6 +13085,7 @@ class CNAMERecord(InfobloxObject):
     _return_fields = ['canonical', 'extattrs', 'name', 'view']
     _remap = {}
     _shadow_fields = ['_ref']
+    _required_fields = ['canonical', 'name']
 
 
 class DhcidRecord(InfobloxObject):
@@ -13902,6 +13915,7 @@ class MXRecord(InfobloxObject):
                       'view']
     _remap = {}
     _shadow_fields = ['_ref']
+    _required_fields = ['mail_exchanger', 'name', 'preference']
 
 
 class NaptrRecord(InfobloxObject):
@@ -14328,6 +14342,7 @@ class PtrRecordV4(PtrRecord):
     _return_fields = ['extattrs', 'ptrdname', 'view', 'ipv4addr']
     _remap = {'ip': 'ipv4addr'}
     _shadow_fields = ['_ref', 'ipv4addr']
+    _required_fields = ['ip', 'ptrdname']
     _ip_version = 4
 
 
@@ -14402,6 +14417,7 @@ class PtrRecordV6(PtrRecord):
     _return_fields = ['extattrs', 'ptrdname', 'view', 'ipv6addr']
     _remap = {'ip': 'ipv6addr'}
     _shadow_fields = ['_ref', 'ipv6addr']
+    _required_fields = ['ip', 'ptrdname']
     _ip_version = 6
 
 
@@ -15382,6 +15398,7 @@ class SRVRecord(InfobloxObject):
                       'weight']
     _remap = {}
     _shadow_fields = ['_ref']
+    _required_fields = ['name', 'port', 'priority', 'target', 'weight']
 
 
 class TlsaRecord(InfobloxObject):
@@ -15508,6 +15525,7 @@ class TXTRecord(InfobloxObject):
     _return_fields = ['extattrs', 'name', 'text', 'view']
     _remap = {}
     _shadow_fields = ['_ref']
+    _required_fields = ['name', 'text']
 
 
 class UnknownRecord(InfobloxObject):
@@ -17667,6 +17685,7 @@ class DNSView(InfobloxObject):
     _return_fields = ['comment', 'extattrs', 'is_default', 'name']
     _remap = {}
     _shadow_fields = ['_ref']
+    _required_fields = ['name']
 
     _custom_field_processing = {
         'custom_root_name_servers': Extserver.from_dict,
@@ -18144,6 +18163,7 @@ class DNSZone(InfobloxObject):
                       'prefix', 'grid_primary', 'grid_secondaries']
     _remap = {}
     _shadow_fields = ['_ref']
+    _required_fields = ['fqdn']
 
     _custom_field_processing = {
         'allow_active_dir': Addressac.from_dict,
@@ -18438,6 +18458,7 @@ class DNSZoneForward(InfobloxObject):
     _return_fields = ['extattrs', 'forward_to', 'fqdn', 'view']
     _remap = {}
     _shadow_fields = ['_ref']
+    _required_fields = ['forward_to', 'fqdn']
 
     _custom_field_processing = {
         'forward_to': Extserver.from_dict,
@@ -18764,6 +18785,7 @@ class ZoneStub(InfobloxObject):
     _return_fields = ['extattrs', 'fqdn', 'stub_from', 'view']
     _remap = {}
     _shadow_fields = ['_ref']
+    _required_fields = ['fqdn', 'stub_from']
 
     _custom_field_processing = {
         'stub_from': Extserver.from_dict,
