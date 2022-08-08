@@ -123,10 +123,13 @@ class TestObjects(unittest.TestCase):
 
     def test_search_network_with_grid_dhcp_members(self):
         found = {
-            '_ref': 'network/ZG5zLm5ldHdvcmskMTAuMC4zMi4wLzI0LzA:10.0.32.0/24/default',
+            '_ref': 'network/ZG5zLm5ldHdvcmskMTAuMC4zMi4wLzI0LzA:10.0.32.0'
+                    '/24/default',
             'members': [
-                {'_struct': 'dhcpmember', 'ipv4addr': '192.168.10.67', 'name': 'dhcp01.example.com'},
-                {'_struct': 'dhcpmember', 'ipv4addr': '192.168.11.67', 'name': 'dhcp02.example.com'}
+                {'_struct': 'dhcpmember', 'ipv4addr': '192.168.10.67',
+                 'name': 'dhcp01.example.com'},
+                {'_struct': 'dhcpmember', 'ipv4addr': '192.168.11.67',
+                 'name': 'dhcp02.example.com'}
             ]
         }
         connector = self._mock_connector(get_object=[found])
@@ -152,10 +155,13 @@ class TestObjects(unittest.TestCase):
 
     def test_search_network_with_ms_dhcp_members(self):
         found = {
-            '_ref': 'network/ZG5zLm5ldHdvcmskMTAuMC4zMi4wLzI0LzA:10.0.32.0/24/default',
+            '_ref': 'network/ZG5zLm5ldHdvcmskMTAuMC4zMi4wLzI0LzA:10.0.32.0'
+                    '/24/default',
             'members': [
-                {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.10.67', 'name': 'dhcp01.example.com'},
-                {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.11.67', 'name': 'dhcp02.example.com'}
+                {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.10.67',
+                 'name': 'dhcp01.example.com'},
+                {'_struct': 'msdhcpserver', 'ipv4addr': '192.168.11.67',
+                 'name': 'dhcp02.example.com'}
             ]
         }
         connector = self._mock_connector(get_object=[found])
@@ -221,8 +227,8 @@ class TestObjects(unittest.TestCase):
             {'mail_exchanger': 'demo.my_zone.com',
              'name': 'mx.demo.my_zone.com',
              'preference': 1,
-             'view': 'my_dns_view'
-            }, ['extattrs', 'mail_exchanger','name', 'preference', 'view'])
+             'view': 'my_dns_view'},
+            ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
 
     def test_update_MX_Record(self):
         mx_record_copy = [
@@ -240,8 +246,8 @@ class TestObjects(unittest.TestCase):
         connector.update_object.assert_called_once_with(
             mx_record_copy[0]['_ref'],
             {'mail_exchanger': 'demo2.my_zone.com',
-              'name': 'mx1.demo.my_zone.com', 'preference': 1},
-             ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
+             'name': 'mx1.demo.my_zone.com', 'preference': 1},
+            ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
 
     def test_search_and_delete_MX_Record(self):
         mx_record_copy = copy.deepcopy(DEFAULT_MX_RECORD)
@@ -253,12 +259,12 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'record:mx', {'view': 'some_view',
                           'name': 'some_name'},
-            extattrs=None, force_proxy=False, max_results=None,paging=False,
-            return_fields=['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
+            extattrs=None, force_proxy=False, max_results=None, paging=False,
+            return_fields=['extattrs', 'mail_exchanger', 'name',
+                           'preference', 'view'])
         mx_record.delete()
         connector.delete_object.assert_called_once_with(
             DEFAULT_MX_RECORD['_ref'])
-
 
     def test_create_host_record_with_ttl(self):
         mock_record = DEFAULT_HOST_RECORD
@@ -403,12 +409,12 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'ipv6fixedaddress',
             {'duid': mock.ANY, 'ipv6addr': 'fffe:1234:1234::1',
-             'network_view': 'some-view' },
+             'network_view': 'some-view'},
             return_fields=mock.ANY)
         connector.create_object.assert_called_once_with(
             'ipv6fixedaddress',
             {'duid': mock.ANY, 'ipv6addr': 'fffe:1234:1234::1',
-             'network_view': 'some-view' }, mock.ANY)
+             'network_view': 'some-view'}, mock.ANY)
 
     @mock.patch('infoblox_client.utils.generate_duid')
     def test_fixed_address_v6(self, generate):
@@ -437,7 +443,8 @@ class TestObjects(unittest.TestCase):
         payload = {'network_view': 'some_view', 'ip_address': '192.168.1.5'}
         connector.get_object.assert_called_once_with(
             'ipv4address', payload, return_fields=mock.ANY,
-            paging=False, extattrs=None, force_proxy=mock.ANY, max_results=None)
+            paging=False, extattrs=None, force_proxy=mock.ANY,
+            max_results=None)
         self.assertIsInstance(ip, objects.IPv4Address)
         self.assertEqual(ip_mock[0]['objects'], ip.objects)
 
@@ -645,18 +652,18 @@ class TestObjects(unittest.TestCase):
         txt_record_copy = copy.deepcopy(mock_record)
         connector = self._mock_connector(create_object=txt_record_copy)
         txt = objects.TXTRecord.create(connector, name='text_test.my_zone.com',
-                                     text='hello_text',
-                                     view='my_dns_view')
+                                       text='hello_text', view='my_dns_view')
         self.assertIsInstance(txt, objects.TXTRecord)
         connector.create_object.assert_called_once_with(
             'record:txt',
             {'name': 'text_test.my_zone.com',
              'text': 'hello_text',
-             'view': 'my_dns_view',
-            }, ['extattrs', 'name', 'text', 'view'])
+             'view': 'my_dns_view'},
+            ['extattrs', 'name', 'text', 'view'])
 
     def test_call_upload_file(self):
-        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_file_path = '/http_direct_file_io/' \
+                           'req_id-UPLOAD-0302163936014609/ibx_networks.csv'
         upload_url = 'https://infoblox.example.org' + upload_file_path
         self._create_infoblox_csv()
         with open('tests/ibx_networks.csv', 'r') as fh:
@@ -670,5 +677,3 @@ class TestObjects(unittest.TestCase):
         self.assertTrue(result)
         # clean up and remove csv file
         self._delete_infoblox_csv()
-
-

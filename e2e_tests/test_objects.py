@@ -69,14 +69,18 @@ class TestObjectsE2E(unittest.TestCase):
     def test_create_object_check_response(self):
         """Objects returned by create method should contain response field"""
         # When WAPI object is successfully created
-        zone = DNSZone.create(self.connector, view='default', fqdn='check_response_zone.com')
+        zone = DNSZone.create(self.connector, view='default',
+                              fqdn='check_response_zone.com')
         self.assertEqual("Infoblox Object was Created", zone.response)
         # When WAPI object already exists
-        zone = DNSZone.create(self.connector, view='default', fqdn='check_response_zone.com')
+        zone = DNSZone.create(self.connector, view='default',
+                              fqdn='check_response_zone.com')
         self.assertEqual("Infoblox Object already Exists", zone.response)
         # When WAPI object is updated
-        zone = DNSZone.create(self.connector, view='default', fqdn='check_response_zone.com',
-                              comment="Zone updated", update_if_exists=True, ref=zone.ref)
+        zone = DNSZone.create(self.connector, view='default',
+                              fqdn='check_response_zone.com',
+                              comment="Zone updated", update_if_exists=True,
+                              ref=zone.ref)
         self.assertEqual("Infoblox Object was Updated", zone.response)
 
     def test_fetch_by_ref_when_paging_enabled(self):
@@ -108,4 +112,3 @@ class TestObjectsE2E(unittest.TestCase):
         # Update DNS zone
         zone.Comment = "Modified"
         zone.update()
-
