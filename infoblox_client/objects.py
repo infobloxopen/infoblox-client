@@ -13,7 +13,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import six
-import types
 
 try:
     from oslo_log import log as logging
@@ -306,6 +305,8 @@ class InfobloxObject(BaseObject):
         # and getting created with this function call
         obj_created = False
         local_obj = cls(connector, **kwargs)
+        response = None
+
         if check_if_exists:
             if local_obj.fetch(only_ref=True):
                 LOG.info(("Infoblox %(obj_type)s already exists: "
@@ -324,19 +325,42 @@ class InfobloxObject(BaseObject):
             LOG.info("Infoblox %(obj_type)s was created: %(ib_obj)s",
                      {'obj_type': local_obj.infoblox_type,
                       'ib_obj': local_obj})
-            local_obj.response = "Infoblox Object was Created"
+            response = "Infoblox Object was Created"
         elif update_if_exists:
             update_fields = local_obj.to_dict(search_fields='exclude')
             reply = connector.update_object(local_obj.ref,
                                             update_fields,
                                             local_obj.return_fields)
             LOG.info('Infoblox object was updated: %s', local_obj.ref)
-            local_obj.response = "Infoblox Object was Updated"
-        return cls._object_from_reply(local_obj, connector, reply), obj_created
+            response = "Infoblox Object was Updated"
+
+        obj_result = cls._object_from_reply(local_obj, connector, reply)
+
+        # Add response string if object is not None
+        # and properly deserialized
+        if issubclass(type(obj_result), BaseObject):
+            obj_result.response = response
+
+        return obj_result, obj_created
 
     @classmethod
     def create(cls, connector, check_if_exists=True,
                update_if_exists=False, **kwargs):
+        """Create the object in NIOS.
+
+        Args:
+            check_if_exists: If True, create method will attempt
+                to fetch the object to check if it exists.
+            update_if_exists: If True, create method will attempt
+                to update the object if one exists.
+
+        Raises:
+            InfobloxFetchGotMultipleObjects: Raised only when check_if_exists
+                is True. The fetch method can raise this error when API return
+                multiple objects.
+
+        Returns: Created Infoblox object.
+        """
         ib_object, _ = (
             cls.create_check_exists(connector,
                                     check_if_exists=check_if_exists,
@@ -347,7 +371,7 @@ class InfobloxObject(BaseObject):
     @classmethod
     def _search(cls, connector, return_fields=None,
                 search_extattrs=None, force_proxy=False,
-                max_results=None,paging=False, **kwargs):
+                max_results=None, paging=False, **kwargs):
         ib_obj_for_search = cls(connector, **kwargs)
         search_dict = ib_obj_for_search.to_dict(search_fields='all')
         if return_fields is None and ib_obj_for_search.return_fields:
@@ -370,28 +394,16 @@ class InfobloxObject(BaseObject):
         ib_obj, parse_class = cls._search(
             connector, **kwargs)
         if ib_obj:
-            if (isinstance(ib_obj,types.GeneratorType)):
-                for ib in ib_obj:
-                    LOG.warn("Ignoring paging argument as 'search' function returns single output")
-                    return [parse_class.from_dict(connector, ib[0])]
-            else:
-                return parse_class.from_dict(connector, ib_obj[0])
-        return []
+            return parse_class.from_dict(connector, ib_obj[0])
 
     @classmethod
     def search_all(cls, connector, **kwargs):
         ib_objects, parsing_class = cls._search(
             connector, **kwargs)
         if ib_objects:
-            if not (isinstance(ib_objects,types.GeneratorType)):
-                return [parsing_class.from_dict(connector, obj) for obj in ib_objects]
-            if (isinstance(ib_objects,types.GeneratorType)):
-                return cls._search_all(connector, ib_objects, parsing_class)
+            return [parsing_class.from_dict(connector, obj)
+                    for obj in ib_objects]
         return []
-
-    def _search_all(  connector, ib_objects, parsing_class):
-        for ib in ib_objects:
-            yield [parsing_class.from_dict(connector, obj) for obj in list(ib)]
 
     def fetch(self, only_ref=False):
         """Fetch object from NIOS by _ref or searchfields
@@ -655,7 +667,7 @@ class Dhcpmember(SubObjects):
     _fields = ['_struct', 'ipv4addr', 'ipv6addr', 'name']
 
 
-class Dhcpoption(SubObjects):
+class DhcpOption(SubObjects):
     _fields = ['name', 'num', 'use_option', 'value', 'vendor_class']
 
 
@@ -4395,7 +4407,7 @@ class Filtermac(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -4433,7 +4445,7 @@ class Filternac(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -4487,7 +4499,7 @@ class Filteroption(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'option_list': Dhcpoption.from_dict,
+        'option_list': DhcpOption.from_dict,
     }
 
 
@@ -4783,7 +4795,7 @@ class FixedAddressV4(FixedAddress):
         'cli_credentials': DiscoveryClicredential.from_dict,
         'logic_filter_rules': Logicfilterrule.from_dict,
         'ms_options': Msdhcpoption.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -4931,7 +4943,7 @@ class FixedAddressV6(FixedAddress):
 
     _custom_field_processing = {
         'cli_credentials': DiscoveryClicredential.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -5030,7 +5042,7 @@ class FixedAddressTemplateV4(FixedAddressTemplate):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -5088,7 +5100,7 @@ class FixedAddressTemplateV6(FixedAddressTemplate):
     _ip_version = 6
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -5941,10 +5953,10 @@ class GridDhcpproperties(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'ipv6_options': Dhcpoption.from_dict,
+        'ipv6_options': DhcpOption.from_dict,
         'logic_filter_rules': Logicfilterrule.from_dict,
         'option60_match_rules': Option60Matchrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -7547,7 +7559,7 @@ class NetworkV4(Network):
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
         'members': Dhcpmember.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'vlans': Vlanlink.from_dict,
         'zone_associations': Zoneassociation.from_dict,
     }
@@ -7800,7 +7812,7 @@ class NetworkV6(Network):
 
     _custom_field_processing = {
         'members': Dhcpmember.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'vlans': Vlanlink.from_dict,
         'zone_associations': Zoneassociation.from_dict,
     }
@@ -8108,7 +8120,7 @@ class NetworkContainerV4(NetworkContainer):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'zone_associations': Zoneassociation.from_dict,
     }
 
@@ -8296,7 +8308,7 @@ class NetworkContainerV6(NetworkContainer):
     _ip_version = 6
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'zone_associations': Zoneassociation.from_dict,
     }
 
@@ -8532,7 +8544,7 @@ class NetworkTemplateV4(NetworkTemplate):
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
         'members': Dhcpmember.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -8671,7 +8683,7 @@ class NetworkTemplateV6(NetworkTemplate):
 
     _custom_field_processing = {
         'members': Dhcpmember.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -8993,7 +9005,7 @@ class IPRangeV4(IPRange):
         'ms_options': Msdhcpoption.from_dict,
         'nac_filter_rules': Filterrule.from_dict,
         'option_filter_rules': Filterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'relay_agent_filter_rules': Filterrule.from_dict,
     }
 
@@ -9355,7 +9367,7 @@ class RangeTemplateV4(RangeTemplate):
         'ms_options': Msdhcpoption.from_dict,
         'nac_filter_rules': Filterrule.from_dict,
         'option_filter_rules': Filterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
         'relay_agent_filter_rules': Filterrule.from_dict,
     }
 
@@ -9595,7 +9607,7 @@ class SharedNetworkV4(SharedNetwork):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -9696,7 +9708,7 @@ class SharedNetworkV6(SharedNetwork):
     _ip_version = 6
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -10754,10 +10766,10 @@ class MemberDhcpproperties(InfobloxObject):
 
     _custom_field_processing = {
         'ddns_zone_primaries': Dhcpddns.from_dict,
-        'ipv6_options': Dhcpoption.from_dict,
+        'ipv6_options': DhcpOption.from_dict,
         'logic_filter_rules': Logicfilterrule.from_dict,
         'option60_match_rules': Option60Matchrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
     def clear_nac_auth_cache(self, *args, **kwargs):
@@ -12852,7 +12864,8 @@ class AAAARecord(ARecordBase):
                'remove_associated_ptr', 'shared_record_group', 'ttl',
                'use_ttl', 'view', 'zone']
     _search_for_update_fields = ['ipv6addr', 'name', 'view']
-    _updateable_search_fields = ['comment', 'creator', 'ddns_principal']
+    _updateable_search_fields = ['comment', 'creator', 'ddns_principal',
+                                 'ipv6addr', 'name']
     _all_searchable_fields = ['comment', 'creator', 'ddns_principal',
                               'ipv6addr', 'name', 'reclaimable', 'view',
                               'zone']
@@ -13724,7 +13737,7 @@ class IPv4HostAddress(InfobloxObject):
 
     _custom_field_processing = {
         'logic_filter_rules': Logicfilterrule.from_dict,
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -13813,7 +13826,7 @@ class IPv6HostAddress(InfobloxObject):
     _shadow_fields = ['_ref', 'ip']
 
     _custom_field_processing = {
-        'options': Dhcpoption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -15838,8 +15851,8 @@ class DHCPRoamingHost(InfobloxObject):
     _shadow_fields = ['_ref']
 
     _custom_field_processing = {
-        'ipv6_options': Dhcpoption.from_dict,
-        'options': Dhcpoption.from_dict,
+        'ipv6_options': DhcpOption.from_dict,
+        'options': DhcpOption.from_dict,
     }
 
 
@@ -18127,7 +18140,7 @@ class DNSZone(InfobloxObject):
     _all_searchable_fields = ['comment', 'dnssec_ksk_rollover_date',
                               'dnssec_zsk_rollover_date', 'fqdn', 'parent',
                               'view', 'zone_format']
-    _return_fields = ['extattrs', 'fqdn', 'view', 'zone_format', 'ns_group',
+    _return_fields = ['extattrs', 'fqdn', 'view', 'ns_group',
                       'prefix', 'grid_primary', 'grid_secondaries']
     _remap = {}
     _shadow_fields = ['_ref']

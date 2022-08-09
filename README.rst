@@ -69,46 +69,6 @@ For these request data is returned as list of dicts:
     u'network': u'100.0.0.0/8',
     u'network_view': u'default'}]
 
-Retrieve list of network from NIOS using Paging:
-
-.. code:: python
-
-  from infoblox_client import connector, exceptions, objects
-
-  op = objects.Network.search(conn, view='default', return_fields=['members'])
-  print(op)
-
-  for op in objects.Network.search_all(conn, view='default', paging=True, max_results=2, return_fields=['members']):
-    print(op)
-
-  for obj in conn.get_object('network', paging=True, max_results=2):
-    print(obj)
-
-For these requests output will be displayed as:
-
-.. code:: python
-
-  Network.search:
-  [NetworkV4: members="[]", _ref="network/ZG5zLm5ldHdvcmskMTcyLjI0LjQuMC8yNC8w:172.24.4.0/24/default"]
-
-  Network.search_all:
-  [NetworkV4: members="[]", _ref="network/ZG5zLm5ldHdvcmskMTcyLjI0LjQuMC8yNC8w:172.24.4.0/24/default", NetworkV4: members="[Dhcpmember: _struct="dhcpmember", ipv4addr="10.197.36.96", name="infoblox.localdomain"]", _ref="network/ZG5zLm5ldHdvcmskMTkyLjE2OC4yMzMuMC8yNC8w:192.168.233.0/24/default"]
-  Press enter to read more...
-
-  [NetworkV4: members="[]", _ref="network/ZG5zLm5ldHdvcmskMTAuMC4wLjAvMjYvMA:10.0.0.0/26/default", NetworkV4: members="[]", _ref="network/ZG5zLm5ldHdvcmskMTAuMC4wLjAvMTIvMQ:10.0.0.0/12/test_view"]
-  Press enter to read more...
-
-  [NetworkV4: members="[]", _ref="network/ZG5zLm5ldHdvcmskMTAuMC4xLjAvMjYvMA:10.0.1.0/26/default"]
-
-  get_object('network'):
-  [{'_ref': 'network/ZG5zLm5ldHdvcmskMTcyLjI0LjQuMC8yNC8w:172.24.4.0/24/default', 'network': '172.24.4.0/24', 'network_view': 'default'}, {'_ref': 'network/ZG5zLm5ldHdvcmskMTkyLjE2OC4yMzMuMC8yNC8w:192.168.233.0/24/default', 'network': '192.168.233.0/24', 'network_view': 'default'}]
-  Press enter to read more...
-
-  [{'_ref': 'network/ZG5zLm5ldHdvcmskMTAuMC4wLjAvMjYvMA:10.0.0.0/26/default', 'network': '10.0.0.0/26', 'network_view': 'default'}, {'_ref': 'network/ZG5zLm5ldHdvcmskMTAuMC4wLjAvMTIvMQ:10.0.0.0/12/test_view', 'network': '10.0.0.0/12', 'network_view': 'test_view'}]
-  Press enter to read more...
-
-  [{'_ref': 'network/ZG5zLm5ldHdvcmskMTAuMC4xLjAvMjYvMA:10.0.1.0/26/default', 'network': '10.0.1.0/26', 'network_view': 'default'}]
-
 High level API, using objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -231,10 +191,9 @@ All top level objects support interface for CRUD operations. List of supported o
     ``search_extattrs`` is used to filter out results by extensible attributes.
     ``force_proxy`` forces search request to be processed on Grid Master (applies only in cloud environment)
 
-- ``search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, paging=False, max_results=None, **kwargs)``
+- ``search_all(cls, connector, return_fields=None, search_extattrs=None, force_proxy=False, **kwargs)``
     Search all objects on NIOS side that match search criteria. Returns a list of objects.
     All other options are equal to ``search()``.
-    Paging can help in displaying the output with max_results value and press enter to view the next set of output.
 
 - ``update(self)``
     Update the object on NIOS side by pushing changes done in the local object.

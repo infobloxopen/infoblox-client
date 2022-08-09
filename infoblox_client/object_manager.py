@@ -78,13 +78,13 @@ class InfobloxObjectManager(object):
 
         options = []
         if nameservers:
-            options.append(obj.Dhcpoption(name='domain-name-servers',
+            options.append(obj.DhcpOption(name='domain-name-servers',
                                           value=",".join(nameservers)))
         if ipv4 and gateway_ip:
-            options.append(obj.Dhcpoption(name='routers',
+            options.append(obj.DhcpOption(name='routers',
                                           value=gateway_ip))
         if ipv4 and dhcp_trel_ip:
-            options.append(obj.Dhcpoption(name='dhcp-server-identifier',
+            options.append(obj.DhcpOption(name='dhcp-server-identifier',
                                           num=54,
                                           value=dhcp_trel_ip))
         return obj.Network.create(self.connector,
