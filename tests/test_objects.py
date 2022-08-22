@@ -12,7 +12,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
+import re
 import unittest
 import os
 import copy
@@ -20,6 +20,7 @@ import mock
 
 from infoblox_client import objects
 import infoblox_client.exceptions as ib_ex
+
 REC = 'ZG5zLmJpbmRfbXgkLjQuY29tLm15X3pvbmUuZGVtby5teC5kZW1vLm15X3pvbmUuY29tLjE'
 
 DEFAULT_HOST_RECORD = {
@@ -222,7 +223,7 @@ class TestObjects(unittest.TestCase):
              'name': 'mx.demo.my_zone.com',
              'preference': 1,
              'view': 'my_dns_view'
-            }, ['extattrs', 'mail_exchanger','name', 'preference', 'view'])
+             }, ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
 
     def test_update_MX_Record(self):
         mx_record_copy = [
@@ -240,8 +241,8 @@ class TestObjects(unittest.TestCase):
         connector.update_object.assert_called_once_with(
             mx_record_copy[0]['_ref'],
             {'mail_exchanger': 'demo2.my_zone.com',
-              'name': 'mx1.demo.my_zone.com', 'preference': 1},
-             ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
+             'name': 'mx1.demo.my_zone.com', 'preference': 1},
+            ['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
 
     def test_search_and_delete_MX_Record(self):
         mx_record_copy = copy.deepcopy(DEFAULT_MX_RECORD)
@@ -253,12 +254,11 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'record:mx', {'view': 'some_view',
                           'name': 'some_name'},
-            extattrs=None, force_proxy=False, max_results=None,paging=False,
+            extattrs=None, force_proxy=False, max_results=None, paging=False,
             return_fields=['extattrs', 'mail_exchanger', 'name', 'preference', 'view'])
         mx_record.delete()
         connector.delete_object.assert_called_once_with(
             DEFAULT_MX_RECORD['_ref'])
-
 
     def test_create_host_record_with_ttl(self):
         mock_record = DEFAULT_HOST_RECORD
@@ -403,12 +403,12 @@ class TestObjects(unittest.TestCase):
         connector.get_object.assert_called_once_with(
             'ipv6fixedaddress',
             {'duid': mock.ANY, 'ipv6addr': 'fffe:1234:1234::1',
-             'network_view': 'some-view' },
+             'network_view': 'some-view'},
             return_fields=mock.ANY)
         connector.create_object.assert_called_once_with(
             'ipv6fixedaddress',
             {'duid': mock.ANY, 'ipv6addr': 'fffe:1234:1234::1',
-             'network_view': 'some-view' }, mock.ANY)
+             'network_view': 'some-view'}, mock.ANY)
 
     @mock.patch('infoblox_client.utils.generate_duid')
     def test_fixed_address_v6(self, generate):
@@ -465,7 +465,7 @@ class TestObjects(unittest.TestCase):
 
     def test_ea_to_dict(self):
         ea = {'Subnet ID': 'some-id',
-              'Tenant Name':  'tenant-name',
+              'Tenant Name': 'tenant-name',
               'Cloud API Owned': 'True',
               'DNS Record Types': ['record_a', 'record_ptr'],
               'False String EA': 'False',
@@ -477,7 +477,7 @@ class TestObjects(unittest.TestCase):
               'Empty List EA': [],
               'Zero String EA': '0'}
         processed_ea = {'Subnet ID': 'some-id',
-                        'Tenant Name':  'tenant-name',
+                        'Tenant Name': 'tenant-name',
                         'Cloud API Owned': 'True',
                         'DNS Record Types': ['record_a', 'record_ptr'],
                         'False String EA': 'False',
@@ -639,15 +639,15 @@ class TestObjects(unittest.TestCase):
         txt_record_copy = copy.deepcopy(mock_record)
         connector = self._mock_connector(create_object=txt_record_copy)
         txt = objects.TXTRecord.create(connector, name='text_test.my_zone.com',
-                                     text='hello_text',
-                                     view='my_dns_view')
+                                       text='hello_text',
+                                       view='my_dns_view')
         self.assertIsInstance(txt, objects.TXTRecord)
         connector.create_object.assert_called_once_with(
             'record:txt',
             {'name': 'text_test.my_zone.com',
              'text': 'hello_text',
              'view': 'my_dns_view',
-            }, ['extattrs', 'name', 'text', 'view'])
+             }, ['extattrs', 'name', 'text', 'view'])
 
     def test_call_upload_file(self):
         upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
@@ -665,4 +665,27 @@ class TestObjects(unittest.TestCase):
         # clean up and remove csv file
         self._delete_infoblox_csv()
 
+    def test__search_non_searchable_fields(self):
+        """
+        Method InfobloxObject._search should raise the
+        ib_ex.InfobloxFieldNotSearchable error, if non-searchable
+        fields are used.
+        """
+        connector = self._mock_connector()
 
+        with self.assertRaises(ib_ex.InfobloxFieldNotSearchable) as e:
+            objects.AAAARecord._search(
+                connector,
+                # Use non-searchable field for search
+                use_ttl=True,
+            )
+
+        self.assertTrue(
+            re.match(
+                # For Python 3.x and 2.x string repr of dict keys may differ.
+                # This regex matches both representations.
+                r"^Field is not searchable: use_ttl",
+                str(e.exception),
+            ),
+            "Exception string '%s' doesn't match test regexp" % e.exception
+        )
