@@ -268,7 +268,7 @@ class InfobloxObject(BaseObject):
             return [self.value_to_dict(val) for val in value]
         return self.value_to_dict(value)
 
-    def to_dict(self, search_fields=None):
+    def to_dict(self, search_fields=None, update_fields=None):
         """Builds dict without None object fields"""
         fields = self._fields
         if search_fields == 'update':
@@ -283,6 +283,10 @@ class InfobloxObject(BaseObject):
             fields = [field for field in self._fields
                       if field in self._updateable_search_fields or
                       field not in self._search_for_update_fields]
+
+        elif search_fields == 'extra':
+            fields = [field for field in self._fields
+                      if field not in update_fields]
 
         return {field: self.field_to_dict(field) for field in fields
                 if getattr(self, field, None) is not None}
@@ -448,6 +452,13 @@ class InfobloxObject(BaseObject):
 
     def update(self):
         update_fields = self.to_dict(search_fields='exclude')
+        fields = self.to_dict(search_fields='extra',
+                              update_fields=update_fields)
+        for key in fields:
+            LOG.info(
+                "Field is not allowed for update: %s - ignoring",
+                key,
+            )
         ib_obj = self.connector.update_object(self.ref,
                                               update_fields,
                                               self.return_fields)
