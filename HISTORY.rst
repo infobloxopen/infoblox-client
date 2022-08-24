@@ -4,13 +4,13 @@ History
 -------
 
 0.5.1 (2022-03-14)
-------------------
+__________________
 * Updated connector's urlencoding logic for proper array encoding #287;
 * Updated InfobloxObject's fetch method to raise `InfobloxFetchGotMultipleObjects` exception #288;
 * Fix a bug when calling abstracted class from_dict with V4 & V6 subclass #282;
 
-0.5.0 (2020-05-14)
-------------------
+**0.5.0 (2020-05-14)**
+______________________
 * Majorly Updated objects with around 380+ NIOS object calls supported now.(Find the infoblox_client/objects.py file to list the supported objects and its descriptions)
 * Bug Fixes
 * python-six dependency set to >=1.11.0
@@ -137,8 +137,8 @@ __________________
 __________________
 * Add 'max_results' as connector option
 
-0.4.0 (2016-02-19)
-------------------
+**0.4.0 (2016-02-19)**
+______________________
 * Add max_results option to connector and objects
 * Add Tenant object
 * Update README.rst with more examples
@@ -187,8 +187,8 @@ __________________
 * Add 'zone' to search fields of Host Record
 
 
-0.3.0 (2016-01-14)
-------------------
+**0.3.0 (2016-01-14)**
+______________________
 * Update development status from Pre-Alpha to Alpha
 * Feature/tox testing (huge changes in testing env)
 * Add 'network' to search fields of FixedAddress
@@ -216,8 +216,8 @@ __________________
 * Add 'log_api_calls_as_info' option for connector
 * Check for empty values in EA
 
-0.2.0 (2015-12-17)
-------------------
+**0.2.0 (2015-12-17)**
+______________________
 * Deprecate network_exists method in object_manager
 * Add _global_field_processing for objects
 * Add parsing 'extattrs' into EA objects for all InfobloxObject childs
@@ -312,7 +312,7 @@ ____________________
 * Fixed using dashes in package directory names that prevented package import after install.
 
 
-0.0.1 (2015-09-11)
----------------------
+**0.0.1 (2015-09-11)**
+______________________
 * Added connector to send wapi requests to NIOS, does not includes NIOS object model at this point.
 * First release on PyPI.
