@@ -2,7 +2,7 @@ import os
 import unittest
 
 from e2e_tests.connector_facade import E2EConnectorFacade
-from infoblox_client.objects import ARecord, DNSZone, AAAARecord, Csvimporttask
+from infoblox_client.objects import ARecord, DNSZone, AAAARecord
 
 
 class TestObjectsE2E(unittest.TestCase):
@@ -66,6 +66,19 @@ class TestObjectsE2E(unittest.TestCase):
         self.assertTrue(created)
         self.assertNotEqual(alias1._ref, alias2._ref)
 
+    def test_create_object_check_response(self):
+        """Objects returned by create method should contain response field"""
+        # When WAPI object is successfully created
+        zone = DNSZone.create(self.connector, view='default', fqdn='check_response_zone.com')
+        self.assertEqual("Infoblox Object was Created", zone.response)
+        # When WAPI object already exists
+        zone = DNSZone.create(self.connector, view='default', fqdn='check_response_zone.com')
+        self.assertEqual("Infoblox Object already Exists", zone.response)
+        # When WAPI object is updated
+        zone = DNSZone.create(self.connector, view='default', fqdn='check_response_zone.com',
+                              comment="Zone updated", update_if_exists=True, ref=zone.ref)
+        self.assertEqual("Infoblox Object was Updated", zone.response)
+
     def test_fetch_by_ref_when_paging_enabled(self):
         """
         Fetch should explicitly disable paging, when reading object from
@@ -82,8 +95,16 @@ class TestObjectsE2E(unittest.TestCase):
         zone2.fetch()
         self.assertEqual(zone1.fqdn, zone2.fqdn)
 
-    def test_search_csvimporttask(self):
+    def test_update_dns_zone(self):
         """
-        Test validates if client is able to read Csvimporttask
+        Validates if DNS Zone object can be updated
+
+        Related ticket: NIOS-84427
         """
-        Csvimporttask.search(self.connector)
+        # Create DNS Zone
+        zone = DNSZone.create(self.connector,
+                              fqdn="e2e-test-zone.com",
+                              view="default")
+        # Update DNS zone
+        zone.Comment = "Modified"
+        zone.update()
