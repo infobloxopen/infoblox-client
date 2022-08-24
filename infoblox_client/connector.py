@@ -272,7 +272,7 @@ class Connector(object):
             A list of the Infoblox objects requested
         Raises:
             requests.exceptions.HTTPError: If API responded with error HTTP
-            status code.
+                status code.
         """
         self._validate_obj_type_or_die(obj_type, obj_type_expected=False)
 
@@ -545,7 +545,7 @@ class Connector(object):
             False otherwise.
 
         Raises:
-            ValueError if an invalid version is passed
+            ValueError: if an invalid version is passed
         """
         valid = wapi_version and isinstance(wapi_version, six.string_types)
         if not valid:
