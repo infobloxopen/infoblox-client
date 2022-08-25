@@ -134,7 +134,7 @@ class EA(object):
 
     @property
     def ea_dict(self):
-        """Returns dict with EAs in {ea_name: ea_value} format."""
+        """Returns dict with EAs in ``{ea_name: ea_value}`` format."""
         return self._ea_dict.copy()
 
     @classmethod
