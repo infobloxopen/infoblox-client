@@ -8,6 +8,10 @@ __________________
 * Updated connector's urlencoding logic for proper array encoding #287;
 * Updated InfobloxObject's fetch method to raise `InfobloxFetchGotMultipleObjects` exception #288;
 * Fix a bug when calling abstracted class from_dict with V4 & V6 subclass #282;
+* Fix a bug when updating DNSZone object exception was raised and field not allowed to update #331;
+* Fix a bug when ARecord and AAAARecord object skips updating the updatable fields #334, #328;
+* Raised an exception while searching with non searchable fields #339;
+* Fix errors generated for the client using sphinx with make docs #343;
 
 **0.5.0 (2020-05-14)**
 ______________________
