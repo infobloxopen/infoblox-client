@@ -20,7 +20,6 @@ import requests
 from mock import patch
 from requests import exceptions as req_exc
 
-
 try:
     from oslo_serialization import jsonutils
 except ImportError:  # pragma: no cover
@@ -94,7 +93,7 @@ class TestInfobloxConnector(unittest.TestCase):
     def test_create_object_with_extattrs(self):
         objtype = 'network'
         payload = {'extattrs':
-                   {'Subnet ID': {'value': 'fake_subnet_id'}},
+                       {'Subnet ID': {'value': 'fake_subnet_id'}},
                    'ip': '0.0.0.0'}
         with patch.object(requests.Session, 'post',
                           return_value=mock.Mock()) as patched_create:
@@ -174,7 +173,8 @@ class TestInfobloxConnector(unittest.TestCase):
                 return_fields=return_fields
             )
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields%2B=extattrs',  # noqa: E501
+                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields%2B=extattrs',
+                # noqa: E501
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
@@ -195,7 +195,8 @@ class TestInfobloxConnector(unittest.TestCase):
                 return_fields=return_fields
             )
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields=extattrs',  # noqa: E501
+                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields=extattrs',
+                # noqa: E501
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
@@ -337,14 +338,17 @@ class TestInfobloxConnector(unittest.TestCase):
         url = self.connector._construct_url('network',
                                             query_params=query_params,
                                             extattrs=ext_attrs)
-        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&some_option=some_value',  # noqa: E501
-                         url)
+        self.assertEqual(
+            'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&some_option=some_value',
+            # noqa: E501
+            url)
 
     def test_construct_url_with_query_params_containing_array(self):
         query_params = {'array_option': ['value1', 'value2']}
         url = self.connector._construct_url('network',
                                             query_params=query_params)
-        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?array_option=value1&array_option=value2',  # noqa: E501
+        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?array_option=value1&array_option=value2',
+                         # noqa: E501
                          url)
 
     def test_construct_url_with_force_proxy(self):
@@ -352,7 +356,8 @@ class TestInfobloxConnector(unittest.TestCase):
         url = self.connector._construct_url('network',
                                             extattrs=ext_attrs,
                                             force_proxy=True)
-        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_proxy_search=GM',  # noqa: E501
+        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_proxy_search=GM',
+                         # noqa: E501
                          url)
 
     def test_get_object_with_proxy_flag(self):
@@ -714,6 +719,21 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
             self.assertRaises(exceptions.InfobloxConfigException,
                               connector.Connector, test_dict)
 
+    def test_blank_values_not_allowed_cert_auth(self):
+        """
+        Checks if connector's _parse_options method raises
+        exception if one of the host/cert/key is not provided
+
+        """
+        base_dict = {'host': '192.168.1.15',
+                     'cert': 'cert',
+                     'key': 'key'}
+        for field in base_dict:
+            test_dict = base_dict.copy()
+            test_dict[field] = None
+            self.assertRaises(exceptions.InfobloxConfigException,
+                              connector.Connector, test_dict)
+
     def test_is_cloud_wapi_raises_exception(self):
         for value in (None, '', 0, 1, self, 1.2):
             self.assertRaises(ValueError,
@@ -742,3 +762,39 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
 
         parsed_reply = connector.Connector._parse_reply(request)
         self.assertEqual(expected_reply, parsed_reply)
+
+    def test_session_auth(self):
+        """
+        Checks if connector's session is configured,
+        when username and password are provided
+        """
+        # Case 1: Only username and password are provided
+        options = {'host': '192.168.1.15',
+                   'username': 'admin',
+                   'password': 'pass'}
+        conn = connector.Connector(options)
+        self.assertEqual(conn.session.auth, ('admin', 'pass'))
+        self.assertEqual(conn.session.cert, None)
+
+        # Case 2: Username, password, cert and key are
+        # provided. Connector should use username and password.
+        options = {'host': '192.168.1.15',
+                   'username': 'admin',
+                   'password': 'pass',
+                   'cert': 'cert',
+                   'key': 'key'}
+        conn = connector.Connector(options)
+        self.assertEqual(conn.session.auth, ('admin', 'pass'))
+        self.assertEqual(conn.session.cert, None)
+
+    def test_session_cert(self):
+        """
+        Checks if connector's session is configured,
+        when cert and key are provided
+        """
+        options = {'host': '192.168.1.15',
+                   'cert': 'cert',
+                   'key': 'key'}
+        conn = connector.Connector(options)
+        self.assertEqual(conn.session.auth, None)
+        self.assertEqual(conn.session.cert, ('cert', 'key'))

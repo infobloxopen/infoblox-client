@@ -146,7 +146,7 @@ class Connector(object):
             max_retries=self.max_retries)
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
-        if self.username and self.password:
+        if hasattr(self, 'username') and hasattr(self, 'password'):
             self.session.auth = (self.username, self.password)
         else:
             self.session.cert = (self.cert, self.key)
