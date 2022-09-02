@@ -92,9 +92,12 @@ class TestInfobloxConnector(unittest.TestCase):
 
     def test_create_object_with_extattrs(self):
         objtype = 'network'
-        payload = {'extattrs':
-                       {'Subnet ID': {'value': 'fake_subnet_id'}},
-                   'ip': '0.0.0.0'}
+        payload = {
+            'extattrs': {
+                'Subnet ID': {'value': 'fake_subnet_id'}
+            },
+            'ip': '0.0.0.0',
+        }
         with patch.object(requests.Session, 'post',
                           return_value=mock.Mock()) as patched_create:
             patched_create.return_value.status_code = 201
@@ -173,8 +176,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 return_fields=return_fields
             )
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields%2B=extattrs',
-                # noqa: E501
+                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields%2B=extattrs',  # noqa: E501
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
@@ -195,8 +197,7 @@ class TestInfobloxConnector(unittest.TestCase):
                 return_fields=return_fields
             )
             patched_get.assert_called_once_with(
-                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields=extattrs',
-                # noqa: E501
+                'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_return_fields=extattrs',  # noqa: E501
                 headers=self.connector.DEFAULT_HEADER,
                 timeout=self.default_opts.http_request_timeout,
                 verify=self.default_opts.ssl_verify,
@@ -339,16 +340,14 @@ class TestInfobloxConnector(unittest.TestCase):
                                             query_params=query_params,
                                             extattrs=ext_attrs)
         self.assertEqual(
-            'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&some_option=some_value',
-            # noqa: E501
+            'https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&some_option=some_value',  # noqa: E501
             url)
 
     def test_construct_url_with_query_params_containing_array(self):
         query_params = {'array_option': ['value1', 'value2']}
         url = self.connector._construct_url('network',
                                             query_params=query_params)
-        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?array_option=value1&array_option=value2',
-                         # noqa: E501
+        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?array_option=value1&array_option=value2',  # noqa: E501
                          url)
 
     def test_construct_url_with_force_proxy(self):
@@ -356,8 +355,7 @@ class TestInfobloxConnector(unittest.TestCase):
         url = self.connector._construct_url('network',
                                             extattrs=ext_attrs,
                                             force_proxy=True)
-        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_proxy_search=GM',
-                         # noqa: E501
+        self.assertEqual('https://infoblox.example.org/wapi/v1.1/network?%2ASubnet+ID=fake_subnet_id&_proxy_search=GM',  # noqa: E501
                          url)
 
     def test_get_object_with_proxy_flag(self):
@@ -506,7 +504,7 @@ class TestInfobloxConnector(unittest.TestCase):
             )
 
     def test_call_upload_file(self):
-        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'  # noqa: E501
         upload_url = 'https://infoblox.example.org' + upload_file_path
         self._create_infoblox_csv()
         with open('tests/ibx_networks.csv', 'r') as fh:
@@ -523,7 +521,7 @@ class TestInfobloxConnector(unittest.TestCase):
             self._delete_infoblox_csv()
 
     def test_call_upload_file_with_error_403(self):
-        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'
+        upload_file_path = '/http_direct_file_io/req_id-UPLOAD-0302163936014609/ibx_networks.csv'  # noqa: E501
         upload_url = 'https://infoblox.example.org' + upload_file_path
         self._create_infoblox_csv()
         with open('tests/ibx_networks.csv', 'r') as fh:
@@ -541,7 +539,7 @@ class TestInfobloxConnector(unittest.TestCase):
             self._delete_infoblox_csv()
 
     def test_call_download_file(self):
-        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'
+        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'  # noqa: E501
         download_url = 'https://infoblox.example.org' + download_file_path
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:
@@ -552,7 +550,7 @@ class TestInfobloxConnector(unittest.TestCase):
             self.assertEqual(None, self.connector.session.auth)
 
     def test_call_download_file_with_error_403(self):
-        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'
+        download_file_path = '/http_direct_file_io/req_id-DOWNLOAD-0302163936014609/ibx_networks.csv'  # noqa: E501
         download_url = 'https://infoblox.example.org' + download_file_path
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:
