@@ -2,7 +2,8 @@ import os
 import unittest
 
 from e2e_tests.connector_facade import E2EConnectorFacade
-from infoblox_client.objects import ARecord, DNSZone, AAAARecord
+from infoblox_client.objects import ARecord, DNSZone, AAAARecord, Network, \
+    EADefinition, EA, HostRecord, IP
 
 
 class TestObjectsE2E(unittest.TestCase):
@@ -109,3 +110,65 @@ class TestObjectsE2E(unittest.TestCase):
         zone.Comment = "Modified"
         zone.update()
 
+    def test_host_record_ea_inheritance(self):
+        """
+        Checks if EA inheritance for record:host object
+        works as expected
+        """
+        # Create inheritable extensible attribute
+        EADefinition.create(
+            self.connector,
+            name="Test HostRecord EA Inheritance",
+            type="STRING",
+            flags="I",
+        )
+        # Create two networks with inheritable
+        # extensible attributes
+        Network.create(
+            self.connector,
+            network="192.170.1.0/24",
+            network_view="default",
+            extattrs=EA({
+                "Test HostRecord EA Inheritance": "Expected Value"
+            })
+        )
+        Network.create(
+            self.connector,
+            network="192.180.1.0/24",
+            network_view="default",
+            extattrs=EA({
+                "Test HostRecord EA Inheritance": "Second Value"
+            })
+        )
+
+        # Create DNS Zone for the host record
+        DNSZone.create(
+            self.connector,
+            view='default',
+            fqdn="e2e-test.com",
+        )
+
+        # Create two ips in both networks
+        # One IP will be used for EA inheritance
+        ip170net = IP.create(
+            ip="192.170.1.25",
+            mac="00:00:00:00:00:00",
+            use_for_ea_inheritance=True,
+        )
+        ip180net = IP.create(
+            ip="192.180.1.25",
+            mac="00:00:00:00:00:00",
+        )
+
+        hr = HostRecord.create(
+            self.connector,
+            view="default",
+            name="test_host_record_ea_inheritance.e2e-test.com",
+            ips=[ip170net, ip180net]
+        )
+
+        # Expect host record to inherit EAs from 192.170.1.0/24 network
+        self.assertEqual(
+            "Expected Value",
+            hr.extattrs.ea_dict["Test HostRecord EA Inheritance"]
+        )
