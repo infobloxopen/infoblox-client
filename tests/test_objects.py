@@ -689,3 +689,35 @@ class TestObjects(unittest.TestCase):
             ),
             "Exception string '%s' doesn't match test regexp" % e.exception
         )
+
+    def test_member_searchable_ipv4(self):
+        """
+        Validates if Member object can be searched by ipv4_address
+        """
+        connector = self._mock_connector()
+        objects.Member.search(connector, ipv4_address='10.0.3.5')
+        connector.get_object.assert_called_once_with(
+            "member",
+            {"ipv4_address": "10.0.3.5"},
+            extattrs=None,
+            force_proxy=False,
+            return_fields=mock.ANY,
+            paging=False,
+            max_results=None,
+        )
+
+    def test_member_searchable_ipv6(self):
+        """
+        Validates if Member object can be searched by ipv6_address
+        """
+        connector = self._mock_connector()
+        objects.Member.search(connector, ipv6_address='fffe:1234:1234::1')
+        connector.get_object.assert_called_once_with(
+            "member",
+            {"ipv6_address": "fffe:1234:1234::1"},
+            extattrs=None,
+            force_proxy=False,
+            return_fields=mock.ANY,
+            paging=False,
+            max_results=None,
+        )
