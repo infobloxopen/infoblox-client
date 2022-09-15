@@ -574,13 +574,15 @@ class IP(SubObjects):
 
 
 class IPv4(IP):
-    _fields = ['ipv4addr', 'configure_for_dhcp', 'mac']
+    _fields = ['ipv4addr', 'configure_for_dhcp',
+               'use_for_ea_inheritance', 'mac']
     _remap = {'ipv4addr': 'ip'}
     ip_version = 4
 
 
 class IPv6(IP):
-    _fields = ['ipv6addr', 'configure_for_dhcp', 'duid']
+    _fields = ['ipv6addr', 'configure_for_dhcp',
+               'use_for_ea_inheritance', 'duid']
     _remap = {'ipv6addr': 'ip'}
     ip_version = 6
 
