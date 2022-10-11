@@ -3,6 +3,12 @@
 History
 -------
 
+0.5.2 (2022-10-11)
+__________________
+* Added Certificate based authentication logic #330;
+* Fixed use of EA inheritance in IP Objects #318;
+* Fixed missing fields ('ipv4addr', 'ipv6addr') for 'class Member()' #345;
+
 0.5.1 (2022-03-14)
 __________________
 * Updated connector's urlencoding logic for proper array encoding #287;
