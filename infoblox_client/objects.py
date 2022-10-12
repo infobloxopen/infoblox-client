@@ -10911,11 +10911,9 @@ class Member(InfobloxObject):
                'use_traffic_capture_auth_dns', 'use_traffic_capture_chr',
                'use_traffic_capture_qps', 'use_traffic_capture_rec_dns',
                'use_traffic_capture_rec_queries', 'use_trap_notifications',
-               'use_v4_vrrp', 'vip_setting', 'vpn_mtu', 'ipv4_address',
-               'ipv6_address']
+               'use_v4_vrrp', 'vip_setting', 'vpn_mtu']
     _search_for_update_fields = ['config_addr_type', 'host_name', 'platform',
-                                 'service_type_configuration', 'ipv4_address',
-                                 'ipv6_address']
+                                 'service_type_configuration']
     _updateable_search_fields = ['comment', 'config_addr_type', 'enable_ha',
                                  'enable_ro_api_access', 'host_name',
                                  'master_candidate', 'platform',
@@ -10925,8 +10923,7 @@ class Member(InfobloxObject):
                               'enable_ro_api_access', 'host_name',
                               'master_candidate', 'platform',
                               'preserve_if_owns_delegation', 'router_id',
-                              'service_type_configuration', 'ipv4_address',
-                              'ipv6_address']
+                              'service_type_configuration']
     _return_fields = ['config_addr_type', 'extattrs', 'host_name', 'platform',
                       'service_type_configuration']
     _remap = {'name': 'host_name'}
