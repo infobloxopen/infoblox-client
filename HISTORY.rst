@@ -3,7 +3,7 @@
 History
 -------
 
-0.5.2 (2022-10-11)
+0.5.2 (2022-10-12)
 __________________
 * Added Certificate based authentication logic #330;
 * Fixed use of EA inheritance in IP Objects #318;
