@@ -37,10 +37,8 @@ jobs:
       fail-fast: false
       matrix:
         # A list of Python versions to run the tests on
-        python-version: ['2.7', '3.5', '3.6', '3.7', '3.8', '3.9']
+        python-version: ['3.5', '3.6', '3.7', '3.8', '3.9']
         include:
-          - python-version: '2.7'
-            TOXENV: 'py27'
           - python-version: '3.5'
             TOXENV: 'py35'
           - python-version: '3.6'
