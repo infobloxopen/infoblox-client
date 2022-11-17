@@ -4,9 +4,6 @@ language: python
 
 matrix:
   include:
-    - python: 2.7
-      env:
-      - TOXENV=py27
     - python: 3.5
       env:
       - TOXENV=py35
@@ -22,6 +19,12 @@ matrix:
     - python: 3.6
       env:
       - TOXENV=pep8
+    - python: 3.9
+      env:
+      - TOXENV=py39
+    - python: 3.9
+      env:
+      - TOXENV=coverage
 
 install: pip install -U tox
 script: tox
