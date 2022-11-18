@@ -3,6 +3,11 @@
 History
 -------
 
+0.6.0 (2022-11-18)
+__________________
+* Added support for Python version 3.9 #352;
+* Removed support for Python version below 3.0 #352;
+
 0.5.2 (2022-10-12)
 __________________
 * Added Certificate based authentication logic #330;
