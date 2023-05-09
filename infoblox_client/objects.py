@@ -14305,7 +14305,7 @@ class HostRecordV4(HostRecord):
             zone, the default view is used.
     """
     _infoblox_type = 'record:host'
-    _fields = ['aliases', 'allow_telnet', 'cli_credentials', 'cloud_info',
+    _fields = ['alias', 'aliases', 'allow_telnet', 'cli_credentials', 'cloud_info',
                'comment', 'configure_for_dns', 'creation_time',
                'ddns_protected', 'device_description', 'device_location',
                'device_type', 'device_vendor', 'disable', 'disable_discovery',
@@ -14319,7 +14319,7 @@ class HostRecordV4(HostRecord):
     _updateable_search_fields = ['comment', 'device_description',
                                  'device_location', 'device_type',
                                  'device_vendor', 'name', 'view']
-    _all_searchable_fields = ['comment', 'device_description',
+    _all_searchable_fields = ['alias', 'comment', 'device_description',
                               'device_location', 'device_type',
                               'device_vendor', 'name', 'network_view', 'view',
                               'zone', 'mac', 'ipv4addr']
