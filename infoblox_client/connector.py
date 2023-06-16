@@ -374,8 +374,10 @@ class Connector(object):
     def download_file(self, url):
         if self.session.cookies:
             self.session.auth = None
+        ibapauth_cookie = self.session.cookies.get('ibapauth')
+        req_cookies = {'ibapauth': ibapauth_cookie}
         headers = {'content-type': 'application/force-download'}
-        r = self.session.get(url, headers=headers)
+        r = self.session.get(url, headers=headers, cookies=req_cookies)
         if r.status_code != requests.codes.ok:
             response = utils.safe_json_load(r.content)
             raise ib_ex.InfobloxFileDownloadFailed(

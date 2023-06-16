@@ -2,6 +2,10 @@
 # you can turn it on using a cron schedule for regular testing.
 name: Unit Tests
 on:
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
   push:
     paths-ignore:
       - 'README.md'
