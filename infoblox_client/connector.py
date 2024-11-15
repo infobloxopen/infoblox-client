@@ -77,18 +77,19 @@ def retry_on_expired_cookie(func):
         except (req_exc.HTTPError, ib_ex.InfobloxBadWAPICredential,
                 ib_ex.InfobloxFileDownloadFailed,
                 ib_ex.InfobloxFileUploadFailed) as e:
-            if e.response.status_code == requests.codes.UNAUTHORIZED or \
-               isinstance(e, (req_exc.HTTPError,
+            if isinstance(e, (req_exc.HTTPError,
                               ib_ex.InfobloxBadWAPICredential,
                               ib_ex.InfobloxFileDownloadFailed,
                               ib_ex.InfobloxFileUploadFailed)):
-                LOG.info("Bad WAPI credentials or Cookie timeout."
-                         "Re-authenticating and retrying the request.")
+                LOG.warning("Bad WAPI credentials or Cookie timeout.\
+                         Re-authenticating and retrying the request.")
             else:
                 raise
 
+            LOG.warning("Clearing cookies and re-authenticating.")
             self.session.cookies.clear()
             self.session.auth = (self.username, self.password)
+            LOG.warning("Re-executing the request.")
             return func(self, *args, **kwargs)
     return wrapper
 
@@ -324,8 +325,10 @@ class Connector(object):
         Raises exception with content if reply is not in json format
         """
         try:
+            LOG.debug("WAPI Response: %s", request.content)
             return jsonutils.loads(request.content)
         except ValueError:
+            LOG.error("Failed to parse reply from NIOS: %s", request.content)
             raise ib_ex.InfobloxConnectionError(reason=request.content)
 
     def _log_request(self, verb, url, opts):
