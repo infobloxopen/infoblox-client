@@ -62,19 +62,28 @@ def reraise_neutron_exception(func):
 
 
 def retry_on_expired_cookie(func):
-    """Decorator to handle expired cookies by re-authenticating and retrying the request."""
+    """
+    Decorator to handle expired cookies by re-authenticating
+    and retrying the request.
+    """
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
-        """Wrapper function to handle expired cookies by re-authenticating and retrying the request."""
+        """
+        Wrapper function to handle expired cookies by re-authenticating
+        and retrying the request.
+        """
         try:
             return func(self, *args, **kwargs)
-        except (req_exc.HTTPError, ib_ex.InfobloxBadWAPICredential, ib_ex.InfobloxFileDownloadFailed, ib_ex.InfobloxFileUploadFailed) as e:
-            if isinstance(e, (req_exc.HTTPError,
+        except (req_exc.HTTPError, ib_ex.InfobloxBadWAPICredential,
+                ib_ex.InfobloxFileDownloadFailed,
+                ib_ex.InfobloxFileUploadFailed) as e:
+            if e.response.status_code == requests.codes.UNAUTHORIZED or \
+               isinstance(e, (req_exc.HTTPError,
                               ib_ex.InfobloxBadWAPICredential,
                               ib_ex.InfobloxFileDownloadFailed,
-                              ib_ex.InfobloxFileUploadFailed)
-                          ) or e.response.status_code == requests.codes.UNAUTHORIZED:
-                LOG.info("Bad WAPI credentials or Cookie timeout. Re-authenticating and retrying the request.")
+                              ib_ex.InfobloxFileUploadFailed)):
+                LOG.info("Bad WAPI credentials or Cookie timeout."
+                         "Re-authenticating and retrying the request.")
             else:
                 raise
 
@@ -260,7 +269,10 @@ class Connector(object):
         return query_params
 
     def is_cookie_expired(self):
-        """Check if the cookie is expired by comparing the expiration time with the current time."""
+        """
+        Check if the cookie is expired by comparing the expiration time
+        with the current time.
+        """
 
         cookie_jar = self.session.cookies
         for cookie in cookie_jar:
@@ -297,11 +309,12 @@ class Connector(object):
 
     def _validate_cookie(self):
         if self.is_cookie_expired():
-            LOG.info("Cookie expired. Clearing cookies and re-authenticating on the next request.")
+            LOG.info("Cookie expired. \
+            Clearing cookies and re-authenticating on the next request.")
             self.session.cookies.clear()
             self.session.auth = (self.username, self.password)
         else:
-            LOG.info("Subsequent calls will use the existing cookie for authentication")
+            LOG.info("Using existing cookie for authentication")
             self.session.auth = None  # Do not re-authenticate
 
     @staticmethod
@@ -437,13 +450,16 @@ class Connector(object):
     @reraise_neutron_exception
     @retry_on_expired_cookie
     def download_file(self, url):
+        req_cookies = None
         if self.session.cookies:
             self._validate_cookie()
             cookies_dict = self.session.cookies.get_dict()
             ibapauth_cookie = cookies_dict.get('ibapauth', None)
-            req_cookies = {'ibapauth': ibapauth_cookie} if ibapauth_cookie else None
-        else:
-            req_cookies = None
+            if ibapauth_cookie:
+                req_cookies = {'ibapauth': ibapauth_cookie}
+            else:
+                req_cookies = None
+
         headers = {'content-type': 'application/force-download'}
         r = self.session.get(url, headers=headers, cookies=req_cookies)
         if r.status_code != requests.codes.ok:
@@ -467,13 +483,15 @@ class Connector(object):
         Raises:
             InfobloxException
         """
+        req_cookies = None
         if self.session.cookies:
             self._validate_cookie()
             cookies_dict = self.session.cookies.get_dict()
             ibapauth_cookie = cookies_dict.get('ibapauth', None)
-            req_cookies = {'ibapauth': ibapauth_cookie} if ibapauth_cookie else None
-        else:
-            req_cookies = None
+            if ibapauth_cookie:
+                req_cookies = {'ibapauth': ibapauth_cookie}
+            else:
+                req_cookies = None
         r = self.session.post(url, files=files, cookies=req_cookies)
         if r.status_code != requests.codes.ok:
             response = utils.safe_json_load(r.content)
