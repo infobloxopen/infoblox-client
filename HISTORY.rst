@@ -3,6 +3,12 @@
 History
 -------
 
+0.6.1 (2024-11-15)
+__________________
+* Resolved the problem with cookie management and re-authentication upon cookie expiration #384;
+* Dropped support for Python versions below 3.6 #384;
+
+
 0.6.0 (2022-11-18)
 __________________
 * Added support for Python version 3.9 #352;
