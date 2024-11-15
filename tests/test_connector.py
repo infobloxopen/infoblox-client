@@ -12,6 +12,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+import time
 import unittest
 
 import os
@@ -19,6 +20,7 @@ import mock
 import requests
 from mock import patch
 from requests import exceptions as req_exc
+from requests.cookies import RequestsCookieJar
 
 try:
     from oslo_serialization import jsonutils
@@ -76,7 +78,11 @@ class TestInfobloxConnector(unittest.TestCase):
 
         with patch.object(requests.Session, 'post',
                           return_value=mock.Mock()) as patched_create:
-            self.connector.session.cookies = ['cookies']
+            cookie_jar = RequestsCookieJar()
+            cookie_jar.set('ibapauth',
+                           'ctime={},user=admin,group=admin-group,auth=LOCAL,client=API,mtime=1731651582,su=1,ip=localhost,timeout=60,mjuHjy8l1tY0GhSf+aRcxI7rybaIONUIpjc'.format(
+                               int(time.time())), domain='infoblox.localhost')
+            self.connector.session.cookies = cookie_jar
             patched_create.return_value.status_code = 201
             patched_create.return_value.content = '{}'
             self.connector.create_object(objtype, payload)
@@ -399,6 +405,7 @@ class TestInfobloxConnector(unittest.TestCase):
         response.url = url
         self.connector.session = mock.Mock()
         self.connector.session.get.return_value = response
+        self.connector.session.cookies = RequestsCookieJar()
 
         with self.assertRaises(requests.HTTPError):
             self.connector._get_object('network', url)
@@ -517,7 +524,12 @@ class TestInfobloxConnector(unittest.TestCase):
         payload = dict(file=data)
         with patch.object(requests.Session, 'post',
                           return_value=mock.Mock()) as patched_post:
-            self.connector.session.cookies = ['cookies']
+            cookie_jar = RequestsCookieJar()
+            cookie_jar.set(
+                'ibapauth',
+                'ctime={},user=admin,group=admin-group,auth=LOCAL,client=API,mtime=1731651582,su=1,ip=localhost,timeout=60,mjuHjy8l1tY0GhSf+aRcxI7rybaIONUIpjc'.format(
+                    int(time.time())), domain='infoblox.localhost')
+            self.connector.session.cookies = cookie_jar
             patched_post.return_value.status_code = 200
             patched_post.return_value.content = '{}'
             self.connector.upload_file(upload_url, payload)
@@ -547,7 +559,12 @@ class TestInfobloxConnector(unittest.TestCase):
         download_url = 'https://infoblox.example.org' + download_file_path
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:
-            self.connector.session.cookies = ['cookies']
+            cookie_jar = RequestsCookieJar()
+            cookie_jar.set(
+                'ibapauth',
+                'ctime={},user=admin,group=admin-group,auth=LOCAL,client=API,mtime=1731651582,su=1,ip=localhost,timeout=60,mjuHjy8l1tY0GhSf+aRcxI7rybaIONUIpjc'.format(
+                    int(time.time())), domain='infoblox.localhost')
+            self.connector.session.cookies = cookie_jar
             patched_get.return_value.status_code = 200
             patched_get.return_value.content = '{}'
             self.connector.download_file(download_url)
@@ -606,7 +623,11 @@ class TestInfobloxConnector(unittest.TestCase):
         objtype = 'network'
         with patch.object(requests.Session, 'get',
                           return_value=mock.Mock()) as patched_get:
-            self.connector.session.cookies = ['cookies']
+            cookie_jar = RequestsCookieJar()
+            cookie_jar.set('ibapauth',
+                           'ctime={},user=admin,group=admin-group,auth=LOCAL,client=API,mtime=1731651582,su=1,ip=localhost,timeout=60,mjuHjy8l1tY0GhSf+aRcxI7rybaIONUIpjc'.format(
+                               int(time.time())), domain='infoblox.localhost')
+            self.connector.session.cookies = cookie_jar
             patched_get.return_value.status_code = 200
             patched_get.return_value.content = '{}'
             self.connector.get_object(objtype, {})
