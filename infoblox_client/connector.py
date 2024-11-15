@@ -88,8 +88,16 @@ def retry_on_expired_cookie(func):
 
             LOG.warning("Clearing cookies and re-authenticating.")
             self.session.cookies.clear()
-            self.session.auth = (self.username, self.password)
-            LOG.warning("Re-executing the request.")
+            if hasattr(self, 'username') and hasattr(self, 'password'):
+                LOG.warning("Re-authenticating with username and password.")
+                self.session.auth = (self.username, self.password)
+            elif hasattr(self, 'cert') and hasattr(self, 'key'):
+                LOG.warning("Re-authenticating with client certificate.")
+                self.session.cert = (self.cert, self.key)
+            else:
+                LOG.warning("No valid credentials found to re-authenticate.")
+                raise ib_ex.InfobloxConfigException(
+                    msg="No valid credentials found to re-authenticate.")
             return func(self, *args, **kwargs)
     return wrapper
 
@@ -313,7 +321,16 @@ class Connector(object):
             LOG.info("Cookie expired. \
             Clearing cookies and re-authenticating on the next request.")
             self.session.cookies.clear()
-            self.session.auth = (self.username, self.password)
+            if hasattr(self, 'username') and hasattr(self, 'password'):
+                LOG.info("Re-authenticating with username and password.")
+                self.session.auth = (self.username, self.password)
+            elif hasattr(self, 'cert') and hasattr(self, 'key'):
+                LOG.info("Re-authenticating with client certificate.")
+                self.session.cert = (self.cert, self.key)
+            else:
+                LOG.warning("No valid credentials found to re-authenticate.")
+                raise ib_ex.InfobloxConfigException(
+                    msg="No valid credentials found to re-authenticate.")
         else:
             LOG.info("Using existing cookie for authentication")
             self.session.auth = None  # Do not re-authenticate
