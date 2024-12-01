@@ -7693,6 +7693,10 @@ class NetworkV4(Network):
         comment: Comment for the network, maximum 256 characters.
         conflict_count: The number of conflicts discovered via network
             discovery.
+        contains_address: When specified in searches, the returned network
+            is the smallest network that contains this IPv4 Address. If
+            specified, all other search attributes are ignored, except
+            for network_view.
         ddns_domainname: The dynamic DNS domain name the appliance uses
             specifically for DDNS updates for this network.
         ddns_generate_hostname: If this field is set to True, the DHCP
@@ -7956,7 +7960,7 @@ class NetworkV4(Network):
     _infoblox_type = 'network'
     _fields = ['authority', 'auto_create_reversezone', 'bootfile',
                'bootserver', 'cloud_info', 'comment', 'conflict_count',
-               'ddns_domainname', 'ddns_generate_hostname',
+               'contains_address', 'ddns_domainname', 'ddns_generate_hostname',
                'ddns_server_always_updates', 'ddns_ttl',
                'ddns_update_fixed_addresses', 'ddns_use_option81',
                'delete_reason', 'deny_bootp', 'dhcp_utilization',
@@ -8008,10 +8012,10 @@ class NetworkV4(Network):
     _updateable_search_fields = ['comment', 'discovered_bridge_domain',
                                  'discovered_tenant', 'ipv4addr', 'network',
                                  'rir_organization', 'unmanaged']
-    _all_searchable_fields = ['comment', 'discovered_bgp_as',
-                              'discovered_bridge_domain', 'discovered_tenant',
-                              'discovered_vlan_id', 'discovered_vlan_name',
-                              'discovered_vrf_description',
+    _all_searchable_fields = ['comment', 'contains_address',
+                              'discovered_bgp_as', 'discovered_bridge_domain',
+                              'discovered_tenant', 'discovered_vlan_id',
+                              'discovered_vlan_name', 'discovered_vrf_description',
                               'discovered_vrf_name', 'discovered_vrf_rd',
                               'discovery_engine_type', 'ipv4addr', 'network',
                               'network_container', 'network_view', 'rir',
