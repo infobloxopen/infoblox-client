@@ -15,6 +15,7 @@
 
 import netaddr
 import six
+import re
 
 try:
     from oslo_log import log as logging
@@ -136,3 +137,35 @@ def paging(response, max_results):
     while i < len(response):
         yield response[i:i + max_results]
         i = i + max_results
+
+
+def mask_sensitive_data(data, sensitive_keys=None):
+    if sensitive_keys is None:
+        sensitive_keys = ['username', 'password', 'cert', 'key']
+
+    if isinstance(data, dict):
+        # Mask sensitive data in dictionary
+        return {
+            k: ('****' if k in sensitive_keys else v) for k, v in data.items()
+        }
+    elif isinstance(data, str):
+        # Mask sensitive data in string
+        patterns = {key: rf'(?<={key}=)[^&]*' for key in sensitive_keys}
+        for key, pattern in patterns.items():
+            data = re.sub(pattern, '****', data)
+        return data
+    return data
+
+
+def format_html(html_content):
+    if not html_content:
+        return ''
+    # Replace HTML tags with newlines and indentation for readability
+    # Decode if the content is in bytes
+    if isinstance(html_content, bytes):
+        html_content = html_content.decode('utf-8')
+    formatted_content = html_content.replace('<', '\n<')
+    formatted_content = formatted_content.replace('>', '>\n')
+    formatted_content = '\n'.join(
+        line.strip() for line in formatted_content.split('\n') if line.strip())
+    return formatted_content

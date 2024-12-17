@@ -43,11 +43,12 @@ class InfobloxSearchError(InfobloxException):
 
 
 class InfobloxFileDownloadFailed(InfobloxException):
-    message = "Unable to download file from '%(url)s'"
+    message = "Unable to download file from '%(url)s'" \
+              "\n '%(content)s' [code %(code)s]"
 
 
 class InfobloxFileUploadFailed(InfobloxException):
-    message = "Unable to upload file to '%(url)s '%(content)s' '%(code)s'"
+    message = "Unable to upload file to '%(url)s '\n %(content)s' '%(code)s'"
 
 
 class InfobloxCannotCreateObject(InfobloxException):
@@ -115,11 +116,12 @@ class InfobloxConfigException(BaseExc):
 
 class InfobloxBadWAPICredential(InfobloxException):
     message = "Infoblox IPAM is misconfigured: " \
-              "infoblox_username and infoblox_password are incorrect."
+              "infoblox_username and infoblox_password are incorrect." \
+              "\n %(content)s [code %(code)s]"
 
 
 class InfobloxTimeoutError(InfobloxException):
-    message = "Connection to NIOS timed out"
+    message = "Connection to NIOS timed out: %(reason)s"
 
 
 class InfobloxGridTemporaryUnavailable(InfobloxException):
