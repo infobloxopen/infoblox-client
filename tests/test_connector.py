@@ -659,6 +659,15 @@ class TestInfobloxConnectorStaticMethods(unittest.TestCase):
     def test_exception_raised_for_non_authorized(self):
         response = mock.Mock()
         response.status_code = requests.codes.UNAUTHORIZED
+        response.content = (b'<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">'
+                            b'\n<html><head>\n<title>401 Unauthorized</title>\n'
+                            b'</head><body>\n<h1>Unauthorized</h1>'
+                            b'\n<p>This server could not verify that you'
+                            b'\nare authorized to access the document'
+                            b'\nrequested.  Either you supplied the wrong'
+                            b'\ncredentials (e.g., bad password), or your'
+                            b'\nbrowser doesn\'t understand how to supply'
+                            b'\nthe credentials required.</p>\n</body></html>\n')
         self.assertRaises(exceptions.InfobloxBadWAPICredential,
                           connector.Connector._validate_authorized,
                           response)
