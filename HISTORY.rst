@@ -3,11 +3,16 @@
 History
 -------
 
+0.6.2 (2024-12-18)
+__________________
+* Enhanced debug logs for connector #387;
+* Updated masked exception messages with WAPI response #387;
+* Deprecation of delete_all_associated_objects
+
 0.6.1 (2024-11-15)
 __________________
 * Resolved the problem with cookie management and re-authentication upon cookie expiration #384;
 * Dropped support for Python versions below 3.6 #384;
-
 
 0.6.0 (2022-11-18)
 __________________
