@@ -54,7 +54,7 @@ def reraise_neutron_exception(func):
         try:
             return func(*args, **kwargs)
         except req_exc.Timeout as e:
-            raise ib_ex.InfobloxTimeoutError(e)
+            raise ib_ex.InfobloxTimeoutError(e, reason=e)
         except req_exc.RequestException as e:
             raise ib_ex.InfobloxConnectionError(reason=e)
 
@@ -133,6 +133,9 @@ class Connector(object):
             self._urlencode = urlparse.urlencode
             self._quote = urlparse.quote
             self._urljoin = urlparse.urljoin
+        masked_options = utils.mask_sensitive_data(options)
+        LOG.debug(
+            "Connector initialized with options: {}".format(masked_options))
 
     def _parse_options(self, options):
         """Copy necessary options to self"""
@@ -159,6 +162,7 @@ class Connector(object):
                 setattr(self, attr, self.DEFAULT_OPTIONS[attr])
             elif attr not in creds:
                 msg = "WAPI config error. Option %s is not defined" % attr
+                LOG.error(msg)
                 raise ib_ex.InfobloxConfigException(msg=msg)
 
         def check_creds(credentials):
@@ -174,6 +178,7 @@ class Connector(object):
                 not check_creds(creds_cert_auth):
             msg = "WAPI config error. Option either (username, password) " \
                   "or (cert, key) should be passed"
+            LOG.error(msg)
             raise ib_ex.InfobloxConfigException(msg=msg)
 
         self.wapi_url = "https://%s/wapi/v%s/" % (self.host,
@@ -182,6 +187,7 @@ class Connector(object):
             self.wapi_version)
 
     def _configure_session(self):
+        LOG.debug("Configuring session")
         self.session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(
             pool_connections=self.http_pool_connections,
@@ -190,22 +196,31 @@ class Connector(object):
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
         if hasattr(self, 'username') and hasattr(self, 'password'):
+            LOG.info("Authenticating with username and password.")
             self.session.auth = (self.username, self.password)
         else:
             self.session.cert = (self.cert, self.key)
+            LOG.info("Authenticating with client certificate.")
         self.session.verify = utils.try_value_to_bool(self.ssl_verify,
                                                       strict_mode=False)
+        LOG.debug("SSL verification is %s", self.session.verify)
 
         if self.silent_ssl_warnings:
+            LOG.debug("Silencing SSL warnings")
             urllib3.disable_warnings()
 
     def _construct_url(self, relative_path, query_params=None,
                        extattrs=None, force_proxy=False):
+        """
+        Construct URL for Infoblox WAPI request
+        """
+        LOG.debug("Constructing URL for relative path: %s", relative_path)
         if query_params is None:
             query_params = {}
         if extattrs is None:
             extattrs = {}
         if force_proxy:
+            LOG.debug("Forcing proxy search")
             query_params['_proxy_search'] = 'GM'
 
         if not relative_path or relative_path[0] == '/':
@@ -232,6 +247,7 @@ class Connector(object):
 
         base_url = self._urljoin(self.wapi_url,
                                  self._quote(relative_path))
+        LOG.debug("Constructed URL: %s", base_url + query)
         return base_url + query
 
     @staticmethod
@@ -245,13 +261,18 @@ class Connector(object):
         if not obj_type:
             raise ValueError('NIOS object type cannot be empty.')
         if obj_type_expected and '/' in obj_type:
+            LOG.error(
+                "NIOS object type cannot contain slash: {}".format(obj_type))
             raise ValueError('NIOS object type cannot contain slash.')
 
     @staticmethod
     def _validate_authorized(response):
         if response.status_code == requests.codes.UNAUTHORIZED:
-            LOG.debug("WAPI Response: %s", response.content)
-            raise ib_ex.InfobloxBadWAPICredential(response='')
+            raise ib_ex.InfobloxBadWAPICredential(
+                response=response.content,
+                content=utils.format_html(response.content),
+                code=response.status_code
+            )
 
     @staticmethod
     def _build_query_params(payload=None, return_fields=None,
@@ -282,7 +303,7 @@ class Connector(object):
         Check if the cookie is expired by comparing the expiration time
         with the current time.
         """
-
+        LOG.debug("Validating cookie expiration")
         cookie_jar = self.session.cookies
         for cookie in cookie_jar:
             if cookie.name == 'ibapauth':
@@ -411,9 +432,11 @@ class Connector(object):
         proxy_flag = self.cloud_api_enabled and force_proxy
 
         try:
-            return self._handle_get_object(obj_type, query_params, extattrs,
-                                           proxy_flag)
+            return self._handle_get_object(
+                obj_type, query_params, extattrs, proxy_flag)
         except req_exc.HTTPError:
+            LOG.warning(
+                "Failed on object search with proxy flag %s", proxy_flag)
             # Do second get call with force_proxy if not done yet
             return self._handle_get_object(obj_type, query_params,
                                            extattrs, proxy_flag=True)
@@ -470,6 +493,7 @@ class Connector(object):
     @reraise_neutron_exception
     @retry_on_expired_cookie
     def download_file(self, url):
+        LOG.debug("Downloading file from %s", url)
         req_cookies = None
         if self.session.cookies:
             self._validate_cookie()
@@ -483,10 +507,14 @@ class Connector(object):
         headers = {'content-type': 'application/force-download'}
         r = self.session.get(url, headers=headers, cookies=req_cookies)
         if r.status_code != requests.codes.ok:
+            res_content = utils.format_html(r.content)
+            LOG.error("Failed to download file from %s: %s", url, res_content)
             response = utils.safe_json_load(r.content)
             raise ib_ex.InfobloxFileDownloadFailed(
                 response=response,
-                url=url
+                url=url,
+                content=res_content,
+                code=r.status_code
             )
         return r
 
@@ -503,6 +531,7 @@ class Connector(object):
         Raises:
             InfobloxException
         """
+        LOG.debug("Uploading file to %s", url)
         req_cookies = None
         if self.session.cookies:
             self._validate_cookie()
@@ -515,10 +544,12 @@ class Connector(object):
         r = self.session.post(url, files=files, cookies=req_cookies)
         if r.status_code != requests.codes.ok:
             response = utils.safe_json_load(r.content)
+            res_content = utils.format_html(r.content)
+            LOG.error("Failed to upload file to %s: %s", url, res_content)
             raise ib_ex.InfobloxFileUploadFailed(
                 response=response,
                 url=url,
-                content=response,
+                content=res_content,
                 code=r.status_code,
             )
         return r
@@ -554,6 +585,8 @@ class Connector(object):
         self._validate_authorized(r)
 
         if r.status_code != requests.codes.CREATED:
+            LOG.error(
+                "Failed to create object with url %s: %s", url, r.content)
             response = utils.safe_json_load(r.content)
             already_assigned = 'is assigned to another network view'
             if response and already_assigned in response.get('text'):
@@ -581,6 +614,7 @@ class Connector(object):
     @reraise_neutron_exception
     @retry_on_expired_cookie
     def call_func(self, func_name, ref, payload, return_fields=None):
+        LOG.debug("Calling function %s on object %s", func_name, ref)
         if self.session.cookies:
             self._validate_cookie()
         query_params = self._build_query_params(return_fields=return_fields)
@@ -697,5 +731,7 @@ class Connector(object):
         version_match = re.search(r'(\d+)\.(\d+)', wapi_version)
         if version_match:
             if int(version_match.group(1)) >= CLOUD_WAPI_MAJOR_VERSION:
+                LOG.debug("Cloud WAPI version detected: %s", wapi_version)
                 return True
+        LOG.debug("Non-cloud WAPI version detected: %s", wapi_version)
         return False

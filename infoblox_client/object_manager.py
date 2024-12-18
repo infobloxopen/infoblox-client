@@ -469,12 +469,6 @@ class InfobloxObjectManager(object):
                 for ib_obj in ib_objs:
                     self.delete_object_by_ref(ib_obj['_ref'])
 
-    def delete_all_associated_objects(self, network_view, ip, delete_list):
-        LOG.warning(
-            "DEPRECATION WARNING! Using delete_all_associated_objects() "
-            "is deprecated and to be removed in next releases. "
-            "Use unbind_name_from_record_a() instead.")
-
     def delete_object_by_ref(self, ref):
         try:
             self.connector.delete_object(ref)
